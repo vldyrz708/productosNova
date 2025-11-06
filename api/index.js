@@ -35,6 +35,9 @@ app.use(sanitizarEntrada);
 // Servir archivos estáticos (fotos de álbumes)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// Servir archivos estáticos desde la carpeta "frontend"
+app.use(express.static(path.join(__dirname, './../frontend')));
+
 // Conectar a MongoDB
 conection();
 
@@ -91,6 +94,11 @@ app.get('/', (req, res) => {
         },
         documentation: 'Ver API_DOCUMENTATION.md para detalles completos'
     });
+});
+
+// Ruta específica para redirigir a "index.html"
+app.get('/', (req, res) => {
+    res.sendFile(path.resolve(__dirname, '../frontend/index.html'));
 });
 
 // Middleware de manejo de errores (debe ir después de las rutas)
