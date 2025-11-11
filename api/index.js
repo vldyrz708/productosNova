@@ -55,8 +55,8 @@ app.get('/health', (req, res) => {
     });
 });
 
-// Ruta de bienvenida con información útil para el frontend
-app.get('/', (req, res) => {
+// Endpoint de información de la API
+app.get('/api', (req, res) => {
     res.json({
         success: true,
         message: '🎵 API de Álbumes K-pop - productosNova',
@@ -69,7 +69,7 @@ app.get('/', (req, res) => {
             },
             album_by_id: {
                 url: '/api/albums/:id',
-                methods: ['GET', 'PUT', 'DELETE']
+                methods: ['GET', 'PATCH', 'DELETE']
             },
             search: {
                 url: '/api/albums/search',
@@ -83,10 +83,6 @@ app.get('/', (req, res) => {
                 url: '/api/albums/categoria/:categoria',
                 methods: ['GET']
             },
-            update_stock: {
-                url: '/api/albums/:id/stock',
-                methods: ['PATCH']
-            },
             stats: {
                 url: '/api/albums/stats',
                 methods: ['GET']
@@ -96,7 +92,7 @@ app.get('/', (req, res) => {
     });
 });
 
-// Ruta específica para redirigir a "index.html"
+// Ruta raíz sirve el frontend
 app.get('/', (req, res) => {
     res.sendFile(path.resolve(__dirname, '../frontend/index.html'));
 });
