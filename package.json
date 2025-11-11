@@ -1,31 +1,31 @@
 {
-  "name": "productosnova",
-  "version": "1.0.0",
-  "main": "api/index.js",
-  "scripts": {
-    "start": "node api/index.js",
-    "dev": "nodemon api/index.js",
-    "vlad": "node programa.js && node api/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [
-    "API",
-    "REST",
-    "NodeJS",
-    "Express",
-    "MongoDB"
-  ],
-  "author": "Vladimir Alvarez, Alondra Sanchez, Yenifer Martinez, Alan Palafox",
-  "license": "ISC",
-  "description": "",
-  "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^5.1.0",
-    "mongoose": "^8.19.3",
-    "multer": "^2.0.2",
-    "validator": "^13.15.20"
-  },
-  "devDependencies": {
-    "nodemon": "^3.1.10"
-  }
+    "name": "productosnova",
+    "version": "1.0.0",
+    "main": "api/index.js",
+    "scripts": {
+        "start": "node api/index.js",
+        "dev": "nodemon api/index.js",
+        "vlad": "node programa.js && node api/index.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [
+        "API",
+        "REST",
+        "NodeJS",
+        "Express",
+        "MongoDB"
+    ],
+    "author": "Vladimir Alvarez, Alondra Sanchez, Yenifer Martinez, Alan Palafox",
+    "license": "ISC",
+    "description": "",
+    "dependencies": {
+        "cors": "^2.8.5",
+        "express": "^5.1.0",
+        "mongoose": "^8.19.3",
+        "multer": "^2.0.2",
+        "validator": "^13.15.20"
+    },
+    "devDependencies": {
+        "nodemon": "^3.1.10"
+    }
 }
