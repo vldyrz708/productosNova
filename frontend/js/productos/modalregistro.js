@@ -1,3 +1,46 @@
+// Configurar límites de fechas
+const fechaLanzamientoInput = document.getElementById('fechaLanzamiento');
+const fechaCompraInput = document.getElementById('fechaCompra');
+const fechaCaducidadInput = document.getElementById('fechaCaducidad');
+
+if (fechaLanzamientoInput) {
+    // Fecha de lanzamiento: máximo hoy
+    const hoy = new Date().toISOString().split('T')[0];
+    fechaLanzamientoInput.setAttribute('max', hoy);
+    
+    // Cuando cambia fecha de lanzamiento, actualizar mínimo de fecha de compra
+    fechaLanzamientoInput.addEventListener('change', (e) => {
+        if (e.target.value) {
+            // La fecha de compra puede ser igual a la fecha de lanzamiento
+            fechaCompraInput.setAttribute('min', e.target.value);
+        }
+    });
+}
+
+if (fechaCompraInput) {
+    // Fecha de compra: máximo mañana
+    const manana = new Date();
+    manana.setDate(manana.getDate() + 1);
+    fechaCompraInput.setAttribute('max', manana.toISOString().split('T')[0]);
+    
+    // Cuando cambia fecha de compra, actualizar mínimo de fecha de caducidad
+    fechaCompraInput.addEventListener('change', (e) => {
+        if (e.target.value) {
+            const fechaCompra = new Date(e.target.value);
+            fechaCompra.setDate(fechaCompra.getDate() + 1);
+            const minCaducidad = fechaCompra.toISOString().split('T')[0];
+            fechaCaducidadInput.setAttribute('min', minCaducidad);
+        }
+    });
+}
+
+if (fechaCaducidadInput) {
+    // Fecha de caducidad: mínimo mañana
+    const manana = new Date();
+    manana.setDate(manana.getDate() + 1);
+    fechaCaducidadInput.setAttribute('min', manana.toISOString().split('T')[0]);
+}
+
 // Formatear duración automáticamente mientras se escribe
 const duracionInput = document.getElementById('duracion');
 if (duracionInput) {
@@ -93,11 +136,21 @@ document.getElementById('guardarProducto').addEventListener('click', () => {
         marcarExito(versionInput);
     }
 
+    // Validar fecha de lanzamiento (debe ser menor o igual a hoy)
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    
     if (!fechaLanzamientoInput.value) {
         marcarError(fechaLanzamientoInput, 'Fecha de lanzamiento requerida');
         valido = false;
     } else {
-        marcarExito(fechaLanzamientoInput);
+        const fechaLanzamiento = new Date(fechaLanzamientoInput.value + 'T00:00:00');
+        if (fechaLanzamiento > hoy) {
+            marcarError(fechaLanzamientoInput, 'Fecha de lanzamiento debe ser menor o igual a hoy');
+            valido = false;
+        } else {
+            marcarExito(fechaLanzamientoInput);
+        }
     }
 
     if (!idiomaInput.value.trim()) {
@@ -149,31 +202,45 @@ document.getElementById('guardarProducto').addEventListener('click', () => {
         marcarExito(descripcionInput);
     }
 
+    // Validar fecha de compra (mayor o igual a lanzamiento y menor o igual a mañana)
+    const manana = new Date(hoy);
+    manana.setDate(manana.getDate() + 1);
+    
     if (!fechaCompraInput.value) {
         marcarError(fechaCompraInput, 'Fecha de compra requerida');
         valido = false;
     } else {
-        marcarExito(fechaCompraInput);
+        const fechaCompra = new Date(fechaCompraInput.value + 'T00:00:00');
+        const fechaLanzamiento = new Date(fechaLanzamientoInput.value + 'T00:00:00');
+        
+        if (fechaCompra < fechaLanzamiento) {
+            marcarError(fechaCompraInput, 'Fecha de compra debe ser mayor o igual a fecha de lanzamiento');
+            valido = false;
+        } else if (fechaCompra > manana) {
+            marcarError(fechaCompraInput, 'Fecha de compra debe ser menor o igual a mañana');
+            valido = false;
+        } else {
+            marcarExito(fechaCompraInput);
+        }
     }
 
+    // Validar fecha de caducidad (mayor a compra y mayor a hoy)
     if (!fechaCaducidadInput.value) {
         marcarError(fechaCaducidadInput, 'Fecha de caducidad requerida');
         valido = false;
     } else {
-        marcarExito(fechaCaducidadInput);
-    }
-
-    // Validar orden de fechas
-    if (fechaLanzamientoInput.value && fechaCompraInput.value &&
-        new Date(fechaLanzamientoInput.value) > new Date(fechaCompraInput.value)) {
-        marcarError(fechaCompraInput, 'La fecha de compra debe ser después del lanzamiento');
-        valido = false;
-    }
-
-    if (fechaCompraInput.value && fechaCaducidadInput.value &&
-        new Date(fechaCompraInput.value) > new Date(fechaCaducidadInput.value)) {
-        marcarError(fechaCaducidadInput, 'La fecha de caducidad debe ser posterior a la compra');
-        valido = false;
+        const fechaCaducidad = new Date(fechaCaducidadInput.value + 'T00:00:00');
+        const fechaCompra = new Date(fechaCompraInput.value + 'T00:00:00');
+        
+        if (fechaCaducidad <= fechaCompra) {
+            marcarError(fechaCaducidadInput, 'Fecha de caducidad debe ser mayor a fecha de compra');
+            valido = false;
+        } else if (fechaCaducidad <= hoy) {
+            marcarError(fechaCaducidadInput, 'Fecha de caducidad debe ser mayor a hoy');
+            valido = false;
+        } else {
+            marcarExito(fechaCaducidadInput);
+        }
     }
 
     // Validar imagen

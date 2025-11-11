@@ -35,7 +35,7 @@
                         <div class="col-md-6">
                             <label for="fechaLanzamiento" class="form-label">Fecha de Lanzamiento</label>
                             <input type="date" class="form-control" id="fechaLanzamiento" required>
-                            <div class="invalid-feedback">Fecha de lanzamiento requerida.</div>
+                            <div class="invalid-feedback">Fecha de lanzamiento debe ser menor o igual a hoy.</div>
                         </div>
                         <div class="col-md-6">
                             <label for="idioma" class="form-label">Idioma</label>
@@ -97,12 +97,12 @@
                         <div class="col-md-6">
                             <label for="fechaCompra" class="form-label">Fecha de Compra</label>
                             <input type="date" class="form-control" id="fechaCompra" required>
-                            <div class="invalid-feedback">Fecha de compra requerida.</div>
+                            <div class="invalid-feedback">Fecha de compra debe ser mayor o igual a fecha de lanzamiento y menor o igual a mañana.</div>
                         </div>
                         <div class="col-md-6">
                             <label for="fechaCaducidad" class="form-label">Fecha de Caducidad</label>
                             <input type="date" class="form-control" id="fechaCaducidad" required>
-                            <div class="invalid-feedback">Fecha de caducidad requerida.</div>
+                            <div class="invalid-feedback">Fecha de caducidad debe ser mayor a fecha de compra y mayor a hoy.</div>
                         </div>
                         <div class="col-12">
                             <label for="imagen" class="form-label">Imagen</label>

@@ -8,6 +8,30 @@ setTimeout(() => {
         return;
     }
 
+    // Restaurar estado del modal cuando se cierra
+    modalElement.addEventListener('hidden.bs.modal', () => {
+        // Restaurar todos los inputs a spans si el modal estaba en modo edición
+        const inputs = modalElement.querySelectorAll('input[data-id-campo]');
+        if (inputs.length > 0) {
+            inputs.forEach(input => {
+                const span = document.createElement('span');
+                span.id = input.dataset.idCampo;
+                span.textContent = input.value.trim() || '—';
+                input.replaceWith(span);
+            });
+        }
+
+        // Eliminar botones de Guardar/Cancelar si existen
+        const contenedorBotones = modalElement.querySelector('.d-flex.justify-content-center.gap-3.mt-3');
+        if (contenedorBotones) {
+            contenedorBotones.remove();
+        }
+
+        // Asegurar que los botones Editar y Eliminar estén visibles
+        btnEditar.style.display = 'inline-block';
+        btnEliminar.style.display = 'inline-block';
+    });
+
     // --- ELIMINAR PRODUCTO ---
     btnEliminar.addEventListener('click', () => {
         const confirmar = confirm('¿Estás seguro de que deseas eliminar este producto?');
