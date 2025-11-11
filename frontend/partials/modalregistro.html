@@ -1,0 +1,85 @@
+<div class="modal fade" id="modalRegistro" tabindex="-1" aria-labelledby="modalRegistroLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalRegistroLabel">Registrar Nuevo Producto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formRegistroProducto">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="nombreAlbum" class="form-label">Nombre del Álbum</label>
+                            <input type="text" class="form-control" id="nombreAlbum" required>
+                            <div class="invalid-feedback">Nombre inválido (mínimo 2 caracteres).</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="artistaGrupo" class="form-label">Artista / Grupo</label>
+                            <input type="text" class="form-control" id="artistaGrupo" required>
+                            <div class="invalid-feedback">Artista inválido (mínimo 2 caracteres).</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="version" class="form-label">Versión</label>
+                            <input type="text" class="form-control" id="version" required>
+                            <div class="invalid-feedback">Versión requerida.</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="fechaLanzamiento" class="form-label">Fecha de Lanzamiento</label>
+                            <input type="date" class="form-control" id="fechaLanzamiento" required>
+                            <div class="invalid-feedback">Fecha de lanzamiento requerida.</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="idioma" class="form-label">Idioma</label>
+                            <input type="text" class="form-control" id="idioma" required>
+                            <div class="invalid-feedback">Idioma requerido.</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="duracion" class="form-label">Duración</label>
+                            <input type="text" class="form-control" id="duracion" required>
+                            <div class="invalid-feedback">Duración requerida.</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="peso" class="form-label">Peso</label>
+                            <input type="text" class="form-control" id="peso" required>
+                            <div class="invalid-feedback">Peso requerido.</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="stock" class="form-label">Stock</label>
+                            <input type="number" class="form-control" id="stock" required>
+                            <div class="invalid-feedback">Stock inválido (número >= 0).</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="categoria" class="form-label">Categoría</label>
+                            <input type="text" class="form-control" id="categoria" required>
+                            <div class="invalid-feedback">Categoría requerida.</div>
+                        </div>
+                        <div class="col-12">
+                            <label for="descripcion" class="form-label">Descripción</label>
+                            <textarea class="form-control" id="descripcion" rows="3" required></textarea>
+                            <div class="invalid-feedback">Descripción inválida (mínimo 10 caracteres).</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="fechaCompra" class="form-label">Fecha de Compra</label>
+                            <input type="date" class="form-control" id="fechaCompra" required>
+                            <div class="invalid-feedback">Fecha de compra requerida.</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="fechaCaducidad" class="form-label">Fecha de Caducidad</label>
+                            <input type="date" class="form-control" id="fechaCaducidad" required>
+                            <div class="invalid-feedback">Fecha de caducidad requerida.</div>
+                        </div>
+                        <div class="col-12">
+                            <label for="imagen" class="form-label">Imagen</label>
+                            <input type="file" class="form-control" id="imagen" accept="image/*" required>
+                            <div class="invalid-feedback">Selecciona una imagen válida (máx 5MB).</div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="guardarProducto">Guardar Producto</button>
+            </div>
+        </div>
+    </div>
+</div>

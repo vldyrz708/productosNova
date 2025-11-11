@@ -1,0 +1,207 @@
+/* ======= ESTILOS BASE ======= */
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f6f6f6;
+}
+
+
+/* ======= ENCABEZADO ======= */
+
+header {
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+}
+
+.home-link svg {
+    width: 36px;
+    height: 36px;
+    stroke: #000;
+    transition: transform 0.3s ease, stroke 0.3s ease;
+}
+
+.home-link:hover svg {
+    transform: scale(1.2);
+    stroke: #444;
+}
+
+
+/* ======= BOTÓN AGREGAR ======= */
+
+#btnAgregar {
+    background-color: #000;
+    border: none;
+    border-radius: 50px;
+    font-size: 14px;
+    padding: 8px 18px;
+    transition: all 0.3s ease;
+}
+
+#btnAgregar:hover {
+    background-color: #333;
+    transform: translateY(-2px);
+}
+
+
+/* ======= BUSCADOR EXPANDIBLE ======= */
+
+.buscador {
+    width: 160px;
+    transition: all 0.4s ease;
+    border: 1px solid #ccc;
+    border-radius: 25px;
+    overflow: hidden;
+}
+
+.buscador input {
+    border: none;
+    box-shadow: none !important;
+    transition: width 0.4s ease;
+    font-size: 14px;
+}
+
+.buscador input:focus {
+    outline: none;
+    box-shadow: none !important;
+}
+
+.buscador:focus-within {
+    width: 250px;
+}
+
+.buscador .input-group-text {
+    border: none;
+    background: transparent;
+}
+
+
+/* ======= CARDS ======= */
+
+.producto-card {
+    background-color: #f0f0f0 !important;
+    border-radius: 12px;
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.producto-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+}
+
+.producto-card img {
+    width: 100px;
+    height: auto;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+.producto-card h6 {
+    font-weight: 700;
+    font-size: 15px;
+    margin-bottom: 6px;
+}
+
+.producto-card p {
+    font-size: 13px;
+    color: #333;
+    text-align: left;
+    margin-bottom: 3px;
+}
+
+.producto-card button {
+    background-color: #000;
+    border: none;
+    border-radius: 20px;
+    font-size: 12px;
+    padding: 4px 14px;
+    transition: background-color 0.3s ease;
+}
+
+.producto-card button:hover {
+    background-color: #333;
+}
+
+
+/* ======= TITULOS ======= */
+
+main h3 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #000;
+}
+
+
+/* ======= RESPONSIVE ======= */
+
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        align-items: start !important;
+    }
+    .buscador {
+        width: 100%;
+        margin-top: 10px;
+    }
+    #btnAgregar {
+        width: 100%;
+    }
+    .producto-card img {
+        width: 90px;
+    }
+}
+
+
+/*diceso modalproducto.css*/
+
+
+/* === Modal Producto === */
+
+#modalProducto .modal-content {
+    border-radius: 1.5rem;
+    background-color: #fff;
+    transition: all 0.3s ease-in-out;
+    position: relative;
+}
+
+#modalProducto .btn-close {
+    background-color: #f1f1f1;
+    border-radius: 50%;
+    opacity: 0.8;
+    transition: 0.2s;
+}
+
+#modalProducto .btn-close:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+#modalProducto .btn-outline-primary,
+#modalProducto .btn-outline-danger {
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+#modalProducto .btn-outline-primary:hover {
+    background-color: #0d6efd;
+    color: white;
+}
+
+#modalProducto .btn-outline-danger:hover {
+    background-color: #dc3545;
+    color: white;
+}
+
+#modalProducto img {
+    border: 2px solid #e9ecef;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+
+/* Para mantener coherencia tipográfica */
+
+#modalProducto p {
+    font-size: 0.95rem;
+    margin-bottom: 0.4rem;
+    color: #333;
+}
