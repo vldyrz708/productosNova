@@ -1,3 +1,40 @@
+// Formatear duración automáticamente mientras se escribe
+const duracionInput = document.getElementById('duracion');
+if (duracionInput) {
+    duracionInput.addEventListener('input', (e) => {
+        // Solo permitir números
+        let valor = e.target.value.replace(/\D/g, '');
+        
+        // Limitar a 4 dígitos
+        if (valor.length > 4) {
+            valor = valor.slice(0, 4);
+        }
+        
+        e.target.value = valor;
+    });
+    
+    duracionInput.addEventListener('blur', (e) => {
+        // Al salir del campo, agregar ceros si es necesario y formatear
+        let valor = e.target.value.replace(/\D/g, '');
+        
+        if (valor.length > 0) {
+            // Rellenar con ceros a la izquierda si es necesario
+            valor = valor.padStart(4, '0');
+            
+            // Formatear como MM:SS
+            const minutos = valor.slice(0, 2);
+            const segundos = valor.slice(2, 4);
+            
+            // Validar que los segundos no sean mayores a 59
+            if (parseInt(segundos) > 59) {
+                e.target.value = minutos + '59';
+            } else {
+                e.target.value = minutos + segundos;
+            }
+        }
+    });
+}
+
 document.getElementById('guardarProducto').addEventListener('click', () => {
     // Función helper para marcar un input
     function marcarError(input, mensaje) {
@@ -18,6 +55,7 @@ document.getElementById('guardarProducto').addEventListener('click', () => {
     const idiomaInput = document.getElementById('idioma');
     const duracionInput = document.getElementById('duracion');
     const pesoInput = document.getElementById('peso');
+    const precioInput = document.getElementById('precio');
     const stockInput = document.getElementById('stock');
     const categoriaInput = document.getElementById('categoria');
     const descripcionInput = document.getElementById('descripcion');
@@ -69,18 +107,25 @@ document.getElementById('guardarProducto').addEventListener('click', () => {
         marcarExito(idiomaInput);
     }
 
-    if (!duracionInput.value.trim()) {
-        marcarError(duracionInput, 'Duración requerida');
+    if (!duracionInput.value.trim() || duracionInput.value.length !== 4) {
+        marcarError(duracionInput, 'Duración requerida (4 dígitos, ej: 0345)');
         valido = false;
     } else {
         marcarExito(duracionInput);
     }
 
-    if (!pesoInput.value.trim()) {
-        marcarError(pesoInput, 'Peso requerido');
+    if (!pesoInput.value || isNaN(pesoInput.value) || parseInt(pesoInput.value) < 1 || parseInt(pesoInput.value) > 2000) {
+        marcarError(pesoInput, 'Peso inválido (1-2000 gramos)');
         valido = false;
     } else {
         marcarExito(pesoInput);
+    }
+
+    if (!precioInput.value || isNaN(precioInput.value) || parseFloat(precioInput.value) < 0) {
+        marcarError(precioInput, 'Precio inválido (número >= 0)');
+        valido = false;
+    } else {
+        marcarExito(precioInput);
     }
 
     if (!stockInput.value || isNaN(stockInput.value) || parseInt(stockInput.value) < 0) {
@@ -148,36 +193,59 @@ document.getElementById('guardarProducto').addEventListener('click', () => {
 
     if (!valido) return;
 
-    // Si todo es válido, agregar producto
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const producto = {
-            nombreAlbum: nombreAlbumInput.value.trim(),
-            artistaGrupo: artistaGrupoInput.value.trim(),
-            version: versionInput.value.trim(),
-            fechaLanzamiento: fechaLanzamientoInput.value,
-            idioma: idiomaInput.value.trim(),
-            duracion: duracionInput.value.trim(),
-            peso: pesoInput.value.trim(),
-            stock: parseInt(stockInput.value),
-            categoria: categoriaInput.value.trim(),
-            descripcion: descripcionInput.value.trim(),
-            fechaCompra: fechaCompraInput.value,
-            fechaCaducidad: fechaCaducidadInput.value,
-            imagen: e.target.result
-        };
+    // Si todo es válido, enviar producto a la API
+    // Formatear duración con dos puntos (MMSS → MM:SS)
+    const duracionFormateada = duracionInput.value.trim();
+    const duracionConPuntos = duracionFormateada.slice(0, 2) + ':' + duracionFormateada.slice(2);
+    
+    const formData = new FormData();
+    formData.append('nombreAlbum', nombreAlbumInput.value.trim());
+    formData.append('artistaGrupo', artistaGrupoInput.value.trim());
+    formData.append('version', versionInput.value.trim());
+    formData.append('fechaLanzamiento', fechaLanzamientoInput.value);
+    formData.append('idioma', idiomaInput.value.trim());
+    formData.append('duracion', duracionConPuntos);
+    formData.append('peso', parseInt(pesoInput.value));
+    formData.append('precio', parseFloat(precioInput.value));
+    formData.append('stock', parseInt(stockInput.value));
+    formData.append('categoria', categoriaInput.value.trim());
+    formData.append('descripcion', descripcionInput.value.trim());
+    formData.append('fechaCompra', fechaCompraInput.value);
+    formData.append('fechaCaducidad', fechaCaducidadInput.value);
+    formData.append('fotoAlbum', archivoImagen);
 
-        agregarProducto(producto);
-
+    // Enviar a la API
+    fetch(API_URL, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) throw new Error('Error al guardar el producto');
+        return response.json();
+    })
+    .then(data => {
+        console.log('Producto guardado:', data);
+        
+        // Cerrar modal
         const modal = bootstrap.Modal.getInstance(document.getElementById('modalRegistro'));
         modal.hide();
+        
+        // Resetear formulario
         document.getElementById('formRegistroProducto').reset();
-
+        
         // Limpiar validaciones
         document.querySelectorAll('.form-control').forEach(input => {
             input.classList.remove('is-invalid');
             input.classList.remove('is-valid');
         });
-    };
-    reader.readAsDataURL(archivoImagen);
+        
+        // Recargar productos
+        cargarProductos();
+        
+        alert('Producto agregado exitosamente');
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error al guardar el producto. Verifica que el servidor esté corriendo.');
+    });
 });

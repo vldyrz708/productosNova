@@ -67,12 +67,58 @@ const upload = multer({
     fileFilter: fileFilter
 });
 
-// Middleware para manejar archivos subidos
+// Middleware para manejar archivos subidos y mapear campos del frontend
 const procesarFotoAlbum = (req, res, next) => {
+    // console.log('🔍 Datos recibidos antes del mapeo:', req.body);
+    // console.log('📸 Archivo recibido:', req.file ? req.file.filename : 'ninguno');
+    
     if (req.file) {
         // Guardar la ruta relativa del archivo
         req.body.fotoAlbum = `uploads/${req.file.filename}`;
     }
+    
+    // Mapear campos del frontend al modelo de backend
+    if (req.body.artistaGrupo) {
+        req.body.artista = req.body.artistaGrupo;
+        delete req.body.artistaGrupo;
+    }
+    
+    if (req.body.version) {
+        req.body.versionAlbum = req.body.version;
+        delete req.body.version;
+    }
+    
+    if (req.body.peso) {
+        req.body.pesoGramos = parseInt(req.body.peso);
+        delete req.body.peso;
+    }
+    
+    if (req.body.fechaCompra) {
+        req.body.fechaAdquisicion = req.body.fechaCompra;
+        delete req.body.fechaCompra;
+    }
+    
+    if (req.body.fechaCaducidad) {
+        req.body.fechaLimiteVenta = req.body.fechaCaducidad;
+        delete req.body.fechaCaducidad;
+    }
+    
+    // Convertir idioma a array si viene como string
+    if (req.body.idioma && typeof req.body.idioma === 'string') {
+        req.body.idioma = [req.body.idioma];
+    }
+    
+    // Convertir categoria a array si viene como string
+    if (req.body.categoria && typeof req.body.categoria === 'string') {
+        req.body.categoria = [req.body.categoria];
+    }
+    
+    // Agregar precio por defecto si no viene
+    if (!req.body.precio) {
+        req.body.precio = 0;
+    }
+    
+    // console.log('✅ Datos después del mapeo:', req.body);
     next();
 };
 
@@ -115,10 +161,56 @@ router.post('/', upload.single('fotoAlbum'), procesarFotoAlbum, validarCrearAlbu
 // @access  Public
 router.get('/:id', validarObjectId, obtenerAlbumPorId);
 
+// Middleware para procesar datos JSON en PATCH (sin archivo)
+const procesarCambiosJSON = (req, res, next) => {
+    // Si no hay archivo, solo mapear campos del JSON
+    if (!req.file && req.body) {
+        // console.log('🔄 PATCH - Datos JSON recibidos:', req.body);
+        
+        // Mapear campos del frontend al backend
+        if (req.body.artistaGrupo) {
+            req.body.artista = req.body.artistaGrupo;
+            delete req.body.artistaGrupo;
+        }
+        
+        if (req.body.version) {
+            req.body.versionAlbum = req.body.version;
+            delete req.body.version;
+        }
+        
+        if (req.body.peso) {
+            req.body.pesoGramos = parseInt(req.body.peso);
+            delete req.body.peso;
+        }
+        
+        if (req.body.fechaCompra) {
+            req.body.fechaAdquisicion = req.body.fechaCompra;
+            delete req.body.fechaCompra;
+        }
+        
+        if (req.body.fechaCaducidad) {
+            req.body.fechaLimiteVenta = req.body.fechaCaducidad;
+            delete req.body.fechaCaducidad;
+        }
+        
+        // Convertir a array si es necesario
+        if (req.body.idioma && typeof req.body.idioma === 'string') {
+            req.body.idioma = [req.body.idioma];
+        }
+        
+        if (req.body.categoria && typeof req.body.categoria === 'string') {
+            req.body.categoria = [req.body.categoria];
+        }
+        
+        // console.log('✅ PATCH - Datos después del mapeo:', req.body);
+    }
+    next();
+};
+
 // @route   PATCH /api/albums/:id
 // @desc    Actualizar cualquier campo de un álbum
 // @access  Private
-router.patch('/:id', validarObjectId, upload.single('fotoAlbum'), procesarFotoAlbum, validarActualizarAlbum, actualizarAlbum);
+router.patch('/:id', validarObjectId, procesarCambiosJSON, actualizarAlbum);
 
 // @route   DELETE /api/albums/:id
 // @desc    Eliminar un álbum permanentemente

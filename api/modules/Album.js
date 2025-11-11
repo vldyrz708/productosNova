@@ -92,7 +92,11 @@ const albumSchema = new mongoose.Schema({
         required: [true, 'La fecha límite de venta es requerida'],
         validate: {
             validator: function(v) {
-                return v > this.fechaAdquisicion;
+                // Solo validar en creación o cuando ambas fechas están presentes
+                if (this.isNew || this.fechaAdquisicion) {
+                    return v > this.fechaAdquisicion;
+                }
+                return true; // No validar en actualizaciones parciales
             },
             message: 'La fecha límite de venta debe ser posterior a la fecha de adquisición'
         }

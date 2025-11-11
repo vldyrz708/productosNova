@@ -39,9 +39,30 @@ const obtenerAlbumes = async (req, res, next) => {
 
         const total = await Album.countDocuments(filtros);
 
+        // Función auxiliar para formatear fechas (YYYY-MM-DD)
+        const formatearFecha = (fecha) => {
+            if (!fecha) return null;
+            const d = new Date(fecha);
+            return d.toISOString().split('T')[0];
+        };
+
+        // Mapear campos del backend al frontend
+        const albumsMapeados = albums.map(album => {
+            const albumObj = album.toObject();
+            return {
+                ...albumObj,
+                artistaGrupo: albumObj.artista,
+                version: albumObj.versionAlbum,
+                peso: albumObj.pesoGramos ? `${albumObj.pesoGramos}g` : '',
+                fechaLanzamiento: formatearFecha(albumObj.fechaLanzamiento),
+                fechaCompra: formatearFecha(albumObj.fechaAdquisicion),
+                fechaCaducidad: formatearFecha(albumObj.fechaLimiteVenta)
+            };
+        });
+
         res.status(200).json({
             success: true,
-            data: albums,
+            albums: albumsMapeados,
             pagination: {
                 page,
                 limit,
@@ -101,21 +122,36 @@ const crearAlbum = async (req, res, next) => {
             data: album
         });
     } catch (error) {
+        // Log detallado del error
+        console.error('❌ Error al crear álbum:', error.message);
+        if (error.errors) {
+            console.error('Detalles de validación:');
+            Object.keys(error.errors).forEach(key => {
+                console.error(`  - ${key}: ${error.errors[key].message}`);
+            });
+        }
         next(error);
     }
 };
 
 // @desc    Actualizar un álbum
-// @route   PUT /api/albums/:id
+// @route   PUT /api/albums/:id o PATCH /api/albums/:id
 // @access  Private
-const actualizarAlbum = async (req, res) => {
+const actualizarAlbum = async (req, res, next) => {
     try {
+        // Convertir valores numéricos si existen
+        if (req.body.precio) req.body.precio = parseFloat(req.body.precio);
+        if (req.body.stock) req.body.stock = parseInt(req.body.stock);
+        if (req.body.pesoGramos) req.body.pesoGramos = parseFloat(req.body.pesoGramos);
+        
+        // Usar findByIdAndUpdate con validación básica pero sin validadores personalizados complejos
         const album = await Album.findByIdAndUpdate(
             req.params.id,
             req.body,
             {
                 new: true,
-                runValidators: true
+                runValidators: false, // Desactivar validadores en PATCH para permitir actualizaciones parciales
+                context: 'query'
             }
         );
 
@@ -125,18 +161,21 @@ const actualizarAlbum = async (req, res) => {
                 message: 'Álbum no encontrado'
             });
         }
-
+        
         res.status(200).json({
             success: true,
             message: 'Álbum actualizado exitosamente',
             data: album
         });
     } catch (error) {
-        res.status(400).json({
-            success: false,
-            message: 'Error al actualizar el álbum',
-            error: error.message
-        });
+        console.error('❌ Error al actualizar álbum:', error.message);
+        if (error.errors) {
+            console.error('Detalles de validación:');
+            Object.keys(error.errors).forEach(key => {
+                console.error(`  - ${key}: ${error.errors[key].message}`);
+            });
+        }
+        next(error);
     }
 };
 

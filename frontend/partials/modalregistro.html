@@ -20,7 +20,16 @@
                         </div>
                         <div class="col-md-6">
                             <label for="version" class="form-label">Versión</label>
-                            <input type="text" class="form-control" id="version" required>
+                            <select class="form-control" id="version" required>
+                                <option value="">Selecciona una versión</option>
+                                <option value="Standard">Standard</option>
+                                <option value="Deluxe">Deluxe</option>
+                                <option value="Limited Edition">Limited Edition</option>
+                                <option value="Special Edition">Special Edition</option>
+                                <option value="Repackage">Repackage</option>
+                                <option value="Mini Album">Mini Album</option>
+                                <option value="Single">Single</option>
+                            </select>
                             <div class="invalid-feedback">Versión requerida.</div>
                         </div>
                         <div class="col-md-6">
@@ -30,27 +39,54 @@
                         </div>
                         <div class="col-md-6">
                             <label for="idioma" class="form-label">Idioma</label>
-                            <input type="text" class="form-control" id="idioma" required>
+                            <select class="form-control" id="idioma" required>
+                                <option value="">Selecciona un idioma</option>
+                                <option value="Coreano">Coreano</option>
+                                <option value="Japonés">Japonés</option>
+                                <option value="Inglés">Inglés</option>
+                                <option value="Chino">Chino</option>
+                                <option value="Tailandés">Tailandés</option>
+                                <option value="Español">Español</option>
+                                <option value="Otro">Otro</option>
+                            </select>
                             <div class="invalid-feedback">Idioma requerido.</div>
                         </div>
                         <div class="col-md-6">
-                            <label for="duracion" class="form-label">Duración</label>
-                            <input type="text" class="form-control" id="duracion" required>
-                            <div class="invalid-feedback">Duración requerida.</div>
+                            <label for="duracion" class="form-label">Duración (MM:SS)</label>
+                            <input type="text" class="form-control" id="duracion" placeholder="0345" maxlength="4" required>
+                            <div class="invalid-feedback">Duración requerida (ingresa 4 dígitos, ej: 0345 para 03:45).</div>
                         </div>
                         <div class="col-md-6">
-                            <label for="peso" class="form-label">Peso</label>
-                            <input type="text" class="form-control" id="peso" required>
-                            <div class="invalid-feedback">Peso requerido.</div>
+                            <label for="peso" class="form-label">Peso (gramos)</label>
+                            <input type="number" class="form-control" id="peso" min="1" max="2000" placeholder="150" required>
+                            <div class="invalid-feedback">Peso requerido (1-2000 gramos).</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="precio" class="form-label">Precio</label>
+                            <input type="number" class="form-control" id="precio" min="0" step="0.01" placeholder="0.00" required>
+                            <div class="invalid-feedback">Precio inválido (número >= 0).</div>
                         </div>
                         <div class="col-md-6">
                             <label for="stock" class="form-label">Stock</label>
-                            <input type="number" class="form-control" id="stock" required>
+                            <input type="number" class="form-control" id="stock" min="0" required>
                             <div class="invalid-feedback">Stock inválido (número >= 0).</div>
                         </div>
                         <div class="col-md-6">
                             <label for="categoria" class="form-label">Categoría</label>
-                            <input type="text" class="form-control" id="categoria" required>
+                            <select class="form-control" id="categoria" required>
+                                <option value="">Selecciona una categoría</option>
+                                <option value="K-Pop">K-Pop</option>
+                                <option value="J-Pop">J-Pop</option>
+                                <option value="Boy Group">Boy Group</option>
+                                <option value="Girl Group">Girl Group</option>
+                                <option value="Solista">Solista</option>
+                                <option value="Ballad">Ballad</option>
+                                <option value="Dance">Dance</option>
+                                <option value="R&B">R&B</option>
+                                <option value="Hip-Hop">Hip-Hop</option>
+                                <option value="Rock">Rock</option>
+                                <option value="Indie">Indie</option>
+                            </select>
                             <div class="invalid-feedback">Categoría requerida.</div>
                         </div>
                         <div class="col-12">
