@@ -10,14 +10,14 @@ setTimeout(() => {
 
     // Restaurar estado del modal cuando se cierra
     modalElement.addEventListener('hidden.bs.modal', () => {
-        // Restaurar todos los inputs a spans si el modal estaba en modo edición
-        const inputs = modalElement.querySelectorAll('input[data-id-campo]');
-        if (inputs.length > 0) {
-            inputs.forEach(input => {
+        // Restaurar todos los inputs y selects a spans si el modal estaba en modo edición
+        const campos = modalElement.querySelectorAll('input[data-id-campo], select[data-id-campo]');
+        if (campos.length > 0) {
+            campos.forEach(campo => {
                 const span = document.createElement('span');
-                span.id = input.dataset.idCampo;
-                span.textContent = input.value.trim() || '—';
-                input.replaceWith(span);
+                span.id = campo.dataset.idCampo;
+                span.textContent = campo.value.trim() || '—';
+                campo.replaceWith(span);
             });
         }
 
@@ -95,26 +95,72 @@ setTimeout(() => {
         // Convertir los campos en inputs editables
         campos.forEach(span => {
             const valor = span.textContent.trim();
-            const input = document.createElement('input');
+            let elemento;
             
             // Identificar campos de fecha y configurarlos correctamente
             const camposFecha = ['modalFechaLanzamiento', 'modalFechaCompra', 'modalFechaCaducidad'];
+            const camposEnum = ['modalVersion', 'modalIdioma', 'modalCategoria'];
             
             if (camposFecha.includes(span.id)) {
-                input.type = 'date';
-                input.value = valor !== '—' ? valor : '';
+                elemento = document.createElement('input');
+                elemento.type = 'date';
+                elemento.value = valor !== '—' ? valor : '';
+            } else if (camposEnum.includes(span.id)) {
+                // Crear select para campos enum
+                elemento = document.createElement('select');
+                
+                // Configurar opciones según el campo
+                if (span.id === 'modalVersion') {
+                    elemento.innerHTML = `
+                        <option value="">Selecciona una versión</option>
+                        <option value="Standard" ${valor === 'Standard' ? 'selected' : ''}>Standard</option>
+                        <option value="Deluxe" ${valor === 'Deluxe' ? 'selected' : ''}>Deluxe</option>
+                        <option value="Limited Edition" ${valor === 'Limited Edition' ? 'selected' : ''}>Limited Edition</option>
+                        <option value="Special Edition" ${valor === 'Special Edition' ? 'selected' : ''}>Special Edition</option>
+                        <option value="Repackage" ${valor === 'Repackage' ? 'selected' : ''}>Repackage</option>
+                        <option value="Mini Album" ${valor === 'Mini Album' ? 'selected' : ''}>Mini Album</option>
+                        <option value="Single" ${valor === 'Single' ? 'selected' : ''}>Single</option>
+                    `;
+                } else if (span.id === 'modalIdioma') {
+                    elemento.innerHTML = `
+                        <option value="">Selecciona un idioma</option>
+                        <option value="Coreano" ${valor === 'Coreano' ? 'selected' : ''}>Coreano</option>
+                        <option value="Japonés" ${valor === 'Japonés' ? 'selected' : ''}>Japonés</option>
+                        <option value="Inglés" ${valor === 'Inglés' ? 'selected' : ''}>Inglés</option>
+                        <option value="Chino" ${valor === 'Chino' ? 'selected' : ''}>Chino</option>
+                        <option value="Tailandés" ${valor === 'Tailandés' ? 'selected' : ''}>Tailandés</option>
+                        <option value="Español" ${valor === 'Español' ? 'selected' : ''}>Español</option>
+                        <option value="Otro" ${valor === 'Otro' ? 'selected' : ''}>Otro</option>
+                    `;
+                } else if (span.id === 'modalCategoria') {
+                    elemento.innerHTML = `
+                        <option value="">Selecciona una categoría</option>
+                        <option value="K-Pop" ${valor === 'K-Pop' ? 'selected' : ''}>K-Pop</option>
+                        <option value="J-Pop" ${valor === 'J-Pop' ? 'selected' : ''}>J-Pop</option>
+                        <option value="Boy Group" ${valor === 'Boy Group' ? 'selected' : ''}>Boy Group</option>
+                        <option value="Girl Group" ${valor === 'Girl Group' ? 'selected' : ''}>Girl Group</option>
+                        <option value="Solista" ${valor === 'Solista' ? 'selected' : ''}>Solista</option>
+                        <option value="Ballad" ${valor === 'Ballad' ? 'selected' : ''}>Ballad</option>
+                        <option value="Dance" ${valor === 'Dance' ? 'selected' : ''}>Dance</option>
+                        <option value="R&B" ${valor === 'R&B' ? 'selected' : ''}>R&B</option>
+                        <option value="Hip-Hop" ${valor === 'Hip-Hop' ? 'selected' : ''}>Hip-Hop</option>
+                        <option value="Rock" ${valor === 'Rock' ? 'selected' : ''}>Rock</option>
+                        <option value="Indie" ${valor === 'Indie' ? 'selected' : ''}>Indie</option>
+                    `;
+                }
             } else {
-                input.type = 'text';
-                input.value = valor !== '—' ? valor : '';
+                elemento = document.createElement('input');
+                elemento.type = 'text';
+                elemento.value = valor !== '—' ? valor : '';
             }
             
-            input.classList.add('form-control', 'form-control-sm', 'mb-1');
-            input.dataset.idCampo = span.id;
+            elemento.classList.add('form-control', 'form-control-sm', 'mb-1');
+            elemento.dataset.idCampo = span.id;
             
             // Guardar el valor original
             valoresOriginales.set(span.id, valor);
             
-            span.replaceWith(input);
+            span.replaceWith(elemento);
         });
         
         // Configurar validaciones de fechas
@@ -274,9 +320,12 @@ setTimeout(() => {
             
             // Construir objeto con los cambios - Mapear campos del modal al backend
             const cambios = {};
-            inputs.forEach(input => {
-                const modalId = input.dataset.idCampo; // ej: "modalNombre", "modalArtista"
-                const valor = input.value.trim();
+            // Obtener tanto inputs como selects
+            const todosLosCampos = modalElement.querySelectorAll('input[data-id-campo], select[data-id-campo]');
+            
+            todosLosCampos.forEach(campo => {
+                const modalId = campo.dataset.idCampo; // ej: "modalNombre", "modalArtista"
+                const valor = campo.value.trim();
                 
                 // Mapear IDs del modal a campos del backend
                 const mapaCampos = {
@@ -342,11 +391,11 @@ setTimeout(() => {
                 console.log('Producto actualizado:', data);
                 
                 // Restaurar vista de spans con los valores actualizados
-                inputs.forEach(input => {
+                todosLosCampos.forEach(campo => {
                     const span = document.createElement('span');
-                    span.id = input.dataset.idCampo;
-                    span.textContent = input.value.trim() || '—';
-                    input.replaceWith(span);
+                    span.id = campo.dataset.idCampo;
+                    span.textContent = campo.value.trim() || '—';
+                    campo.replaceWith(span);
                 });
 
                 contenedorBotones.remove();
@@ -378,13 +427,13 @@ setTimeout(() => {
 
         // --- CANCELAR EDICIÓN ---
         btnCancelar.addEventListener('click', () => {
-            const inputs = modalElement.querySelectorAll('input[data-id-campo]');
-            inputs.forEach(input => {
+            const todosLosCampos = modalElement.querySelectorAll('input[data-id-campo], select[data-id-campo]');
+            todosLosCampos.forEach(campo => {
                 const span = document.createElement('span');
-                span.id = input.dataset.idCampo;
+                span.id = campo.dataset.idCampo;
                 // Restaurar el valor original guardado
-                span.textContent = valoresOriginales.get(input.dataset.idCampo) || '—';
-                input.replaceWith(span);
+                span.textContent = valoresOriginales.get(campo.dataset.idCampo) || '—';
+                campo.replaceWith(span);
             });
 
             contenedorBotones.remove();
