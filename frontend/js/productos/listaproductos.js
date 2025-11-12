@@ -1,22 +1,10 @@
 // Array global para mantener todos los productos en memoria
 let productosEnMemoria = [];
 
-// Animación del buscador expandible
-const searchIcon = document.querySelector('.search-icon');
-const searchBox = document.querySelector('.buscador input');
+// Buscador en tiempo real
+const searchBox = document.getElementById('buscadorInput');
 
-if (searchIcon && searchBox) {
-    searchIcon.addEventListener('click', () => {
-        searchBox.classList.toggle('active');
-        if (searchBox.classList.contains('active')) {
-            searchBox.focus();
-        } else {
-            searchBox.value = '';
-            // Mostrar todos los productos al limpiar
-            filtrarProductos('');
-        }
-    });
-    
+if (searchBox) {
     // Búsqueda en tiempo real
     searchBox.addEventListener('input', (e) => {
         const terminoBusqueda = e.target.value.toLowerCase().trim();

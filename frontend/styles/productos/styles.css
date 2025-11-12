@@ -58,6 +58,7 @@ header {
     box-shadow: none !important;
     transition: width 0.4s ease;
     font-size: 14px;
+    padding-left: 15px;
 }
 
 .buscador input:focus {
@@ -67,11 +68,25 @@ header {
 
 .buscador:focus-within {
     width: 250px;
+    border-color: #999;
 }
 
 .buscador .input-group-text {
     border: none;
     background: transparent;
+    padding: 0 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.buscador .search-icon {
+    color: #666;
+    transition: color 0.3s ease;
+}
+
+.buscador:focus-within .search-icon {
+    color: #000;
 }
 
 
