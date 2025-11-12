@@ -34,32 +34,55 @@ setTimeout(() => {
 
     // --- ELIMINAR PRODUCTO ---
     btnEliminar.addEventListener('click', () => {
-        const confirmar = confirm('¿Estás seguro de que deseas eliminar este producto?');
-        if (confirmar) {
-            const productoId = modalElement.dataset.productoId;
-            
-            fetch(`${API_URL}/${productoId}`, {
-                method: 'DELETE'
-            })
-            .then(response => {
-                if (!response.ok) throw new Error('Error al eliminar el producto');
-                return response.json();
-            })
-            .then(data => {
-                console.log('Producto eliminado:', data);
-                alert('Producto eliminado con éxito');
+        Swal.fire({
+            title: '¿Eliminar producto?',
+            text: 'Esta acción no se puede deshacer',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const productoId = modalElement.dataset.productoId;
                 
-                const modal = bootstrap.Modal.getInstance(modalElement);
-                modal.hide();
-                
-                // Recargar productos
-                cargarProductos();
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error al eliminar el producto. Verifica que el servidor esté corriendo.');
-            });
-        }
+                fetch(`${API_URL}/${productoId}`, {
+                    method: 'DELETE'
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error('Error al eliminar el producto');
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Producto eliminado:', data);
+                    
+                    const modal = bootstrap.Modal.getInstance(modalElement);
+                    modal.hide();
+                    
+                    // Recargar productos
+                    cargarProductos();
+                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Producto eliminado',
+                        text: 'El producto se ha eliminado correctamente',
+                        confirmButtonColor: '#212529',
+                        timer: 2000,
+                        timerProgressBar: true
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'No se pudo eliminar el producto. Verifica que el servidor esté corriendo.',
+                        confirmButtonColor: '#212529'
+                    });
+                });
+            }
+        });
     });
 
     // --- EDITAR PRODUCTO ---
@@ -137,6 +160,28 @@ setTimeout(() => {
                 }
             });
             
+            // Validar duplicados antes de actualizar (si se cambió nombre o artista)
+            if (cambios.nombreAlbum || cambios.artistaGrupo) {
+                const nombreAlbumEditar = (cambios.nombreAlbum || document.getElementById('modalNombre').textContent.trim()).toLowerCase();
+                const artistaGrupoEditar = (cambios.artistaGrupo || document.getElementById('modalArtista').textContent.trim()).toLowerCase();
+                
+                const productoExistente = productosEnMemoria.find(p => 
+                    p._id !== productoId &&
+                    p.nombreAlbum.toLowerCase() === nombreAlbumEditar && 
+                    p.artistaGrupo.toLowerCase() === artistaGrupoEditar
+                );
+                
+                if (productoExistente) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Producto duplicado',
+                        text: `Ya existe otro producto con el nombre "${nombreAlbumEditar}" del artista/grupo "${artistaGrupoEditar}"`,
+                        confirmButtonColor: '#212529'
+                    });
+                    return;
+                }
+            }
+            
             // Convertir valores numéricos
             if (cambios.stock) cambios.stock = parseInt(cambios.stock);
             if (cambios.peso) cambios.peso = parseInt(cambios.peso);
@@ -168,14 +213,26 @@ setTimeout(() => {
                 btnEditar.style.display = 'inline-block';
                 btnEliminar.style.display = 'inline-block';
                 
-                alert('Cambios guardados exitosamente');
-                
                 // Recargar productos
                 cargarProductos();
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Cambios guardados',
+                    text: 'El producto se ha actualizado correctamente',
+                    confirmButtonColor: '#212529',
+                    timer: 2000,
+                    timerProgressBar: true
+                });
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Error al guardar los cambios. Verifica que el servidor esté corriendo.');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se pudieron guardar los cambios. Verifica que el servidor esté corriendo.',
+                    confirmButtonColor: '#212529'
+                });
             });
         });
 

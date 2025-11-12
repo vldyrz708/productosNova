@@ -115,15 +115,15 @@ document.getElementById('guardarProducto').addEventListener('click', () => {
     let valido = true;
 
     // Validaciones
-    if (!nombreAlbumInput.value.trim() || nombreAlbumInput.value.trim().length < 2) {
-        marcarError(nombreAlbumInput, 'Nombre inválido (mínimo 2 caracteres)');
+    if (!nombreAlbumInput.value.trim() || nombreAlbumInput.value.trim().length < 2 || nombreAlbumInput.value.trim().length > 100) {
+        marcarError(nombreAlbumInput, 'Nombre inválido (2-100 caracteres)');
         valido = false;
     } else {
         marcarExito(nombreAlbumInput);
     }
 
-    if (!artistaGrupoInput.value.trim() || artistaGrupoInput.value.trim().length < 2) {
-        marcarError(artistaGrupoInput, 'Artista inválido (mínimo 2 caracteres)');
+    if (!artistaGrupoInput.value.trim() || artistaGrupoInput.value.trim().length < 2 || artistaGrupoInput.value.trim().length > 100) {
+        marcarError(artistaGrupoInput, 'Artista inválido (2-100 caracteres)');
         valido = false;
     } else {
         marcarExito(artistaGrupoInput);
@@ -174,15 +174,15 @@ document.getElementById('guardarProducto').addEventListener('click', () => {
         marcarExito(pesoInput);
     }
 
-    if (!precioInput.value || isNaN(precioInput.value) || parseFloat(precioInput.value) < 0) {
-        marcarError(precioInput, 'Precio inválido (número >= 0)');
+    if (!precioInput.value || isNaN(precioInput.value) || parseFloat(precioInput.value) < 0.01) {
+        marcarError(precioInput, 'Precio inválido (debe ser mayor a 0)');
         valido = false;
     } else {
         marcarExito(precioInput);
     }
 
-    if (!stockInput.value || isNaN(stockInput.value) || parseInt(stockInput.value) < 0) {
-        marcarError(stockInput, 'Stock inválido (número >=0)');
+    if (!stockInput.value || isNaN(stockInput.value) || parseInt(stockInput.value) < 1 || parseInt(stockInput.value) > 10000) {
+        marcarError(stockInput, 'Stock inválido (1-10000 unidades)');
         valido = false;
     } else {
         marcarExito(stockInput);
@@ -195,8 +195,8 @@ document.getElementById('guardarProducto').addEventListener('click', () => {
         marcarExito(categoriaInput);
     }
 
-    if (!descripcionInput.value.trim() || descripcionInput.value.trim().length < 10) {
-        marcarError(descripcionInput, 'Descripción inválida (mínimo 10 caracteres)');
+    if (!descripcionInput.value.trim() || descripcionInput.value.trim().length < 10 || descripcionInput.value.trim().length > 500) {
+        marcarError(descripcionInput, 'Descripción inválida (10-500 caracteres)');
         valido = false;
     } else {
         marcarExito(descripcionInput);
@@ -260,6 +260,25 @@ document.getElementById('guardarProducto').addEventListener('click', () => {
 
     if (!valido) return;
 
+    // Validar que no exista un producto con el mismo nombre y artista
+    const nombreAlbum = nombreAlbumInput.value.trim().toLowerCase();
+    const artistaGrupo = artistaGrupoInput.value.trim().toLowerCase();
+    
+    const productoExistente = productosEnMemoria.find(p => 
+        p.nombreAlbum.toLowerCase() === nombreAlbum && 
+        p.artistaGrupo.toLowerCase() === artistaGrupo
+    );
+    
+    if (productoExistente) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Producto duplicado',
+            text: `Ya existe un producto con el nombre "${nombreAlbumInput.value.trim()}" del artista/grupo "${artistaGrupoInput.value.trim()}"`,
+            confirmButtonColor: '#212529'
+        });
+        return;
+    }
+
     // Si todo es válido, enviar producto a la API
     // Formatear duración con dos puntos (MMSS → MM:SS)
     const duracionFormateada = duracionInput.value.trim();
@@ -309,10 +328,22 @@ document.getElementById('guardarProducto').addEventListener('click', () => {
         // Recargar productos
         cargarProductos();
         
-        alert('Producto agregado exitosamente');
+        Swal.fire({
+            icon: 'success',
+            title: 'Producto agregado',
+            text: 'El producto se ha registrado exitosamente',
+            confirmButtonColor: '#212529',
+            timer: 2000,
+            timerProgressBar: true
+        });
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Error al guardar el producto. Verifica que el servidor esté corriendo.');
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo guardar el producto. Verifica que el servidor esté corriendo.',
+            confirmButtonColor: '#212529'
+        });
     });
 });
