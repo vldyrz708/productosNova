@@ -100,7 +100,12 @@ async function cargarProductos() {
 
     } catch (error) {
         console.error('Error al cargar productos:', error);
-        alert('Error al cargar productos. Verifica que el servidor esté corriendo en el puerto 3000.');
+        Swal.fire({
+            icon: 'error',
+            title: 'Error al cargar productos',
+            text: 'No se pudieron cargar los productos. Verifica que el servidor esté corriendo en el puerto 3000.',
+            confirmButtonColor: '#212529'
+        });
     }
 }
 

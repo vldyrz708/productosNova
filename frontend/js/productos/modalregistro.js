@@ -266,7 +266,12 @@ document.getElementById('guardarProducto').addEventListener('click', () => {
     );
     
     if (productoExistente) {
-        alert(`Ya existe un producto con el nombre "${nombreAlbumInput.value.trim()}" del artista/grupo "${artistaGrupoInput.value.trim()}"`);
+        Swal.fire({
+            icon: 'warning',
+            title: 'Producto duplicado',
+            text: `Ya existe un producto con el nombre "${nombreAlbumInput.value.trim()}" del artista/grupo "${artistaGrupoInput.value.trim()}"`,
+            confirmButtonColor: '#212529'
+        });
         return;
     }
 
@@ -319,10 +324,22 @@ document.getElementById('guardarProducto').addEventListener('click', () => {
         // Recargar productos
         cargarProductos();
         
-        alert('✓ Producto agregado exitosamente');
+        Swal.fire({
+            icon: 'success',
+            title: 'Producto agregado',
+            text: 'El producto se ha registrado exitosamente',
+            confirmButtonColor: '#212529',
+            timer: 2000,
+            timerProgressBar: true
+        });
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Error: No se pudo guardar el producto. Verifica que el servidor esté corriendo.');
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo guardar el producto. Verifica que el servidor esté corriendo.',
+            confirmButtonColor: '#212529'
+        });
     });
 });

@@ -45,7 +45,17 @@ setTimeout(() => {
 
     // --- ELIMINAR PRODUCTO ---
     btnEliminar.addEventListener('click', () => {
-        if (confirm('¿Estás seguro de eliminar este producto? Esta acción no se puede deshacer.')) {
+        Swal.fire({
+            title: '¿Eliminar producto?',
+            text: 'Esta acción no se puede deshacer',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
             const productoId = modalElement.dataset.productoId;
             
             fetch(`${API_URL}/${productoId}`, {
@@ -64,13 +74,26 @@ setTimeout(() => {
                 // Recargar productos
                 cargarProductos();
                 
-                alert('✓ Producto eliminado correctamente');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Producto eliminado',
+                    text: 'El producto se ha eliminado correctamente',
+                    confirmButtonColor: '#212529',
+                    timer: 2000,
+                    timerProgressBar: true
+                });
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Error: No se pudo eliminar el producto. Verifica que el servidor esté corriendo.');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se pudo eliminar el producto. Verifica que el servidor esté corriendo.',
+                    confirmButtonColor: '#212529'
+                });
             });
-        }
+            }
+        });
     });
 
     // --- EDITAR PRODUCTO ---
@@ -105,7 +128,12 @@ setTimeout(() => {
             if (archivo) {
                 // Validar tamaño
                 if (archivo.size > 5 * 1024 * 1024) {
-                    alert('Error: La imagen no debe superar los 5MB');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Imagen muy grande',
+                        text: 'La imagen no debe superar los 5MB',
+                        confirmButtonColor: '#212529'
+                    });
                     inputImagen.value = '';
                     return;
                 }
@@ -284,7 +312,12 @@ setTimeout(() => {
                 const fechaLanzamiento = new Date(fechaLanzamientoInput.value + 'T00:00:00');
                 
                 if (fechaLanzamiento > hoy) {
-                    alert('Error: La fecha de lanzamiento debe ser menor o igual a hoy');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Fecha inválida',
+                        text: 'La fecha de lanzamiento debe ser menor o igual a hoy',
+                        confirmButtonColor: '#212529'
+                    });
                     return;
                 }
             }
@@ -296,12 +329,22 @@ setTimeout(() => {
                 hoy.setHours(0, 0, 0, 0);
                 
                 if (fechaCompra < fechaLanzamiento) {
-                    alert('Error: La fecha de compra debe ser mayor o igual a la fecha de lanzamiento');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Fecha inválida',
+                        text: 'La fecha de compra debe ser mayor o igual a la fecha de lanzamiento',
+                        confirmButtonColor: '#212529'
+                    });
                     return;
                 }
                 
                 if (fechaCompra > hoy) {
-                    alert('Error: La fecha de compra debe ser menor o igual a hoy');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Fecha inválida',
+                        text: 'La fecha de compra debe ser menor o igual a hoy',
+                        confirmButtonColor: '#212529'
+                    });
                     return;
                 }
             }
@@ -313,12 +356,22 @@ setTimeout(() => {
                 const fechaCaducidad = new Date(fechaCaducidadInput.value + 'T00:00:00');
                 
                 if (fechaCaducidad <= fechaCompra) {
-                    alert('Error: La fecha de caducidad debe ser mayor a la fecha de compra');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Fecha inválida',
+                        text: 'La fecha de caducidad debe ser mayor a la fecha de compra',
+                        confirmButtonColor: '#212529'
+                    });
                     return;
                 }
                 
                 if (fechaCaducidad <= hoy) {
-                    alert('Error: La fecha de caducidad debe ser mayor a hoy');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Fecha inválida',
+                        text: 'La fecha de caducidad debe ser mayor a hoy',
+                        confirmButtonColor: '#212529'
+                    });
                     return;
                 }
             }
@@ -377,7 +430,12 @@ setTimeout(() => {
                 );
                 
                 if (productoExistente) {
-                    alert(`Ya existe otro producto con el nombre "${nombreAlbumEditar}" del artista/grupo "${artistaGrupoEditar}"`);
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Producto duplicado',
+                        text: `Ya existe otro producto con el nombre "${nombreAlbumEditar}" del artista/grupo "${artistaGrupoEditar}"`,
+                        confirmButtonColor: '#212529'
+                    });
                     return;
                 }
             }
@@ -467,11 +525,23 @@ setTimeout(() => {
                 // Recargar productos
                 cargarProductos();
                 
-                alert('✓ Cambios guardados correctamente');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Cambios guardados',
+                    text: 'El producto se ha actualizado correctamente',
+                    confirmButtonColor: '#212529',
+                    timer: 2000,
+                    timerProgressBar: true
+                });
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Error: No se pudieron guardar los cambios. Verifica que el servidor esté corriendo.');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se pudieron guardar los cambios. Verifica que el servidor esté corriendo.',
+                    confirmButtonColor: '#212529'
+                });
             });
         });
 
