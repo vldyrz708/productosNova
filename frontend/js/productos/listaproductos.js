@@ -1,16 +1,16 @@
 // Array global para mantener todos los productos en memoria
 let productosEnMemoria = [];
 
-// Buscador en tiempo real
-const searchBox = document.getElementById('buscadorInput');
-
-if (searchBox) {
-    // Búsqueda en tiempo real
-    searchBox.addEventListener('input', (e) => {
-        const terminoBusqueda = e.target.value.toLowerCase().trim();
-        filtrarProductos(terminoBusqueda);
-    });
-}
+// Configurar buscador cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', () => {
+    const searchBox = document.getElementById('buscadorInput');
+    if (searchBox) {
+        searchBox.addEventListener('input', (e) => {
+            const terminoBusqueda = e.target.value.toLowerCase().trim();
+            filtrarProductos(terminoBusqueda);
+        });
+    }
+});
 
 // Función para filtrar productos en tiempo real
 function filtrarProductos(termino) {
@@ -100,12 +100,7 @@ async function cargarProductos() {
 
     } catch (error) {
         console.error('Error al cargar productos:', error);
-        Swal.fire({
-            icon: 'error',
-            title: 'Error al cargar productos',
-            text: 'No se pudieron cargar los productos. Verifica que el servidor esté corriendo en el puerto 3000.',
-            confirmButtonColor: '#212529'
-        });
+        alert('Error al cargar productos. Verifica que el servidor esté corriendo en el puerto 3000.');
     }
 }
 
@@ -121,6 +116,7 @@ function mostrarModalProducto(producto) {
     const imagenUrl = producto.fotoAlbum ? `http://localhost:3000/${producto.fotoAlbum}` : '../images/logo.png';
     
     document.getElementById('modalImagen').src = imagenUrl;
+    document.getElementById('modalImagen').dataset.rutaOriginal = producto.fotoAlbum || '';
     document.getElementById('modalNombre').textContent = producto.nombreAlbum || '—';
     document.getElementById('modalArtista').textContent = producto.artistaGrupo || '—';
     document.getElementById('modalVersion').textContent = producto.version || '—';
@@ -128,6 +124,7 @@ function mostrarModalProducto(producto) {
     document.getElementById('modalIdioma').textContent = producto.idioma || '—';
     document.getElementById('modalDuracion').textContent = producto.duracion || '—';
     document.getElementById('modalPeso').textContent = producto.peso || '—';
+    document.getElementById('modalPrecio').textContent = producto.precio ? `$${producto.precio}` : '—';
     document.getElementById('modalStock').textContent = producto.stock || '—';
     document.getElementById('modalCategoria').textContent = producto.categoria || '—';
     document.getElementById('modalDescripcion').textContent = producto.descripcion || '—';

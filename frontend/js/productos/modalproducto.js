@@ -1,3 +1,4 @@
+// Esperar a que el DOM esté listo
 setTimeout(() => {
     const btnEditar = document.getElementById('btnEditar');
     const btnEliminar = document.getElementById('btnEliminar');
@@ -21,6 +22,16 @@ setTimeout(() => {
             });
         }
 
+        // Eliminar label e input de imagen si existen
+        const contenedorImagen = document.getElementById('contenedorImagen');
+        if (contenedorImagen) {
+            const labelImagen = contenedorImagen.querySelector('label');
+            const inputImagen = document.getElementById('inputEditarImagen');
+            
+            if (labelImagen) labelImagen.remove();
+            if (inputImagen) inputImagen.remove();
+        }
+
         // Eliminar botones de Guardar/Cancelar si existen
         const contenedorBotones = modalElement.querySelector('.d-flex.justify-content-center.gap-3.mt-3');
         if (contenedorBotones) {
@@ -34,55 +45,32 @@ setTimeout(() => {
 
     // --- ELIMINAR PRODUCTO ---
     btnEliminar.addEventListener('click', () => {
-        Swal.fire({
-            title: '¿Eliminar producto?',
-            text: 'Esta acción no se puede deshacer',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#dc3545',
-            cancelButtonColor: '#6c757d',
-            confirmButtonText: 'Sí, eliminar',
-            cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                const productoId = modalElement.dataset.productoId;
+        if (confirm('¿Estás seguro de eliminar este producto? Esta acción no se puede deshacer.')) {
+            const productoId = modalElement.dataset.productoId;
+            
+            fetch(`${API_URL}/${productoId}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Error al eliminar el producto');
+                return response.json();
+            })
+            .then(data => {
+                console.log('Producto eliminado:', data);
                 
-                fetch(`${API_URL}/${productoId}`, {
-                    method: 'DELETE'
-                })
-                .then(response => {
-                    if (!response.ok) throw new Error('Error al eliminar el producto');
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Producto eliminado:', data);
-                    
-                    const modal = bootstrap.Modal.getInstance(modalElement);
-                    modal.hide();
-                    
-                    // Recargar productos
-                    cargarProductos();
-                    
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Producto eliminado',
-                        text: 'El producto se ha eliminado correctamente',
-                        confirmButtonColor: '#212529',
-                        timer: 2000,
-                        timerProgressBar: true
-                    });
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'No se pudo eliminar el producto. Verifica que el servidor esté corriendo.',
-                        confirmButtonColor: '#212529'
-                    });
-                });
-            }
-        });
+                const modal = bootstrap.Modal.getInstance(modalElement);
+                modal.hide();
+                
+                // Recargar productos
+                cargarProductos();
+                
+                alert('✓ Producto eliminado correctamente');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error: No se pudo eliminar el producto. Verifica que el servidor esté corriendo.');
+            });
+        }
     });
 
     // --- EDITAR PRODUCTO ---
@@ -91,6 +79,50 @@ setTimeout(() => {
 
         // Guardar valores originales antes de editar
         const valoresOriginales = new Map();
+        
+        // Agregar input de archivo para cambiar la imagen
+        const contenedorImagen = document.getElementById('contenedorImagen');
+        const imagenActual = document.getElementById('modalImagen');
+        
+        // Crear label y input de archivo
+        const labelImagen = document.createElement('label');
+        labelImagen.textContent = 'Cambiar imagen (opcional):';
+        labelImagen.id = 'labelEditarImagen';
+        labelImagen.classList.add('form-label', 'text-center', 'd-block', 'mt-2', 'mb-1');
+        labelImagen.style.fontSize = '0.9rem';
+        
+        const inputImagen = document.createElement('input');
+        inputImagen.type = 'file';
+        inputImagen.accept = 'image/*';
+        inputImagen.id = 'inputEditarImagen';
+        inputImagen.classList.add('form-control', 'form-control-sm', 'mb-2');
+        inputImagen.style.maxWidth = '300px';
+        inputImagen.style.margin = '0 auto';
+        
+        // Preview de la nueva imagen
+        inputImagen.addEventListener('change', (e) => {
+            const archivo = e.target.files[0];
+            if (archivo) {
+                // Validar tamaño
+                if (archivo.size > 5 * 1024 * 1024) {
+                    alert('Error: La imagen no debe superar los 5MB');
+                    inputImagen.value = '';
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    imagenActual.src = event.target.result;
+                };
+                reader.readAsDataURL(archivo);
+            }
+        });
+        
+        contenedorImagen.appendChild(labelImagen);
+        contenedorImagen.appendChild(inputImagen);
+        
+        // Guardar la ruta original de la imagen
+        valoresOriginales.set('imagenOriginal', imagenActual.src);
         
         // Convertir los campos en inputs editables
         campos.forEach(span => {
@@ -182,10 +214,9 @@ setTimeout(() => {
         }
         
         if (fechaCompraInput) {
-            // Fecha de compra: máximo mañana, mínimo fecha de lanzamiento
-            const manana = new Date();
-            manana.setDate(manana.getDate() + 1);
-            fechaCompraInput.setAttribute('max', manana.toISOString().split('T')[0]);
+            // Fecha de compra: máximo hoy, mínimo fecha de lanzamiento
+            const hoy = new Date().toISOString().split('T')[0];
+            fechaCompraInput.setAttribute('max', hoy);
             
             if (fechaLanzamientoInput && fechaLanzamientoInput.value) {
                 fechaCompraInput.setAttribute('min', fechaLanzamientoInput.value);
@@ -253,12 +284,7 @@ setTimeout(() => {
                 const fechaLanzamiento = new Date(fechaLanzamientoInput.value + 'T00:00:00');
                 
                 if (fechaLanzamiento > hoy) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Fecha inválida',
-                        text: 'La fecha de lanzamiento debe ser menor o igual a hoy',
-                        confirmButtonColor: '#212529'
-                    });
+                    alert('Error: La fecha de lanzamiento debe ser menor o igual a hoy');
                     return;
                 }
             }
@@ -266,27 +292,16 @@ setTimeout(() => {
             if (fechaCompraInput && fechaCompraInput.value && fechaLanzamientoInput && fechaLanzamientoInput.value) {
                 const fechaLanzamiento = new Date(fechaLanzamientoInput.value + 'T00:00:00');
                 const fechaCompra = new Date(fechaCompraInput.value + 'T00:00:00');
-                const manana = new Date();
-                manana.setDate(manana.getDate() + 1);
-                manana.setHours(0, 0, 0, 0);
+                const hoy = new Date();
+                hoy.setHours(0, 0, 0, 0);
                 
                 if (fechaCompra < fechaLanzamiento) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Fecha inválida',
-                        text: 'La fecha de compra debe ser mayor o igual a la fecha de lanzamiento',
-                        confirmButtonColor: '#212529'
-                    });
+                    alert('Error: La fecha de compra debe ser mayor o igual a la fecha de lanzamiento');
                     return;
                 }
                 
-                if (fechaCompra > manana) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Fecha inválida',
-                        text: 'La fecha de compra debe ser menor o igual a mañana',
-                        confirmButtonColor: '#212529'
-                    });
+                if (fechaCompra > hoy) {
+                    alert('Error: La fecha de compra debe ser menor o igual a hoy');
                     return;
                 }
             }
@@ -298,22 +313,12 @@ setTimeout(() => {
                 const fechaCaducidad = new Date(fechaCaducidadInput.value + 'T00:00:00');
                 
                 if (fechaCaducidad <= fechaCompra) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Fecha inválida',
-                        text: 'La fecha de caducidad debe ser mayor a la fecha de compra',
-                        confirmButtonColor: '#212529'
-                    });
+                    alert('Error: La fecha de caducidad debe ser mayor a la fecha de compra');
                     return;
                 }
                 
                 if (fechaCaducidad <= hoy) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Fecha inválida',
-                        text: 'La fecha de caducidad debe ser mayor a hoy',
-                        confirmButtonColor: '#212529'
-                    });
+                    alert('Error: La fecha de caducidad debe ser mayor a hoy');
                     return;
                 }
             }
@@ -325,7 +330,12 @@ setTimeout(() => {
             
             todosLosCampos.forEach(campo => {
                 const modalId = campo.dataset.idCampo; // ej: "modalNombre", "modalArtista"
-                const valor = campo.value.trim();
+                let valor = campo.value.trim();
+                
+                // Limpiar el símbolo $ del precio si existe
+                if (modalId === 'modalPrecio' && valor.startsWith('$')) {
+                    valor = valor.substring(1).trim();
+                }
                 
                 // Mapear IDs del modal a campos del backend
                 const mapaCampos = {
@@ -336,6 +346,7 @@ setTimeout(() => {
                     'modalIdioma': 'idioma',
                     'modalDuracion': 'duracion',
                     'modalPeso': 'peso',
+                    'modalPrecio': 'precio',
                     'modalStock': 'stock',
                     'modalCategoria': 'categoria',
                     'modalDescripcion': 'descripcion',
@@ -344,15 +355,20 @@ setTimeout(() => {
                 };
                 
                 const nombreCampo = mapaCampos[modalId];
-                if (nombreCampo && valor) {
+                // Solo agregar si hay un valor válido y no es "—"
+                if (nombreCampo && valor && valor !== '—') {
                     cambios[nombreCampo] = valor;
                 }
             });
             
             // Validar duplicados antes de actualizar (si se cambió nombre o artista)
             if (cambios.nombreAlbum || cambios.artistaGrupo) {
-                const nombreAlbumEditar = (cambios.nombreAlbum || document.getElementById('modalNombre').textContent.trim()).toLowerCase();
-                const artistaGrupoEditar = (cambios.artistaGrupo || document.getElementById('modalArtista').textContent.trim()).toLowerCase();
+                // Obtener el elemento actual (puede ser input o span según el estado)
+                const elementoNombre = modalElement.querySelector('[data-id-campo="modalNombre"]') || document.getElementById('modalNombre');
+                const elementoArtista = modalElement.querySelector('[data-id-campo="modalArtista"]') || document.getElementById('modalArtista');
+                
+                const nombreAlbumEditar = (cambios.nombreAlbum || (elementoNombre ? (elementoNombre.value || elementoNombre.textContent).trim() : '')).toLowerCase();
+                const artistaGrupoEditar = (cambios.artistaGrupo || (elementoArtista ? (elementoArtista.value || elementoArtista.textContent).trim() : '')).toLowerCase();
                 
                 const productoExistente = productosEnMemoria.find(p => 
                     p._id !== productoId &&
@@ -361,27 +377,67 @@ setTimeout(() => {
                 );
                 
                 if (productoExistente) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Producto duplicado',
-                        text: `Ya existe otro producto con el nombre "${nombreAlbumEditar}" del artista/grupo "${artistaGrupoEditar}"`,
-                        confirmButtonColor: '#212529'
-                    });
+                    alert(`Ya existe otro producto con el nombre "${nombreAlbumEditar}" del artista/grupo "${artistaGrupoEditar}"`);
                     return;
                 }
             }
             
-            // Convertir valores numéricos
-            if (cambios.stock) cambios.stock = parseInt(cambios.stock);
-            if (cambios.peso) cambios.peso = parseInt(cambios.peso);
+            // Convertir valores numéricos y validar que no sean NaN
+            if (cambios.stock) {
+                const stockNum = parseInt(cambios.stock);
+                if (!isNaN(stockNum)) {
+                    cambios.stock = stockNum;
+                } else {
+                    delete cambios.stock;
+                }
+            }
+            
+            if (cambios.peso) {
+                const pesoNum = parseInt(cambios.peso);
+                if (!isNaN(pesoNum)) {
+                    cambios.peso = pesoNum;
+                } else {
+                    delete cambios.peso;
+                }
+            }
+            
+            if (cambios.precio) {
+                const precioNum = parseFloat(cambios.precio);
+                if (!isNaN(precioNum)) {
+                    cambios.precio = precioNum;
+                } else {
+                    delete cambios.precio;
+                }
+            }
+            
+            // Verificar si hay una nueva imagen
+            const inputImagen = document.getElementById('inputEditarImagen');
+            const tieneNuevaImagen = inputImagen && inputImagen.files && inputImagen.files.length > 0;
+            
+            // Si hay nueva imagen, usar FormData; si no, usar JSON
+            let requestBody, headers;
+            
+            if (tieneNuevaImagen) {
+                // Usar FormData para enviar imagen
+                const formData = new FormData();
+                Object.keys(cambios).forEach(key => {
+                    formData.append(key, cambios[key]);
+                });
+                formData.append('fotoAlbum', inputImagen.files[0]);
+                
+                requestBody = formData;
+                headers = {}; // No enviar Content-Type, el navegador lo configurará automáticamente
+            } else {
+                // Usar JSON para cambios sin imagen
+                requestBody = JSON.stringify(cambios);
+                headers = { 'Content-Type': 'application/json' };
+            }
             
             // Enviar PATCH a la API
             fetch(`${API_URL}/${productoId}`, {
                 method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(cambios)
+                headers: headers,
+                body: requestBody
             })
             .then(response => {
                 if (!response.ok) throw new Error('Error al actualizar el producto');
@@ -398,6 +454,12 @@ setTimeout(() => {
                     campo.replaceWith(span);
                 });
 
+                // Eliminar label e input de imagen
+                const labelImagen = document.getElementById('labelEditarImagen');
+                const inputImagenEliminar = document.getElementById('inputEditarImagen');
+                if (labelImagen) labelImagen.remove();
+                if (inputImagenEliminar) inputImagenEliminar.remove();
+
                 contenedorBotones.remove();
                 btnEditar.style.display = 'inline-block';
                 btnEliminar.style.display = 'inline-block';
@@ -405,23 +467,11 @@ setTimeout(() => {
                 // Recargar productos
                 cargarProductos();
                 
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Cambios guardados',
-                    text: 'El producto se ha actualizado correctamente',
-                    confirmButtonColor: '#212529',
-                    timer: 2000,
-                    timerProgressBar: true
-                });
+                alert('✓ Cambios guardados correctamente');
             })
             .catch(error => {
                 console.error('Error:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'No se pudieron guardar los cambios. Verifica que el servidor esté corriendo.',
-                    confirmButtonColor: '#212529'
-                });
+                alert('Error: No se pudieron guardar los cambios. Verifica que el servidor esté corriendo.');
             });
         });
 
@@ -436,9 +486,23 @@ setTimeout(() => {
                 campo.replaceWith(span);
             });
 
+            // Restaurar imagen original
+            const imagenActual = document.getElementById('modalImagen');
+            if (valoresOriginales.has('imagenOriginal')) {
+                imagenActual.src = valoresOriginales.get('imagenOriginal');
+            }
+            
+            // Eliminar label e input de imagen
+            const contenedorImagen = document.getElementById('contenedorImagen');
+            const labelImagen = contenedorImagen.querySelector('label');
+            const inputImagen = document.getElementById('inputEditarImagen');
+            
+            if (labelImagen) labelImagen.remove();
+            if (inputImagen) inputImagen.remove();
+
             contenedorBotones.remove();
             btnEditar.style.display = 'inline-block';
             btnEliminar.style.display = 'inline-block';
         });
     });
-}, 300);
+});

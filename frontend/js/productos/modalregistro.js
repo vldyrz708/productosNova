@@ -18,10 +18,9 @@ if (fechaLanzamientoInput) {
 }
 
 if (fechaCompraInput) {
-    // Fecha de compra: máximo mañana
-    const manana = new Date();
-    manana.setDate(manana.getDate() + 1);
-    fechaCompraInput.setAttribute('max', manana.toISOString().split('T')[0]);
+    // Fecha de compra: máximo hoy
+    const hoy = new Date().toISOString().split('T')[0];
+    fechaCompraInput.setAttribute('max', hoy);
     
     // Cuando cambia fecha de compra, actualizar mínimo de fecha de caducidad
     fechaCompraInput.addEventListener('change', (e) => {
@@ -202,10 +201,7 @@ document.getElementById('guardarProducto').addEventListener('click', () => {
         marcarExito(descripcionInput);
     }
 
-    // Validar fecha de compra (mayor o igual a lanzamiento y menor o igual a mañana)
-    const manana = new Date(hoy);
-    manana.setDate(manana.getDate() + 1);
-    
+    // Validar fecha de compra (mayor o igual a lanzamiento y menor o igual a hoy)
     if (!fechaCompraInput.value) {
         marcarError(fechaCompraInput, 'Fecha de compra requerida');
         valido = false;
@@ -216,8 +212,8 @@ document.getElementById('guardarProducto').addEventListener('click', () => {
         if (fechaCompra < fechaLanzamiento) {
             marcarError(fechaCompraInput, 'Fecha de compra debe ser mayor o igual a fecha de lanzamiento');
             valido = false;
-        } else if (fechaCompra > manana) {
-            marcarError(fechaCompraInput, 'Fecha de compra debe ser menor o igual a mañana');
+        } else if (fechaCompra > hoy) {
+            marcarError(fechaCompraInput, 'Fecha de compra debe ser menor o igual a hoy');
             valido = false;
         } else {
             marcarExito(fechaCompraInput);
@@ -270,12 +266,7 @@ document.getElementById('guardarProducto').addEventListener('click', () => {
     );
     
     if (productoExistente) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Producto duplicado',
-            text: `Ya existe un producto con el nombre "${nombreAlbumInput.value.trim()}" del artista/grupo "${artistaGrupoInput.value.trim()}"`,
-            confirmButtonColor: '#212529'
-        });
+        alert(`Ya existe un producto con el nombre "${nombreAlbumInput.value.trim()}" del artista/grupo "${artistaGrupoInput.value.trim()}"`);
         return;
     }
 
@@ -328,22 +319,10 @@ document.getElementById('guardarProducto').addEventListener('click', () => {
         // Recargar productos
         cargarProductos();
         
-        Swal.fire({
-            icon: 'success',
-            title: 'Producto agregado',
-            text: 'El producto se ha registrado exitosamente',
-            confirmButtonColor: '#212529',
-            timer: 2000,
-            timerProgressBar: true
-        });
+        alert('✓ Producto agregado exitosamente');
     })
     .catch(error => {
         console.error('Error:', error);
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'No se pudo guardar el producto. Verifica que el servidor esté corriendo.',
-            confirmButtonColor: '#212529'
-        });
+        alert('Error: No se pudo guardar el producto. Verifica que el servidor esté corriendo.');
     });
 });

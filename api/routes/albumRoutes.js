@@ -72,10 +72,13 @@ const procesarFotoAlbum = (req, res, next) => {
     // console.log('🔍 Datos recibidos antes del mapeo:', req.body);
     // console.log('📸 Archivo recibido:', req.file ? req.file.filename : 'ninguno');
     
+    // Solo procesar la imagen si hay un archivo nuevo
     if (req.file) {
         // Guardar la ruta relativa del archivo
         req.body.fotoAlbum = `uploads/${req.file.filename}`;
     }
+    // Si es una actualización (PATCH) y no hay archivo, no tocar fotoAlbum
+    // Si es una creación (POST) sin archivo, fallar la validación
     
     // Mapear campos del frontend al modelo de backend
     if (req.body.artistaGrupo) {
@@ -208,9 +211,9 @@ const procesarCambiosJSON = (req, res, next) => {
 };
 
 // @route   PATCH /api/albums/:id
-// @desc    Actualizar cualquier campo de un álbum
+// @desc    Actualizar cualquier campo de un álbum (con o sin imagen)
 // @access  Private
-router.patch('/:id', validarObjectId, procesarCambiosJSON, actualizarAlbum);
+router.patch('/:id', validarObjectId, upload.single('fotoAlbum'), procesarFotoAlbum, procesarCambiosJSON, actualizarAlbum);
 
 // @route   DELETE /api/albums/:id
 // @desc    Eliminar un álbum permanentemente
