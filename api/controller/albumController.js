@@ -113,6 +113,7 @@ const crearAlbum = async (req, res, next) => {
         if (req.body.precio) req.body.precio = parseFloat(req.body.precio);
         if (req.body.stock) req.body.stock = parseInt(req.body.stock);
         if (req.body.pesoGramos) req.body.pesoGramos = parseFloat(req.body.pesoGramos);
+        
 
         const album = await Album.create(req.body);
 
