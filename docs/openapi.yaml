@@ -108,7 +108,7 @@ paths:
                 $ref: '#/components/schemas/AlbumResponse'
         "404":
           description: Álbum no encontrado
-    put:
+    patch:
       summary: Actualizar un álbum
       tags:
         - Álbumes
