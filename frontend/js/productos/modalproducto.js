@@ -441,7 +441,7 @@ setTimeout(() => {
             }
             
             // Convertir valores numéricos y validar que no sean NaN
-            if (cambios.stock) {
+            if (Object.prototype.hasOwnProperty.call(cambios, 'stock')) {
                 const stockNum = parseInt(cambios.stock);
                 if (!isNaN(stockNum)) {
                     cambios.stock = stockNum;
@@ -450,7 +450,7 @@ setTimeout(() => {
                 }
             }
             
-            if (cambios.peso) {
+            if (Object.prototype.hasOwnProperty.call(cambios, 'peso')) {
                 const pesoNum = parseInt(cambios.peso);
                 if (!isNaN(pesoNum)) {
                     cambios.peso = pesoNum;
@@ -459,7 +459,7 @@ setTimeout(() => {
                 }
             }
             
-            if (cambios.precio) {
+            if (Object.prototype.hasOwnProperty.call(cambios, 'precio')) {
                 const precioNum = parseFloat(cambios.precio);
                 if (!isNaN(precioNum)) {
                     cambios.precio = precioNum;

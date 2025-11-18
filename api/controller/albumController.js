@@ -110,9 +110,15 @@ const obtenerAlbumPorId = async (req, res) => {
 const crearAlbum = async (req, res, next) => {
     try {
         // Convertir strings a números para campos numéricos
-        if (req.body.precio) req.body.precio = parseFloat(req.body.precio);
-        if (req.body.stock) req.body.stock = parseInt(req.body.stock);
-        if (req.body.pesoGramos) req.body.pesoGramos = parseFloat(req.body.pesoGramos);
+        const normalizarNumero = (campo, parser) => {
+            if (req.body[campo] !== undefined && req.body[campo] !== null && req.body[campo] !== '') {
+                req.body[campo] = parser(req.body[campo]);
+            }
+        };
+
+        normalizarNumero('precio', parseFloat);
+        normalizarNumero('stock', parseInt);
+        normalizarNumero('pesoGramos', parseFloat);
         
 
         const album = await Album.create(req.body);
@@ -141,9 +147,15 @@ const crearAlbum = async (req, res, next) => {
 const actualizarAlbum = async (req, res, next) => {
     try {
         // Convertir valores numéricos si existen
-        if (req.body.precio) req.body.precio = parseFloat(req.body.precio);
-        if (req.body.stock) req.body.stock = parseInt(req.body.stock);
-        if (req.body.pesoGramos) req.body.pesoGramos = parseFloat(req.body.pesoGramos);
+        const normalizarNumero = (campo, parser) => {
+            if (req.body[campo] !== undefined && req.body[campo] !== null && req.body[campo] !== '') {
+                req.body[campo] = parser(req.body[campo]);
+            }
+        };
+
+        normalizarNumero('precio', parseFloat);
+        normalizarNumero('stock', parseInt);
+        normalizarNumero('pesoGramos', parseFloat);
         
         // Usar findByIdAndUpdate con validación básica pero sin validadores personalizados complejos
         const album = await Album.findByIdAndUpdate(

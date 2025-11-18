@@ -180,8 +180,8 @@ document.getElementById('guardarProducto').addEventListener('click', () => {
         marcarExito(precioInput);
     }
 
-    if (!stockInput.value || isNaN(stockInput.value) || parseInt(stockInput.value) < 1 || parseInt(stockInput.value) > 10000) {
-        marcarError(stockInput, 'Stock inválido (1-10000 unidades)');
+    if (stockInput.value === '' || isNaN(stockInput.value) || parseInt(stockInput.value) < 0 || parseInt(stockInput.value) > 10000) {
+        marcarError(stockInput, 'Stock inválido (0-10000 unidades)');
         valido = false;
     } else {
         marcarExito(stockInput);

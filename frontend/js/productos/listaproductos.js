@@ -58,6 +58,10 @@ function renderizarProducto(prod) {
 
     // Construir URL de imagen desde el servidor
     const imagenUrl = prod.fotoAlbum ? `http://localhost:3000/${prod.fotoAlbum}` : '../images/logo.png';
+    const stockValor = Number.isFinite(Number(prod.stock)) ? Number(prod.stock) : 0;
+    const stockDisponible = stockValor > 0;
+    const stockEstadoClase = stockDisponible ? 'stock-available' : 'stock-out';
+    const stockTexto = stockDisponible ? `${stockValor} en stock` : 'Sin stock';
 
     card.innerHTML = `
         <div class="card shadow-sm border-0 text-center p-2 producto-card">
@@ -71,7 +75,13 @@ function renderizarProducto(prod) {
                 <p class="mb-1"><strong>Categoría:</strong> ${prod.categoria || '—'}</p>
                 <p class="mb-1"><strong>Versión:</strong> ${prod.version || '—'}</p>
                 <p class="mb-1"><strong>Fecha de lanzamiento:</strong> ${formatearFecha(prod.fechaLanzamiento)}</p>
-                <button class="btn btn-dark btn-sm mt-2 btn-detalle" data-id="${prod._id}">Ver detalles</button>
+                <div class="mt-3 text-start">
+                    <div class="stock-indicator">
+                        <span class="stock-badge ${stockEstadoClase}"></span>
+                        <span class="stock-label ${stockEstadoClase}">${stockTexto}</span>
+                    </div>
+                    <button class="btn btn-dark btn-sm mt-3 w-100 btn-detalle" data-id="${prod._id}">Ver detalles</button>
+                </div>
             </div>
         </div>
     `;
@@ -129,8 +139,28 @@ function mostrarModalProducto(producto) {
     document.getElementById('modalIdioma').textContent = producto.idioma || '—';
     document.getElementById('modalDuracion').textContent = producto.duracion || '—';
     document.getElementById('modalPeso').textContent = producto.peso || '—';
-    document.getElementById('modalPrecio').textContent = producto.precio ? `$${producto.precio}` : '—';
-    document.getElementById('modalStock').textContent = producto.stock || '—';
+    document.getElementById('modalPrecio').textContent = producto.precio !== undefined && producto.precio !== null && producto.precio !== ''
+        ? `$${producto.precio}`
+        : '—';
+    const stockElemento = document.getElementById('modalStock');
+    const stockNumerico = Number(producto.stock);
+    const tieneNumero = !Number.isNaN(stockNumerico);
+    const stockEsCero = tieneNumero && stockNumerico === 0;
+    const stockEsPositivo = tieneNumero && stockNumerico > 0;
+
+    const stockTextoModal = tieneNumero
+        ? stockNumerico
+        : (producto.stock !== undefined && producto.stock !== null && producto.stock !== ''
+            ? producto.stock
+            : '—');
+    stockElemento.textContent = stockTextoModal;
+
+    stockElemento.classList.remove('stock-text-available', 'stock-text-out');
+    if (stockEsPositivo) {
+        stockElemento.classList.add('stock-text-available');
+    } else if (stockEsCero) {
+        stockElemento.classList.add('stock-text-out');
+    }
     document.getElementById('modalCategoria').textContent = producto.categoria || '—';
     document.getElementById('modalDescripcion').textContent = producto.descripcion || '—';
     document.getElementById('modalFechaCompra').textContent = formatearFecha(producto.fechaCompra);

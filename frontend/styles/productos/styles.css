@@ -136,6 +136,50 @@ header {
     background-color: #333;
 }
 
+.stock-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+}
+
+.stock-badge {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.stock-label {
+    font-size: 0.9rem;
+}
+
+.stock-badge.stock-available {
+    background-color: #198754;
+}
+
+.stock-badge.stock-out {
+    background-color: #dc3545;
+}
+
+.stock-label.stock-available {
+    color: #198754;
+}
+
+.stock-label.stock-out {
+    color: #dc3545;
+}
+
+.stock-text-available {
+    color: #198754;
+    font-weight: 600;
+}
+
+.stock-text-out {
+    color: #dc3545;
+    font-weight: 600;
+}
+
 
 /* ======= TITULOS ======= */
 
