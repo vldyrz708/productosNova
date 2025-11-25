@@ -10,6 +10,7 @@ const { manejoErrores, rutaNoEncontrada, logRequest, sanitizarEntrada } = requir
 
 // Importar rutas
 const albumRoutes = require('./routes/albumRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -43,6 +44,7 @@ conection();
 
 // Rutas
 app.use('/api/albums', albumRoutes);
+app.use('/api/users', userRoutes);
 
 // Endpoint de salud para el frontend
 app.get('/health', (req, res) => {
@@ -67,8 +69,16 @@ app.get('/api', (req, res) => {
                 url: '/api/albums',
                 methods: ['GET', 'POST']
             },
+            users: {
+                url: '/api/users',
+                methods: ['GET', 'POST']
+            },
             album_by_id: {
                 url: '/api/albums/:id',
+                methods: ['GET', 'PATCH', 'DELETE']
+            },
+            user_by_id: {
+                url: '/api/users/:id',
                 methods: ['GET', 'PATCH', 'DELETE']
             },
             search: {
