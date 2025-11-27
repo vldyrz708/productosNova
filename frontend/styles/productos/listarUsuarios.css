@@ -1,0 +1,93 @@
+body {
+    font-family: "Inter", sans-serif;
+    background: #f7f7f7;
+}
+
+
+/* Contenedor principal */
+
+.usuarios-container {
+    width: 90%;
+    max-width: 1100px;
+    margin: 40px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 18px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+
+/* Título */
+
+.titulo-usuarios {
+    text-align: center;
+    font-weight: 700;
+    margin-bottom: 25px;
+    color: #333;
+    font-size: 26px;
+}
+
+
+/* Tabla */
+
+.tabla-usuarios {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+    color: #444;
+}
+
+
+/* Encabezado */
+
+.tabla-usuarios thead {
+    background: #ee9e42;
+    color: white;
+}
+
+.tabla-usuarios th {
+    padding: 14px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+
+/* Celdas */
+
+.tabla-usuarios td {
+    padding: 14px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+    transition: all 0.25s ease;
+}
+
+
+/* Hover fila */
+
+.tabla-usuarios tbody tr:hover {
+    background: #ede7f6;
+    cursor: pointer;
+}
+
+
+/* Resaltar nombre al pasar */
+
+.tabla-usuarios tbody tr:hover td:first-child {
+    font-weight: 700;
+    color: #c2692e;
+    font-size: 16px;
+}
+
+
+/* Responsive */
+
+@media (max-width: 768px) {
+    .tabla-usuarios th,
+    .tabla-usuarios td {
+        font-size: 13px;
+        padding: 10px;
+    }
+    .titulo-usuarios {
+        font-size: 22px;
+    }
+}
