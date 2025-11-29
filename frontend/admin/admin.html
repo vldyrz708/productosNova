@@ -19,7 +19,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="../../styles/styles.css">
 </head>
 
 <body>
@@ -36,15 +36,15 @@
 
                 <!-- Logo -->
                 <a class="navbar-brand d-flex align-items-center" href="#">
-                    <img src="images/logo.png" alt="Logo" class="logo me-2">
+                    <img src="../images/logo.png" alt="Logo" class="logo me-2">
                     <span class="brand-name fw-bold">K-Bias Merch</span>
                 </a>
 
                 <!-- Botón Iniciar Sesión -->
                 <div class="ms-auto">
-                    <button class="btn btn-dark px-4 py-2" id="abrirLogin">
-                        <i class="bi bi-person-circle me-1"></i> Iniciar sesión
-                    </button>
+                    <a href="../index.html" class="btn btn-dark px-4 py-2" id="abrirLogin">
+                        <i class=""></i> Cerrar sesión
+                    </a>
                 </div>
 
             </div>
@@ -63,19 +63,12 @@
 
                 <div class="modal-body d-flex flex-column">
 
-                    <a href="./partials/listaproductos.html" class="btn btn-dark text-white mb-3" style="width:200px; height:50px;">
+                    <a href="./listaproductos.html" class="btn btn-dark text-white mb-3" style="width:200px; height:50px;">
                         Mostrar Productos
                     </a>
 
-                    <a href="./admin/admin.html" class="btn btn-dark text-white mb-3" style="width:200px; height:50px;">
-                       Admin
-                    </a>
-                    <a href="./partials/user.html" class="btn btn-dark text-white mb-3" style="width:200px; height:50px;">
-                        Usuarios Registrados
-                    </a>
-
-                    <a href="./partials/listarUsuarios.html" class="btn btn-dark text-white mb-3" style="width:200px; height:50px;">
-                        Lista de usuarios
+                    <a href="./usuarios.html" class="btn btn-dark text-white mb-3" style="width:200px; height:50px;">
+                       Ver usuarios
                     </a>
 
                 </div>
@@ -83,42 +76,18 @@
         </div>
     </div>
 
-
-    <!-- ========== MODAL LOGIN ========== -->
-    <div class="modal fade" id="loginModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content p-0" id="loginModalContent">
-                <!-- Aquí se cargará modalogin.html -->
-            </div>
-        </div>
-    </div>
-
-
     <!-- Hero -->
     <section class="hero d-flex flex-column justify-content-center align-items-center text-center">
         <div class="overlay"></div>
         <div class="content">
-            <h2 class="subtitle">Productos en venta de K-Pop</h2>
-            <h1 class="title">K-Bias Merch</h1>
+            <h2 class="subtitle">HOLA</h2>
+            <h1 class="title">ADMINISTRADOR</h1>
         </div>
-    </section>
-
-    <!-- Bandas -->
-    <section class="brands-section d-flex justify-content-center align-items-center flex-wrap text-center">
-        <div class="brands">
-            <img src="images/blackpink.png" alt="BLACKPINK">
-            <img src="images/bts.png" alt="BTS">
-            <img src="images/twice.png" alt="TWICE">
-            <img src="images/allday.png" alt="ALLDAY PROJECT">
-            <img src="images/enhypen.png" alt="ENHYPEN">
-            <img src="images/lesserafim.png" alt="LE SSERAFIM">
-        </div>
-        <p class="nova-text">© NOVA</p>
     </section>
 
     <!-- Scripts (solo Bootstrap y tu main.js) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="js/main.js"></script>
+    <script src="../js/main.js"></script>
 </body>
 
 </html>
