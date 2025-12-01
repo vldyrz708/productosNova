@@ -124,12 +124,12 @@
     <!-- Cargar modales externos -->
     <script>
         // Cargar modalProducto
-        fetch('../partials/modalproducto.html')
+        fetch('modalproducto.html')
             .then(res => res.text())
             .then(html => {
                 document.getElementById('contenedorModal').innerHTML += html;
                 const script = document.createElement('script');
-                script.src = '../js/productos/modalproducto.js';
+                script.src = '../js/productos/modalProducto.js';
                 document.body.appendChild(script);
             })
             .catch(err => console.error('Error al cargar modalProducto:', err));

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Usuario - Lista de Productos</title>
+    <title>Lista de Productos</title>
     <link rel="icon" type="image/png" href="../images/logo.png">
 
     <!-- Bootstrap -->
@@ -16,6 +16,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles/styles.css">
     <link rel="stylesheet" href="../styles/productos/styles.css">
 
     <!-- SweetAlert2 -->
@@ -30,31 +31,43 @@
 
 <body class="bg-light">
 
-    <!-- Encabezado -->
-    <header class="d-flex justify-content-between align-items-center p-3 bg-white shadow-sm">
-        <div class="d-flex align-items-center">
-            <!-- Botón hamburguesa: abre el modal del menú -->
-            <button class="btn btn-outline-dark me-2 p-2" data-bs-toggle="modal" data-bs-target="#menuModal" aria-label="Abrir menú">
-                <i class="bi bi-list fs-4"></i>
-            </button>
-            <img src="../images/logo.png" alt="Logo" width="40" class="me-2">
-            <h4 class="m-0 fw-bold">K-Bias Merch — Usuario</h4>
-        </div>
+    <!-- Encabezado: usar markup común de navbar para consistencia -->
+    <header class="navbar-container">
+        <nav class="navbar navbar-expand-lg px-3">
+            <div class="container-fluid d-flex align-items-center">
 
-        <div class="d-flex align-items-center gap-3">
-            <div class="input-group buscador">
-                <input type="text" class="form-control" placeholder="Buscar" id="buscadorInput">
-                <span class="input-group-text bg-white border-0">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor"
-            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search search-icon">
-            <circle cx="11" cy="11" r="5"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-          </svg>
-        </span>
+                <!-- Botón Hamburguesa -->
+                <button class="btn btn-outline-dark me-2 p-2" data-bs-toggle="modal" data-bs-target="#menuModal" aria-label="Abrir menú">
+                    <i class="bi bi-list fs-4"></i>
+                </button>
+
+                <!-- Logo -->
+                <a class="navbar-brand d-flex align-items-center" href="#">
+                    <img src="../images/logo.png" alt="Logo" class="logo me-2">
+                    <span class="brand-name fw-bold">K-Bias Merch</span>
+                </a>
+
+                <!-- Espacio a la derecha: buscador y botón -->
+                <div class="ms-auto d-flex align-items-center gap-3">
+                    <div class="input-group buscador">
+                        <input type="text" class="form-control" placeholder="Buscar" id="buscadorInput">
+                        <span class="input-group-text bg-white border-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                class="feather feather-search search-icon">
+                                <circle cx="11" cy="11" r="5"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                        </span>
+                    </div>
+
+                    <a href="../index.html" class="btn btn-dark px-3 py-2 ms-2" id="abrirLogin">
+                        <i class="bi bi-box-arrow-right me-1"></i> Cerrar sesión
+                    </a>
+                </div>
+
             </div>
-
-            <!-- No hay botón de agregar para usuario/cajero (solo visualiza) -->
-        </div>
+        </nav>
     </header>
 
     <!-- Contenido principal -->
@@ -66,7 +79,7 @@
     <!-- Contenedor donde se cargará el modal -->
     <div id="contenedorModal"></div>
 
-    <!-- ========== MODAL LATERAL DEL MENÚ ========== -->
+    <!-- ========== MODAL LATERAL DEL MENÚ (copiado de index.html, rutas relativas a this folder) ========== -->
     <div class="modal fade" id="menuModal" tabindex="-1">
         <div class="modal-dialog" style="position: fixed; top:0; left:0; margin:0; height:100%; max-width:300px;">
             <div class="modal-content" style="border:none; border-radius:0; height:100%;">
@@ -78,17 +91,13 @@
 
                 <div class="modal-body d-flex flex-column">
 
-                    <a href="../listaproductos.html" class="btn btn-dark text-white mb-3" style="width:200px; height:50px;">
-                        Mostrar Productos
+                    <a href="cajero.html" class="btn btn-dark text-white mb-3" style="width:200px; height:50px;">
+                       Inicio
                     </a>
 
-                    <a href="../user.html" class="btn btn-dark text-white mb-3" style="width:200px; height:50px;">
-                        Usuarios Registrados
-                    </a>
-
-                    <a href="../listarUsuarios.html" class="btn btn-dark text-white mb-3" style="width:200px; height:50px;">
-                        Lista de usuarios
-                    </a>
+                    <a href="listaProductos.html" class="btn btn-dark text-white mb-3" style="width:200px; height:50px;">
+                        Mostrar productos
+                     </a>
 
                 </div>
             </div>
@@ -104,21 +113,26 @@
     <!-- Configuración API -->
     <script src="../js/config.js"></script>
 
-    <!-- Script personalizado (solo vista) -->
+    <!-- Script personalizado -->
     <script src="../js/productos/listaproductos.js"></script>
     
-    <!-- Cargar modalProducto (solo lectura) -->
+    <!-- Cargar modales externos -->
     <script>
-        fetch('../partials/modalproducto.html')
+        // Cargar modalProducto
+        fetch('modalProducto.html')
             .then(res => res.text())
             .then(html => {
                 document.getElementById('contenedorModal').innerHTML += html;
                 const script = document.createElement('script');
-                script.src = '../js/productos/modalproducto.js';
+                script.src = 'modalProducto.js';
                 document.body.appendChild(script);
             })
             .catch(err => console.error('Error al cargar modalProducto:', err));
+
+        // (modalRegistro removido para vista solo-lectura en cajero)
     </script>
+
+
 
 </body>
 
