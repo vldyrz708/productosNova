@@ -123,7 +123,7 @@
             .catch(err => console.error('Error al cargar modalProducto:', err));
 
         // Cargar modalRegistro
-        fetch('../partials/modalregistro.html')
+        fetch('./modalregistro.html')
             .then(res => res.text())
             .then(html => {
                 document.getElementById('contenedorModal').innerHTML += html;
