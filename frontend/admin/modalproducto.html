@@ -11,6 +11,7 @@
             <!-- Contenido -->
             <div class="text-center" id="contenedorImagen">
                 <img id="modalImagen" src="../images/logo.png" class="rounded mb-3 shadow-sm" style="width: 150px; height: auto;">
+                <input type="file" id="inputImagen" class="form-control mt-3" accept=".png, .jpg, .jpeg" aria-label="Subir imagen">
             </div>
 
             <div class="text-start mx-auto" style="max-width: 600px;">
@@ -31,3 +32,19 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.getElementById('inputImagen').addEventListener('change', function (event) {
+        const file = event.target.files[0];
+        if (file) {
+            const validExtensions = ['image/png', 'image/jpeg', 'image/jpg'];
+            if (!validExtensions.includes(file.type)) {
+                alert('Por favor, selecciona un archivo de imagen válido (PNG, JPG, JPEG).');
+                event.target.value = ''; // Limpiar el input
+            } else if (file.size > 5 * 1024 * 1024) { // Limitar tamaño a 5MB
+                alert('El archivo es demasiado grande. El tamaño máximo permitido es de 5MB.');
+                event.target.value = ''; // Limpiar el input
+            }
+        }
+    });
+</script>
