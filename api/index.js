@@ -11,6 +11,7 @@ const { manejoErrores, rutaNoEncontrada, logRequest, sanitizarEntrada } = requir
 // Importar rutas
 const albumRoutes = require('./routes/albumRoutes');
 const userRoutes = require('./routes/userRoutes');
+const authRoutes = require('./routes/authRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -45,6 +46,7 @@ conection();
 // Rutas
 app.use('/api/albums', albumRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/auth', authRoutes);
 
 // Endpoint de salud para el frontend
 app.get('/health', (req, res) => {

@@ -19,6 +19,39 @@ document.getElementById("abrirLogin").addEventListener("click", function() {
             document.getElementById("closeLoginModal").addEventListener("click", () => {
                 modal.hide();
             });
+
+            // Attach login form handler (modal content is dynamic)
+            const loginForm = document.getElementById('loginForm');
+            if (loginForm) {
+                loginForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const email = document.getElementById('email').value.trim();
+                    const password = document.getElementById('password').value;
+                    try {
+                        const resp = await fetch('/api/auth/login', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            credentials: 'include',
+                            body: JSON.stringify({ correo: email, password })
+                        });
+                        const data = await resp.json();
+                        if (!resp.ok) {
+                            alert(data.message || 'Error al iniciar sesión');
+                            return;
+                        }
+
+                        const role = data.user && data.user.rol ? data.user.rol : (data.role || 'Usuario');
+                        modal.hide();
+                        // Redirigir según rol
+                        if (role === 'Admin') window.location.href = '/admin/admin.html';
+                        else if (role === 'Gerente') window.location.href = '/gerente/gerente.html';
+                        else window.location.href = '/cashier/cajero.html';
+                    } catch (err) {
+                        console.error('Login error', err);
+                        alert('Error en la conexión');
+                    }
+                });
+            }
         })
         .catch(err => console.error("Error cargando modalogin.html:", err));
 });
