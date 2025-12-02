@@ -185,40 +185,38 @@
 
     <!-- Cargar modales internos -->
     <script>
-      // Cargar modalProducto
-      fetch("modalproducto.html")
-        .then((res) => res.text())
-        .then((html) => {
-          document.getElementById("contenedorModal").innerHTML += html;
-          const script = document.createElement("script");
-          script.src = "../js/productos/modalproducto.js";
-          document.body.appendChild(script);
-        })
-        .catch((err) => console.error("Error al cargar modalProducto:", err));
+        // Cargar modalProducto
+        fetch('./modalproducto.html')
+            .then(res => res.text())
+            .then(html => {
+                document.getElementById('contenedorModal').innerHTML += html;
+                const script = document.createElement('script');
+                script.src = '../js/productos/modalproducto.js';
+                document.body.appendChild(script);
+            })
+            .catch(err => console.error('Error al cargar modalProducto:', err));
 
-      // Cargar modalRegistro desde partials (admin)
-      fetch("modalregistro.html")
-        .then((res) => res.text())
-        .then((html) => {
-          document.getElementById("contenedorModal").innerHTML += html;
+        // Cargar modalRegistro desde admin
+        fetch('./modalregistro.html')
+            .then(res => res.text())
+            .then(html => {
+                document.getElementById('contenedorModal').innerHTML += html;
 
-          // Configurar botón Agregar
-          const btnAgregar = document.getElementById("btnAgregar");
-          if (btnAgregar) {
-            btnAgregar.addEventListener("click", () => {
-              const modal = new bootstrap.Modal(
-                document.getElementById("modalRegistro")
-              );
-              modal.show();
-            });
-          }
+                // Configurar botón Agregar
+                const btnAgregar = document.getElementById('btnAgregar');
+                if (btnAgregar) {
+                    btnAgregar.addEventListener('click', () => {
+                        const modal = new bootstrap.Modal(document.getElementById('modalRegistro'));
+                        modal.show();
+                    });
+                }
 
-          // Cargar JS del modalRegistro
-          const script = document.createElement("script");
-          script.src = "../js/productos/modalregistro.js";
-          document.body.appendChild(script);
-        })
-        .catch((err) => console.error("Error al cargar modalRegistro:", err));
+                // Cargar JS del modalRegistro
+                const script = document.createElement('script');
+                script.src = '../js/productos/modalregistro.js';
+                document.body.appendChild(script);
+            })
+            .catch(err => console.error('Error al cargar modalRegistro:', err));
     </script>
   </body>
 </html>

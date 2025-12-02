@@ -129,7 +129,7 @@ function formatearFecha(fecha) {
 
 // Mostrar modal
 function mostrarModalProducto(producto) {
-    // Seguridad: comprobar elementos del DOM antes de usarlos
+    // Mantener la versión segura (con comprobaciones de existencia de elementos)
     const imagenUrl = producto && producto.fotoAlbum ? `http://localhost:3000/${producto.fotoAlbum}` : '../images/logo.png';
 
     const elImagen = document.getElementById('modalImagen');
@@ -174,6 +174,7 @@ function mostrarModalProducto(producto) {
         const modal = new bootstrap.Modal(modalProductoEl);
         modal.show();
     }
+}
 }
 
 function agregarProducto(producto) {

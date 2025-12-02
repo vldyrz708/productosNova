@@ -159,7 +159,11 @@ header {
 }
 
 .producto-card button {
+<<<<<<< HEAD
     background-color: #1b1a1a;
+=======
+    background-color: #f51010;
+>>>>>>> 1461369e5019a93db2ac928618804eda8c28e098
     border: none;
     border-radius: 20px;
     font-size: 12px;
