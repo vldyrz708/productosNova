@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Usuario - Lista de Productos</title>
+    <title>Lista de Productos</title>
     <link rel="icon" type="image/png" href="../images/logo.png">
 
     <!-- Bootstrap -->
@@ -38,7 +38,7 @@
                 <i class="bi bi-list fs-4"></i>
             </button>
             <img src="../images/logo.png" alt="Logo" width="40" class="me-2">
-            <h4 class="m-0 fw-bold">K-Bias Merch — Usuario</h4>
+            <h4 class="m-0 fw-bold">K-Bias Merch</h4>
         </div>
 
         <div class="d-flex align-items-center gap-3">
@@ -46,14 +46,15 @@
                 <input type="text" class="form-control" placeholder="Buscar" id="buscadorInput">
                 <span class="input-group-text bg-white border-0">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor"
-            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search search-icon">
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="feather feather-search search-icon">
             <circle cx="11" cy="11" r="5"></circle>
             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
           </svg>
         </span>
             </div>
 
-            <!-- No hay botón de agregar para usuario/cajero (solo visualiza) -->
+            <button class="btn btn-dark fw-semibold px-3" id="btnAgregar">Agregar producto</button>
         </div>
     </header>
 
@@ -66,7 +67,7 @@
     <!-- Contenedor donde se cargará el modal -->
     <div id="contenedorModal"></div>
 
-    <!-- ========== MODAL LATERAL DEL MENÚ ========== -->
+    <!-- ========== MODAL LATERAL DEL MENÚ (copiado de index.html, rutas relativas a this folder) ========== -->
     <div class="modal fade" id="menuModal" tabindex="-1">
         <div class="modal-dialog" style="position: fixed; top:0; left:0; margin:0; height:100%; max-width:300px;">
             <div class="modal-content" style="border:none; border-radius:0; height:100%;">
@@ -78,15 +79,16 @@
 
                 <div class="modal-body d-flex flex-column">
 
-                    <a href="../listaproductos.html" class="btn btn-dark text-white mb-3" style="width:200px; height:50px;">
+
+                    <a href="gerente.html" class="btn btn-dark text-white mb-3" style="width:200px; height:50px;">
+                        Inicio
+                    </a>
+
+                    <a href="listaproductos.html" class="btn btn-dark text-white mb-3" style="width:200px; height:50px;">
                         Mostrar Productos
                     </a>
 
-                    <a href="../user.html" class="btn btn-dark text-white mb-3" style="width:200px; height:50px;">
-                        Usuarios Registrados
-                    </a>
-
-                    <a href="../listarUsuarios.html" class="btn btn-dark text-white mb-3" style="width:200px; height:50px;">
+                    <a href="listarUsuarios.html" class="btn btn-dark text-white mb-3" style="width:200px; height:50px;">
                         Lista de usuarios
                     </a>
 
@@ -104,12 +106,13 @@
     <!-- Configuración API -->
     <script src="../js/config.js"></script>
 
-    <!-- Script personalizado (solo vista) -->
+    <!-- Script personalizado -->
     <script src="../js/productos/listaproductos.js"></script>
-    
-    <!-- Cargar modalProducto (solo lectura) -->
+
+    <!-- Cargar modales externos -->
     <script>
-        fetch('../partials/modalproducto.html')
+        // Cargar modalProducto
+        fetch('./modalproducto.html')
             .then(res => res.text())
             .then(html => {
                 document.getElementById('contenedorModal').innerHTML += html;
@@ -118,7 +121,31 @@
                 document.body.appendChild(script);
             })
             .catch(err => console.error('Error al cargar modalProducto:', err));
+
+        // Cargar modalRegistro
+        fetch('./modalregistro.html')
+            .then(res => res.text())
+            .then(html => {
+                document.getElementById('contenedorModal').innerHTML += html;
+
+                // Configurar botón Agregar
+                const btnAgregar = document.getElementById('btnAgregar');
+                if (btnAgregar) {
+                    btnAgregar.addEventListener('click', () => {
+                        const modal = new bootstrap.Modal(document.getElementById('modalRegistro'));
+                        modal.show();
+                    });
+                }
+
+                // Cargar JS del modalRegistro
+                const script = document.createElement('script');
+                script.src = '../js/productos/modalregistro.js';
+                document.body.appendChild(script);
+            })
+            .catch(err => console.error('Error al cargar modalRegistro:', err));
     </script>
+
+
 
 </body>
 
