@@ -90,24 +90,59 @@ header {
 }
 
 
-/* ======= CARDS ======= */
+/* ===========================================================
+   ======= NUEVO SISTEMA DE CARDS — TAMAÑO UNIFORME ========
+   =========================================================== */
 
 .producto-card {
-    background-color: #f0f0f0 !important;
+    width: 260px;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff !important;
     border-radius: 12px;
+    overflow: hidden;
     transition: transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
+
+
+/* Hover */
 
 .producto-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 6px 14px rgba(72, 206, 10, 0.18);
 }
 
+
+/* ==== CONTENEDOR DE IMAGEN ==== */
+
+.producto-card .img-container {
+    height: 180px;
+    width: 100%;
+    background: #f3f3f3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+
+/* Cuando SÍ hay imagen */
+
 .producto-card img {
-    width: 100px;
-    height: auto;
-    object-fit: contain;
-    border-radius: 8px;
+    max-height: 100%;
+    width: auto;
+    object-fit: cover;
+}
+
+
+/* ==== CUERPO DEL CARD ==== */
+
+.producto-card .card-body {
+    flex: 1;
+    padding: 15px;
+    overflow: hidden;
 }
 
 .producto-card h6 {
@@ -130,11 +165,16 @@ header {
     font-size: 12px;
     padding: 4px 14px;
     transition: background-color 0.3s ease;
+    width: 100%;
+    color: #fff;
 }
 
 .producto-card button:hover {
     background-color: #333;
 }
+
+
+/* Indicadores de stock */
 
 .stock-indicator {
     display: inline-flex;
@@ -204,16 +244,12 @@ main h3 {
     #btnAgregar {
         width: 100%;
     }
-    .producto-card img {
-        width: 90px;
-    }
 }
 
 
-/*diceso modalproducto.css*/
-
-
-/* === Modal Producto === */
+/* ===========================================================
+   ==========  MODAL PRODUCTO (YA EXISTENTE) ==========
+   =========================================================== */
 
 #modalProducto .modal-content {
     border-radius: 1.5rem;
@@ -255,9 +291,6 @@ main h3 {
     border: 2px solid #e9ecef;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
-
-
-/* Para mantener coherencia tipográfica */
 
 #modalProducto p {
     font-size: 0.95rem;

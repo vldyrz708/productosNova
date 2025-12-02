@@ -116,7 +116,7 @@
     <!-- Cargar modales internos -->
     <script>
         // Cargar modalProducto
-        fetch('../partials/modalproducto.html')
+        fetch('./modalproducto.html')
             .then(res => res.text())
             .then(html => {
                 document.getElementById('contenedorModal').innerHTML += html;
