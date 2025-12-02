@@ -175,7 +175,7 @@ function mostrarModalProducto(producto) {
         modal.show();
     }
 }
-}
+
 
 function agregarProducto(producto) {
     productosEnMemoria.push(producto);
