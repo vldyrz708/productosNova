@@ -34,6 +34,10 @@
             <img src="../images/logo.png" alt="Logo" width="40" class="me-2">
             <h4 class="m-0 fw-bold">K-Bias Merch</h4>
         </div>
+
+                        <a href="../index.html" class="btn btn-dark px-3 py-2 ms-2 btn-logout">
+                            <i class="bi bi-box-arrow-right me-1"></i> Cerrar sesión
+                        </a>
     </header>
 
     <!-- Contenido -->
@@ -62,6 +66,10 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script src="../js/productos/listarUsuarios.js"></script>
+    <script src="../js/main.js"></script>
+    <script>
+        window.ensureRole(['Gerente','Admin'], '/');
+    </script>
 
     <!-- ========== MODAL LATERAL DEL MENÚ (copiado de index.html, rutas relativas a this folder) ========== -->
     <div class="modal fade" id="menuModal" tabindex="-1">

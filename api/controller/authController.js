@@ -1,6 +1,7 @@
 const User = require('../modules/User');
 const bcrypt = require('bcryptjs');
 let jwt;
+const { getTokenFromReq } = require('../middleware/auth');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'change_this_secret_in_prod';
 const COOKIE_NAME = 'token';
@@ -51,4 +52,20 @@ function logout(req, res) {
     res.json({ success: true, message: 'Sesión cerrada' });
 }
 
-module.exports = { login, logout };
+async function me(req, res) {
+    try {
+        // Obtener token desde cookie o header
+        const token = getTokenFromReq(req);
+        if (!token) return res.status(401).json({ success: false, message: 'No autorizado' });
+        if (!jwt) jwt = require('jsonwebtoken');
+        const payload = jwt.verify(token, JWT_SECRET);
+        // Buscar usuario y devolver sin password
+        const user = await User.findById(payload.id).select('-password');
+        if (!user) return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
+        res.json({ success: true, user });
+    } catch (err) {
+        return res.status(401).json({ success: false, message: 'Token inválido o expirado' });
+    }
+}
+
+module.exports = { login, logout, me };

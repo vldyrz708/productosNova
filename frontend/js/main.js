@@ -2,7 +2,40 @@
 // Pero lo dejamos para posibles animaciones personalizadas.
 document.addEventListener('DOMContentLoaded', () => {
     console.log('K-Bias Merch loaded');
+    // Attach global logout handlers for elements with class .btn-logout
+    document.querySelectorAll('.btn-logout').forEach(el => {
+        el.addEventListener('click', async (e) => {
+            e.preventDefault();
+            try {
+                await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+            } catch (err) {
+                console.error('Logout error', err);
+            }
+            window.location.href = '/';
+        });
+    });
 });
+
+// Helper para que páginas protejan su acceso por rol
+window.ensureRole = async function(allowedRoles = [], redirectTo = '/') {
+    try {
+        const resp = await fetch('/api/auth/me', { credentials: 'include' });
+        if (!resp.ok) {
+            window.location.href = redirectTo;
+            return false;
+        }
+        const data = await resp.json();
+        const role = data.user && (data.user.rol || data.user.role);
+        if (!allowedRoles.includes(role)) {
+            window.location.href = redirectTo;
+            return false;
+        }
+        return true;
+    } catch (err) {
+        window.location.href = redirectTo;
+        return false;
+    }
+};
 
 
 // Abrir modal login
