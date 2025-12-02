@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // Abrir modal login
 document.getElementById("abrirLogin").addEventListener("click", function() {
 
-    fetch("partials/modalogin.html")
+    fetch("modalogin.html")
         .then(resp => resp.text())
         .then(html => {
 
