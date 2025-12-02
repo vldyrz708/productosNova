@@ -108,7 +108,7 @@ paths:
                 $ref: '#/components/schemas/AlbumResponse'
         "404":
           description: Álbum no encontrado
-    patch:
+    put:
       summary: Actualizar un álbum
       tags:
         - Álbumes
@@ -244,33 +244,12 @@ components:
           example: "The Album"
         artista:
           type: string
-          description: Nombre del artista o grupo.
           example: "BLACKPINK"
-        versionAlbum:
-          type: string
-          description: Versión comercial del álbum.
-          enum: [Standard, Deluxe, "Limited Edition", "Special Edition", Repackage, "Mini Album", Single]
-          example: "Deluxe"
-        idioma:
-          type: array
-          description: Idiomas disponibles en el álbum.
-          items:
-            type: string
-            enum: [Coreano, Japonés, Inglés, Chino, Tailandés, Español, Otro]
-          example: ["Coreano", "Inglés"]
-        duracion:
-          type: string
-          description: Duración total en formato MM:SS u HH:MM:SS.
-          example: "03:45"
         categoria:
           type: array
           items:
             type: string
-            enum: ["K-Pop", "J-Pop", "Boy Group", "Girl Group", "Solista", "Ballad", "Dance", "R&B", "Hip-Hop", "Rock", "Indie"]
-          example: ["K-Pop", "Girl Group"]
-        descripcion:
-          type: string
-          example: "Edición con photobook y tarjeta holográfica."
+          example: ["K-Pop", "Edición Limitada"]
         precio:
           type: number
           example: 599.99
@@ -284,11 +263,6 @@ components:
           type: string
           format: date
           example: "2020-10-02"
-        fechaAdquisicion:
-          type: string
-          format: date
-          description: Fecha en la que se adquirió el lote para venta.
-          example: "2024-11-15"
         fechaLimiteVenta:
           type: string
           format: date
@@ -308,41 +282,17 @@ components:
       required:
         - nombreAlbum
         - artista
-        - versionAlbum
-        - idioma
-        - duracion
-        - pesoGramos
         - precio
         - stock
-        - categoria
-        - descripcion
-        - fotoAlbum
-        - fechaLanzamiento
-        - fechaAdquisicion
-        - fechaLimiteVenta
       properties:
         nombreAlbum:
           type: string
         artista:
           type: string
-        versionAlbum:
-          type: string
-          enum: [Standard, Deluxe, "Limited Edition", "Special Edition", Repackage, "Mini Album", Single]
-        idioma:
-          type: array
-          items:
-            type: string
-            enum: [Coreano, Japonés, Inglés, Chino, Tailandés, Español, Otro]
-        duracion:
-          type: string
-          description: Formato MM:SS u HH:MM:SS.
         categoria:
           type: array
           items:
             type: string
-            enum: ["K-Pop", "J-Pop", "Boy Group", "Girl Group", "Solista", "Ballad", "Dance", "R&B", "Hip-Hop", "Rock", "Indie"]
-        descripcion:
-          type: string
         precio:
           type: number
         stock:
@@ -350,9 +300,6 @@ components:
         pesoGramos:
           type: number
         fechaLanzamiento:
-          type: string
-          format: date
-        fechaAdquisicion:
           type: string
           format: date
         fechaLimiteVenta:
