@@ -15,28 +15,25 @@ document.addEventListener('DOMContentLoaded', () => {
 // Función para filtrar productos en tiempo real
 function filtrarProductos(termino) {
     const lista = document.getElementById('listaProductos');
-    lista.innerHTML = ''; // Limpiar lista
-    
+    lista.innerHTML = '';
+
     if (!termino) {
-        // Si no hay término de búsqueda, mostrar todos
         productosEnMemoria.forEach(prod => renderizarProducto(prod));
         return;
     }
-    
-    // Filtrar productos que coincidan con el término
+
     const productosFiltrados = productosEnMemoria.filter(prod => {
         const nombreAlbum = (prod.nombreAlbum || '').toLowerCase();
         const artistaGrupo = (prod.artistaGrupo || '').toLowerCase();
         const categoria = (prod.categoria || '').toString().toLowerCase();
         const version = (prod.version || '').toLowerCase();
-        
-        return nombreAlbum.includes(termino) || 
-               artistaGrupo.includes(termino) || 
-               categoria.includes(termino) ||
-               version.includes(termino);
+
+        return nombreAlbum.includes(termino) ||
+            artistaGrupo.includes(termino) ||
+            categoria.includes(termino) ||
+            version.includes(termino);
     });
-    
-    // Mostrar mensaje si no hay resultados
+
     if (productosFiltrados.length === 0) {
         lista.innerHTML = `
             <div class="col-12 text-center py-5">
@@ -45,18 +42,18 @@ function filtrarProductos(termino) {
         `;
         return;
     }
-    
-    // Renderizar productos filtrados
+
     productosFiltrados.forEach(prod => renderizarProducto(prod));
 }
 
-// Función para renderizar un producto en la pantalla
+// =======================================================
+//   🟦 NUEVA FUNCIÓN — CARDS CON DISEÑO UNIFORME
+// =======================================================
 function renderizarProducto(prod) {
     const lista = document.getElementById('listaProductos');
     const card = document.createElement('div');
     card.classList.add('col-12', 'col-sm-6', 'col-md-4', 'col-lg-3');
 
-    // Construir URL de imagen desde el servidor
     const imagenUrl = prod.fotoAlbum ? `http://localhost:3000/${prod.fotoAlbum}` : '../images/logo.png';
     const stockValor = Number.isFinite(Number(prod.stock)) ? Number(prod.stock) : 0;
     const stockDisponible = stockValor > 0;
@@ -64,30 +61,38 @@ function renderizarProducto(prod) {
     const stockTexto = stockDisponible ? `${stockValor} en stock` : 'Sin stock';
 
     card.innerHTML = `
-        <div class="card shadow-sm border-0 text-center p-2 producto-card">
-            <img src="${imagenUrl}"
-                 class="card-img-top mx-auto mt-2 rounded"
-                 alt="${prod.nombreAlbum || 'Sin nombre'}"
-                 style="width: 120px; height: auto;">
+        <div class="producto-card">
+            
+            <!-- CONTENEDOR FIJO PARA LA IMAGEN -->
+            <div class="img-container">
+                <img src="${imagenUrl}" 
+                     alt="${prod.nombreAlbum || 'Sin nombre'}">
+            </div>
+
+            <!-- CUERPO DEL CARD -->
             <div class="card-body">
                 <h6 class="fw-bold">${prod.nombreAlbum || 'Sin título'}</h6>
-                <p class="mb-1"><strong>Artista/Grupo:</strong> ${prod.artistaGrupo || '—'}</p>
-                <p class="mb-1"><strong>Categoría:</strong> ${prod.categoria || '—'}</p>
-                <p class="mb-1"><strong>Versión:</strong> ${prod.version || '—'}</p>
-                <p class="mb-1"><strong>Fecha de lanzamiento:</strong> ${formatearFecha(prod.fechaLanzamiento)}</p>
-                <div class="mt-3 text-start">
+                <p><strong>Artista:</strong> ${prod.artistaGrupo || '—'}</p>
+                <p><strong>Categoría:</strong> ${prod.categoria || '—'}</p>
+                <p><strong>Versión:</strong> ${prod.version || '—'}</p>
+                <p><strong>Lanzamiento:</strong> ${formatearFecha(prod.fechaLanzamiento)}</p>
+
+                <div class="mt-2">
                     <div class="stock-indicator">
                         <span class="stock-badge ${stockEstadoClase}"></span>
                         <span class="stock-label ${stockEstadoClase}">${stockTexto}</span>
                     </div>
-                    <button class="btn btn-dark btn-sm mt-3 w-100 btn-detalle" data-id="${prod._id}">Ver detalles</button>
                 </div>
+
+                <button class="btn mt-3 btn-detalle" data-id="${prod._id}">
+                    Ver detalles
+                </button>
             </div>
         </div>
     `;
+
     lista.appendChild(card);
 
-    // Agregar evento al botón "Ver detalles"
     card.querySelector('.btn-detalle').addEventListener('click', () => {
         mostrarModalProducto(prod);
     });
@@ -102,10 +107,7 @@ async function cargarProductos() {
         const data = await response.json();
         productosEnMemoria = data.albums || [];
 
-        // Limpiar lista antes de renderizar
         document.getElementById('listaProductos').innerHTML = '';
-
-        // Renderizar cada producto
         productosEnMemoria.forEach(prod => renderizarProducto(prod));
 
     } catch (error) {
@@ -119,17 +121,16 @@ async function cargarProductos() {
     }
 }
 
-// Función auxiliar para formatear fecha (eliminar hora)
+// Función auxiliar para formatear fecha
 function formatearFecha(fecha) {
     if (!fecha) return '—';
-    // Si la fecha viene con formato ISO (2025-09-01T00:00:00.000Z), extraer solo la fecha
     return fecha.split('T')[0];
 }
 
-// Función para mostrar el modal del producto
+// Mostrar modal
 function mostrarModalProducto(producto) {
     const imagenUrl = producto.fotoAlbum ? `http://localhost:3000/${producto.fotoAlbum}` : '../images/logo.png';
-    
+
     document.getElementById('modalImagen').src = imagenUrl;
     document.getElementById('modalImagen').dataset.rutaOriginal = producto.fotoAlbum || '';
     document.getElementById('modalNombre').textContent = producto.nombreAlbum || '—';
@@ -139,45 +140,37 @@ function mostrarModalProducto(producto) {
     document.getElementById('modalIdioma').textContent = producto.idioma || '—';
     document.getElementById('modalDuracion').textContent = producto.duracion || '—';
     document.getElementById('modalPeso').textContent = producto.peso || '—';
-    document.getElementById('modalPrecio').textContent = producto.precio !== undefined && producto.precio !== null && producto.precio !== ''
-        ? `$${producto.precio}`
-        : '—';
+    document.getElementById('modalPrecio').textContent =
+        producto.precio !== undefined && producto.precio !== null && producto.precio !== '' ?
+        `$${producto.precio}` :
+        '—';
+
     const stockElemento = document.getElementById('modalStock');
     const stockNumerico = Number(producto.stock);
     const tieneNumero = !Number.isNaN(stockNumerico);
     const stockEsCero = tieneNumero && stockNumerico === 0;
     const stockEsPositivo = tieneNumero && stockNumerico > 0;
 
-    const stockTextoModal = tieneNumero
-        ? stockNumerico
-        : (producto.stock !== undefined && producto.stock !== null && producto.stock !== ''
-            ? producto.stock
-            : '—');
+    const stockTextoModal = tieneNumero ? stockNumerico : (producto.stock || '—');
     stockElemento.textContent = stockTextoModal;
 
     stockElemento.classList.remove('stock-text-available', 'stock-text-out');
-    if (stockEsPositivo) {
-        stockElemento.classList.add('stock-text-available');
-    } else if (stockEsCero) {
-        stockElemento.classList.add('stock-text-out');
-    }
+    if (stockEsPositivo) stockElemento.classList.add('stock-text-available');
+    else if (stockEsCero) stockElemento.classList.add('stock-text-out');
+
     document.getElementById('modalCategoria').textContent = producto.categoria || '—';
     document.getElementById('modalDescripcion').textContent = producto.descripcion || '—';
     document.getElementById('modalFechaCompra').textContent = formatearFecha(producto.fechaCompra);
     document.getElementById('modalFechaCaducidad').textContent = formatearFecha(producto.fechaCaducidad);
 
-    // Guardar el ID del producto actual en el modal para usarlo al editar/eliminar
     document.getElementById('modalProducto').dataset.productoId = producto._id;
-
     const modal = new bootstrap.Modal(document.getElementById('modalProducto'));
     modal.show();
 }
 
-// Función para agregar un nuevo producto desde el modalRegistro (ahora recarga productos)
 function agregarProducto(producto) {
     productosEnMemoria.push(producto);
     renderizarProducto(producto);
 }
 
-// Ejecutar al cargar la página
 document.addEventListener('DOMContentLoaded', cargarProductos);

@@ -90,7 +90,6 @@
               </span>
             </div>
 
-<<<<<<< HEAD
             <button class="btn btn-dark fw-semibold px-3" id="btnAgregar">
               Agregar producto
             </button>
@@ -104,16 +103,6 @@
           </div>
         </div>
       </nav>
-=======
-            <button class="btn btn-dark fw-semibold px-3" id="btnAgregar">Agregar producto</button>
-            <a href="../index.html" class="btn btn-dark px-3 py-2 ms-2" id="abrirLogin">
-                <i class="bi bi-box-arrow-right me-1"></i> Cerrar sesión
-            </a>
-        </div>
-
-        </div>
-        </nav>
->>>>>>> 68e13e1257b63afa567d4776ed9dd4cd7177f6a6
     </header>
 
     <!-- Contenido principal -->
@@ -196,49 +185,38 @@
 
     <!-- Cargar modales internos -->
     <script>
-      // Cargar modalProducto
-      fetch("modalproducto.html")
-        .then((res) => res.text())
-        .then((html) => {
-          document.getElementById("contenedorModal").innerHTML += html;
-          const script = document.createElement("script");
-          script.src = "../js/productos/modalproducto.js";
-          document.body.appendChild(script);
-        })
-        .catch((err) => console.error("Error al cargar modalProducto:", err));
+        // Cargar modalProducto
+        fetch('./modalproducto.html')
+            .then(res => res.text())
+            .then(html => {
+                document.getElementById('contenedorModal').innerHTML += html;
+                const script = document.createElement('script');
+                script.src = '../js/productos/modalproducto.js';
+                document.body.appendChild(script);
+            })
+            .catch(err => console.error('Error al cargar modalProducto:', err));
 
-      // Cargar modalRegistro desde partials (admin)
-      fetch("modalregistro.html")
-        .then((res) => res.text())
-        .then((html) => {
-          document.getElementById("contenedorModal").innerHTML += html;
+        // Cargar modalRegistro desde admin
+        fetch('./modalregistro.html')
+            .then(res => res.text())
+            .then(html => {
+                document.getElementById('contenedorModal').innerHTML += html;
 
-          // Configurar botón Agregar
-          const btnAgregar = document.getElementById("btnAgregar");
-          if (btnAgregar) {
-            btnAgregar.addEventListener("click", () => {
-              const modal = new bootstrap.Modal(
-                document.getElementById("modalRegistro")
-              );
-              modal.show();
-            });
-          }
+                // Configurar botón Agregar
+                const btnAgregar = document.getElementById('btnAgregar');
+                if (btnAgregar) {
+                    btnAgregar.addEventListener('click', () => {
+                        const modal = new bootstrap.Modal(document.getElementById('modalRegistro'));
+                        modal.show();
+                    });
+                }
 
-          // Cargar JS del modalRegistro
-          const script = document.createElement("script");
-          script.src = "../js/productos/modalregistro.js";
-          document.body.appendChild(script);
-        })
-        .catch((err) => console.error("Error al cargar modalRegistro:", err));
+                // Cargar JS del modalRegistro
+                const script = document.createElement('script');
+                script.src = '../js/productos/modalregistro.js';
+                document.body.appendChild(script);
+            })
+            .catch(err => console.error('Error al cargar modalRegistro:', err));
     </script>
-<<<<<<< HEAD
   </body>
 </html>
-=======
-
-
-
-</body>
-
-</html>
->>>>>>> 68e13e1257b63afa567d4776ed9dd4cd7177f6a6
