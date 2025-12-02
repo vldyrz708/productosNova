@@ -1,123 +1,118 @@
 openapi: 3.0.3
 info:
-  title: API de Albumes Musicales
-  description: |
-    API REST para la gestión de álbumes musicales (por ejemplo, de K-Pop), desarrollada con Node.js y Express.
-    Incluye endpoints para listar, crear, editar, eliminar, buscar y obtener estadísticas de los álbumes.
+  title: API de Álbumes Musicales
   version: 1.0.0
-  contact:
-    name: Equipo de Desarrollo
-    email: soporte@musicalapi.com
+  description: >
+    API REST para gestionar álbumes musicales.
+    Documentación alineada con modules/Album.js y albumController.js.
 
 servers:
   - url: http://localhost:3001/api
     description: Servidor local de desarrollo
 
-tags:
-  - name: Álbumes
-    description: Operaciones relacionadas con álbumes musicales
-
 paths:
   /albums:
     get:
-      summary: Obtener todos los álbumes
-      tags:
-        - Álbumes
+      summary: Obtener todos los álbumes con paginación y filtros
       parameters:
         - in: query
           name: page
           schema:
             type: integer
-            example: 1
-          description: Página de resultados
+            minimum: 1
+            default: 1
         - in: query
           name: limit
           schema:
             type: integer
-            example: 10
-          description: Límite de resultados por página
+            minimum: 1
+            default: 10
         - in: query
           name: artista
           schema:
             type: string
-          description: Filtrar por artista
         - in: query
           name: categoria
           schema:
             type: string
-          description: Filtrar por categoría
+          description: "Lista separada por comas (ej: K-Pop,Rock)"
         - in: query
           name: disponible
           schema:
             type: boolean
-          description: Mostrar solo álbumes disponibles
         - in: query
           name: precioMin
           schema:
             type: number
+            minimum: 0
         - in: query
           name: precioMax
           schema:
             type: number
+            minimum: 0
       responses:
-        "200":
-          description: Lista de álbumes obtenida correctamente
+        '200':
+          description: Lista de álbumes con paginación
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/AlbumListResponse'
-        "500":
-          description: Error en el servidor
+
     post:
       summary: Crear un nuevo álbum
-      tags:
-        - Álbumes
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/AlbumInput'
+            examples:
+              ejemplo-valido:
+                value:
+                  nombreAlbum: "The Album"
+                  artista: "BLACKPINK"
+                  versionAlbum: "Standard"
+                  fechaLanzamiento: "2025-12-06"
+                  idioma: ["Coreano","Inglés"]
+                  duracion: "42:30"
+                  pesoGramos: 120
+                  precio: 350.0
+                  stock: 10
+                  categoria: ["K-Pop"]
+                  descripcion: "Edición especial con photobook."
+                  fotoAlbum: "cover.jpg"
+                  fechaAdquisicion: "2025-11-13"
+                  fechaLimiteVenta: "2025-12-31"
       responses:
-        "201":
-          description: Álbum creado exitosamente
+        '201':
+          description: Álbum creado correctamente
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/AlbumResponse'
-        "400":
-          description: Datos inválidos
+        '400':
+          description: Error de validación
 
   /albums/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
     get:
-      summary: Obtener álbum por ID
-      tags:
-        - Álbumes
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
+      summary: Obtener un álbum por ID
       responses:
-        "200":
-          description: Álbum obtenido correctamente
+        '200':
+          description: Álbum encontrado
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/AlbumResponse'
-        "404":
+        '404':
           description: Álbum no encontrado
     put:
-      summary: Actualizar un álbum
-      tags:
-        - Álbumes
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
+      summary: Reemplazar un álbum (PUT)
       requestBody:
         required: true
         content:
@@ -125,37 +120,49 @@ paths:
             schema:
               $ref: '#/components/schemas/AlbumInput'
       responses:
-        "200":
-          description: Álbum actualizado exitosamente
-        "404":
+        '200':
+          description: Álbum actualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AlbumResponse'
+        '400':
+          description: Error de validación
+        '404':
+          description: Álbum no encontrado
+    patch:
+      summary: Actualizar parcialmente un álbum (PATCH)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AlbumPatch'
+      responses:
+        '200':
+          description: Álbum actualizado parcialmente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AlbumResponse'
+        '404':
           description: Álbum no encontrado
     delete:
       summary: Eliminar un álbum
-      tags:
-        - Álbumes
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
       responses:
-        "200":
+        '200':
           description: Álbum eliminado correctamente
-        "404":
+        '404':
           description: Álbum no encontrado
 
   /albums/search:
     get:
-      summary: Buscar álbumes por texto o filtros
-      tags:
-        - Álbumes
+      summary: Buscar álbumes por texto y filtros
       parameters:
         - in: query
           name: q
           schema:
             type: string
-          description: Texto de búsqueda
         - in: query
           name: categoria
           schema:
@@ -172,19 +179,29 @@ paths:
           name: precioMax
           schema:
             type: number
+        - in: query
+          name: disponible
+          schema:
+            type: boolean
+        - in: query
+          name: page
+          schema:
+            type: integer
+        - in: query
+          name: limit
+          schema:
+            type: integer
       responses:
-        "200":
+        '200':
           description: Resultados de búsqueda
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AlbumListResponse'
+                $ref: '#/components/schemas/SearchResponse'
 
   /albums/artista/{artista}:
     get:
       summary: Obtener álbumes por artista
-      tags:
-        - Álbumes
       parameters:
         - in: path
           name: artista
@@ -192,8 +209,8 @@ paths:
           schema:
             type: string
       responses:
-        "200":
-          description: Lista de álbumes del artista
+        '200':
+          description: Álbumes por artista
           content:
             application/json:
               schema:
@@ -202,8 +219,6 @@ paths:
   /albums/categoria/{categoria}:
     get:
       summary: Obtener álbumes por categoría
-      tags:
-        - Álbumes
       parameters:
         - in: path
           name: categoria
@@ -211,21 +226,48 @@ paths:
           schema:
             type: string
       responses:
-        "200":
-          description: Lista de álbumes de la categoría
+        '200':
+          description: Álbumes por categoría
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/AlbumListResponse'
 
+  /albums/{id}/stock:
+    patch:
+      summary: Actualizar stock de un álbum (incremento con "cantidad")
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - cantidad
+              properties:
+                cantidad:
+                  type: number
+                  description: "Número (positivo/negativo) para incrementar o decrementar stock"
+      responses:
+        '200':
+          description: Stock actualizado correctamente
+        '400':
+          description: Datos inválidos
+        '404':
+          description: Álbum no encontrado
+
   /albums/stats:
     get:
       summary: Obtener estadísticas de álbumes
-      tags:
-        - Álbumes
       responses:
-        "200":
-          description: Estadísticas de los álbumes
+        '200':
+          description: Estadísticas generales
           content:
             application/json:
               schema:
@@ -233,99 +275,321 @@ paths:
 
 components:
   schemas:
-    Album:
-      type: object
-      properties:
-        _id:
-          type: string
-          example: 67433a2a5e34d40e2b6d9a4c
-        nombreAlbum:
-          type: string
-          example: "The Album"
-        artista:
-          type: string
-          example: "BLACKPINK"
-        categoria:
-          type: array
-          items:
-            type: string
-          example: ["K-Pop", "Edición Limitada"]
-        precio:
-          type: number
-          example: 599.99
-        stock:
-          type: integer
-          example: 50
-        pesoGramos:
-          type: number
-          example: 250
-        fechaLanzamiento:
-          type: string
-          format: date
-          example: "2020-10-02"
-        fechaLimiteVenta:
-          type: string
-          format: date
-          example: "2025-12-31"
-        fotoAlbum:
-          type: string
-          example: "https://cdn.misalbumes.com/blackpink.jpg"
-        createdAt:
-          type: string
-          format: date-time
-        updatedAt:
-          type: string
-          format: date-time
-
-    AlbumInput:
-      type: object
-      required:
-        - nombreAlbum
-        - artista
-        - precio
-        - stock
-      properties:
-        nombreAlbum:
-          type: string
-        artista:
-          type: string
-        categoria:
-          type: array
-          items:
-            type: string
-        precio:
-          type: number
-        stock:
-          type: integer
-        pesoGramos:
-          type: number
-        fechaLanzamiento:
-          type: string
-          format: date
-        fechaLimiteVenta:
-          type: string
-          format: date
-        fotoAlbum:
-          type: string
-
+    # Respuesta estándar para un álbum
     AlbumResponse:
       type: object
       properties:
         success:
           type: boolean
-          example: true
-        message:
-          type: string
-          example: "Álbum obtenido correctamente"
         data:
           $ref: '#/components/schemas/Album'
+        message:
+          type: string
+
+    # Modelo de Album (según albumSchema)
+    Album:
+      type: object
+      properties:
+        _id:
+          type: string
+          readOnly: true
+        nombreAlbum:
+          type: string
+          maxLength: 100
+        artista:
+          type: string
+          maxLength: 80
+        versionAlbum:
+          type: string
+          enum:
+            - "Standard"
+            - "Deluxe"
+            - "Limited Edition"
+            - "Special Edition"
+            - "Repackage"
+            - "Mini Album"
+            - "Single"
+        fechaLanzamiento:
+          type: string
+          format: date
+        idioma:
+          type: array
+          items:
+            type: string
+            enum:
+              - "Coreano"
+              - "Japonés"
+              - "Inglés"
+              - "Chino"
+              - "Tailandés"
+              - "Español"
+              - "Otro"
+        duracion:
+          type: string
+          description: "Formato MM:SS o HH:MM:SS"
+          pattern: "^([0-9]{1,2}:)?[0-5]?[0-9]:[0-5][0-9]$"
+        pesoGramos:
+          type: number
+          minimum: 1
+          maximum: 2000
+        precio:
+          type: number
+          minimum: 0
+        stock:
+          type: integer
+          minimum: 0
+        categoria:
+          type: array
+          items:
+            type: string
+            enum:
+              - "K-Pop"
+              - "J-Pop"
+              - "Boy Group"
+              - "Girl Group"
+              - "Solista"
+              - "Ballad"
+              - "Dance"
+              - "R&B"
+              - "Hip-Hop"
+              - "Rock"
+              - "Indie"
+        descripcion:
+          type: string
+          maxLength: 1000
+        fotoAlbum:
+          type: string
+        fechaAdquisicion:
+          type: string
+          format: date
+        fechaLimiteVenta:
+          type: string
+          format: date
+        palabrasClave:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        disponibleVenta:
+          type: boolean
+          readOnly: true
+        diasRestantesVenta:
+          type: integer
+          readOnly: true
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+        - nombreAlbum
+        - artista
+        - versionAlbum
+        - fechaLanzamiento
+        - idioma
+        - duracion
+        - pesoGramos
+        - precio
+        - stock
+        - categoria
+        - descripcion
+        - fotoAlbum
+        - fechaAdquisicion
+        - fechaLimiteVenta
+
+    # Input para crear / PUT (mismos required que el schema)
+    AlbumInput:
+      type: object
+      required:
+        - nombreAlbum
+        - artista
+        - versionAlbum
+        - fechaLanzamiento
+        - idioma
+        - duracion
+        - pesoGramos
+        - precio
+        - stock
+        - categoria
+        - descripcion
+        - fotoAlbum
+        - fechaAdquisicion
+        - fechaLimiteVenta
+      properties:
+        nombreAlbum:
+          type: string
+          maxLength: 100
+        artista:
+          type: string
+          maxLength: 80
+        versionAlbum:
+          type: string
+          enum:
+            - "Standard"
+            - "Deluxe"
+            - "Limited Edition"
+            - "Special Edition"
+            - "Repackage"
+            - "Mini Album"
+            - "Single"
+        fechaLanzamiento:
+          type: string
+          format: date
+        idioma:
+          type: array
+          items:
+            type: string
+            enum:
+              - "Coreano"
+              - "Japonés"
+              - "Inglés"
+              - "Chino"
+              - "Tailandés"
+              - "Español"
+              - "Otro"
+        duracion:
+          type: string
+          pattern: "^([0-9]{1,2}:)?[0-5]?[0-9]:[0-5][0-9]$"
+        pesoGramos:
+          type: number
+          minimum: 1
+          maximum: 2000
+        precio:
+          type: number
+          minimum: 0
+        stock:
+          type: integer
+          minimum: 0
+        categoria:
+          type: array
+          items:
+            type: string
+            enum:
+              - "K-Pop"
+              - "J-Pop"
+              - "Boy Group"
+              - "Girl Group"
+              - "Solista"
+              - "Ballad"
+              - "Dance"
+              - "R&B"
+              - "Hip-Hop"
+              - "Rock"
+              - "Indie"
+        descripcion:
+          type: string
+          maxLength: 1000
+        fotoAlbum:
+          type: string
+        fechaAdquisicion:
+          type: string
+          format: date
+        fechaLimiteVenta:
+          type: string
+          format: date
+
+    # PATCH input (opcional, no required)
+    AlbumPatch:
+      type: object
+      properties:
+        nombreAlbum:
+          type: string
+          maxLength: 100
+        artista:
+          type: string
+          maxLength: 80
+        versionAlbum:
+          type: string
+          enum:
+            - "Standard"
+            - "Deluxe"
+            - "Limited Edition"
+            - "Special Edition"
+            - "Repackage"
+            - "Mini Album"
+            - "Single"
+        fechaLanzamiento:
+          type: string
+          format: date
+        idioma:
+          type: array
+          items:
+            type: string
+            enum:
+              - "Coreano"
+              - "Japonés"
+              - "Inglés"
+              - "Chino"
+              - "Tailandés"
+              - "Español"
+              - "Otro"
+        duracion:
+          type: string
+          pattern: "^([0-9]{1,2}:)?[0-5]?[0-9]:[0-5][0-9]$"
+        pesoGramos:
+          type: number
+          minimum: 1
+          maximum: 2000
+        precio:
+          type: number
+          minimum: 0
+        stock:
+          type: integer
+          minimum: 0
+        categoria:
+          type: array
+          items:
+            type: string
+            enum:
+              - "K-Pop"
+              - "J-Pop"
+              - "Boy Group"
+              - "Girl Group"
+              - "Solista"
+              - "Ballad"
+              - "Dance"
+              - "R&B"
+              - "Hip-Hop"
+              - "Rock"
+              - "Indie"
+        descripcion:
+          type: string
+          maxLength: 1000
+        fotoAlbum:
+          type: string
+        fechaAdquisicion:
+          type: string
+          format: date
+        fechaLimiteVenta:
+          type: string
+          format: date
 
     AlbumListResponse:
       type: object
       properties:
         success:
           type: boolean
-          example: true
+        albums:
+          type: array
+          items:
+            $ref: '#/components/schemas/Album'
+        pagination:
+          type: object
+          properties:
+            page: { type: integer }
+            limit: { type: integer }
+            total: { type: integer }
+            pages: { type: integer }
+            hasNext: { type: boolean }
+            hasPrev: { type: boolean }
+
+    SearchResponse:
+      type: object
+      properties:
+        success: { type: boolean }
         data:
           type: array
           items:
@@ -333,53 +597,34 @@ components:
         pagination:
           type: object
           properties:
-            page:
-              type: integer
-              example: 1
-            limit:
-              type: integer
-              example: 10
-            total:
-              type: integer
-              example: 100
+            page: { type: integer }
+            limit: { type: integer }
+            total: { type: integer }
+            pages: { type: integer }
+        searchQuery: { type: string }
 
     AlbumStatsResponse:
       type: object
       properties:
-        success:
-          type: boolean
-          example: true
+        success: { type: boolean }
         data:
           type: object
           properties:
-            totalAlbumes:
-              type: integer
-              example: 120
-            albumesDisponibles:
-              type: integer
-              example: 100
-            albumesAgotados:
-              type: integer
-              example: 20
+            totalAlbumes: { type: integer }
+            albumesDisponibles: { type: integer }
+            albumesAgotados: { type: integer }
             estadisticasPorCategoria:
               type: array
               items:
                 type: object
                 properties:
-                  _id:
-                    type: string
-                    example: "K-Pop"
-                  count:
-                    type: integer
-                    example: 30
+                  _id: { type: string }
+                  count: { type: integer }
             albumesMasCaros:
               type: array
               items:
                 type: object
                 properties:
-                  nombreAlbum:
-                    type: string
-                  artista:
-                    type: string
-                  precio:
-                    type: number
+                  nombreAlbum: { type: string }
+                  artista: { type: string }
+                  precio: { type: number }
