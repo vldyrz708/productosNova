@@ -21,9 +21,15 @@ const manejoErrores = (error, req, res, next) => {
     // Error de duplicado (índice único)
     if (error.code === 11000) {
         const campo = Object.keys(error.keyValue)[0];
+        let mensaje;
+        if (campo === 'correo') {
+            mensaje = 'Ya existe un usuario con ese correo';
+        } else {
+            mensaje = `Ya existe un álbum con ese ${campo}`;
+        }
         respuestaError = {
             success: false,
-            message: `Ya existe un álbum con ese ${campo}`
+            message: mensaje
         };
         return res.status(400).json(respuestaError);
     }
