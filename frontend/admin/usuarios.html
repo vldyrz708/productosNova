@@ -90,27 +90,32 @@
                     <h5 class="modal-title" id="modalAgregarUsuarioLabel">Agregar Usuario</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="formAgregarUsuario">
+                <form id="formAgregarUsuario" novalidate>
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="nombre" class="form-label">Nombre</label>
-                            <input type="text" class="form-control" id="nombre" required>
+                                <input type="text" class="form-control" id="nombre" placeholder="Ej: María" required>
+                            <div class="invalid-feedback">Ingrese un nombre válido (ej: María).</div>
                         </div>
                         <div class="mb-3">
                             <label for="apellido" class="form-label">Apellidos</label>
-                            <input type="text" class="form-control" id="apellido" required>
+                                <input type="text" class="form-control" id="apellido" placeholder="Ej: Pérez" required>
+                            <div class="invalid-feedback">Ingrese apellidos válidos (ej: Pérez).</div>
                         </div>
                         <div class="mb-3">
                             <label for="edad" class="form-label">Edad</label>
-                            <input type="number" class="form-control" id="edad" min="1" required>
+                                <input type="number" class="form-control" id="edad" placeholder="Ej: 30" min="16" max="99" required>
+                            <div class="invalid-feedback">Ingrese una edad válida entre 16 y 99.</div>
                         </div>
                         <div class="mb-3">
                             <label for="numeroTelefono" class="form-label">Teléfono</label>
-                            <input type="tel" class="form-control" id="numeroTelefono" pattern="[0-9]{7,15}" required>
+                                <input type="tel" class="form-control" id="numeroTelefono" placeholder="Ej: 5512345678" pattern="[0-9]{7,15}" required>
+                            <div class="invalid-feedback">Teléfono inválido. Ejemplo válido: 5512345678</div>
                         </div>
                         <div class="mb-3">
                             <label for="correo" class="form-label">Correo</label>
-                            <input type="email" class="form-control" id="correo" required>
+                                <input type="email" class="form-control" id="correo" placeholder="ejemplo@dominio.com" required>
+                            <div class="invalid-feedback">Ingrese un correo válido (ej: usuario@dominio.com).</div>
                         </div>
                         <div class="mb-3">
                             <label for="rol" class="form-label">Rol</label>
@@ -122,7 +127,8 @@
                         </div>
                         <div class="mb-3">
                             <label for="contrasena" class="form-label">Contraseña</label>
-                            <input type="password" class="form-control" id="contrasena" minlength="6" required>
+                                <input type="password" class="form-control" id="contrasena" placeholder="Mínimo 6 caracteres" minlength="6" required>
+                            <div class="invalid-feedback">Contraseña demasiado corta. Mínimo 6 caracteres.</div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -142,27 +148,32 @@
                     <h5 class="modal-title" id="modalEditarUsuarioLabel">Editar Usuario</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="formEditarUsuario">
+                <form id="formEditarUsuario" novalidate>
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="nombreEditar" class="form-label">Nombre</label>
-                            <input type="text" class="form-control" id="nombreEditar" required>
+                                <input type="text" class="form-control" id="nombreEditar" placeholder="Ej: María" required>
+                            <div class="invalid-feedback">Ingrese un nombre válido (ej: María).</div>
                         </div>
                         <div class="mb-3">
                             <label for="apellidoEditar" class="form-label">Apellidos</label>
-                            <input type="text" class="form-control" id="apellidoEditar" required>
+                                <input type="text" class="form-control" id="apellidoEditar" placeholder="Ej: Pérez" required>
+                            <div class="invalid-feedback">Ingrese apellidos válidos (ej: Pérez).</div>
                         </div>
                         <div class="mb-3">
                             <label for="edadEditar" class="form-label">Edad</label>
-                            <input type="number" class="form-control" id="edadEditar" min="1" required>
+                                <input type="number" class="form-control" id="edadEditar" placeholder="Ej: 30" min="16" max="99" required>
+                            <div class="invalid-feedback">Ingrese una edad válida entre 16 y 99.</div>
                         </div>
                         <div class="mb-3">
                             <label for="numeroTelefonoEditar" class="form-label">Teléfono</label>
-                            <input type="tel" class="form-control" id="numeroTelefonoEditar" pattern="[0-9]{7,15}" required>
+                                <input type="tel" class="form-control" id="numeroTelefonoEditar" placeholder="Ej: 5512345678" pattern="[0-9]{7,15}" required>
+                            <div class="invalid-feedback">Teléfono inválido. Ejemplo válido: 5512345678</div>
                         </div>
                         <div class="mb-3">
                             <label for="correoEditar" class="form-label">Correo</label>
-                            <input type="email" class="form-control" id="correoEditar" required>
+                                <input type="email" class="form-control" id="correoEditar" placeholder="ejemplo@dominio.com" required>
+                            <div class="invalid-feedback">Ingrese un correo válido (ej: usuario@dominio.com).</div>
                         </div>
                         <div class="mb-3">
                             <label for="rolEditar" class="form-label">Rol</label>
@@ -174,7 +185,8 @@
                         </div>
                         <div class="mb-3">
                             <label for="contrasenaEditar" class="form-label">Contraseña</label>
-                            <input type="password" class="form-control" id="contrasenaEditar" minlength="6">
+                                <input type="password" class="form-control" id="contrasenaEditar" placeholder="Opcional — Mínimo 6 caracteres" minlength="6">
+                            <div class="invalid-feedback">Contraseña demasiado corta. Mínimo 6 caracteres.</div>
                         </div>
                     </div>
                     <div class="modal-footer">

@@ -21,6 +21,125 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // ------------------ Validación de formularios ------------------
+  const nameRegex = /^[A-Za-zÁÉÍÓÚáéíóúñÑ\s]{2,}$/;
+
+  function validateName(value) {
+    return nameRegex.test(value.trim());
+  }
+
+  function validateEdad(value) {
+    const n = Number(value);
+    return Number.isInteger(n) && n >= 16 && n <= 99;
+  }
+
+  function validateTelefono(value) {
+    return /^[0-9]{7,15}$/.test(value.trim());
+  }
+
+  function validateEmail(value) {
+    // aprovechamos la validación nativa del input
+    try {
+      return Boolean(value) && /.+@.+\..+/.test(value);
+    } catch { return false; }
+  }
+
+  function validatePassword(value, required) {
+    if (!value) return !required; // si no es requerido y vacío -> válido
+    return value.length >= 6;
+  }
+
+  function setFieldInvalid(input, message) {
+    input.classList.add('is-invalid');
+    input.setCustomValidity(message || '');
+  }
+
+  function clearFieldInvalid(input) {
+    input.classList.remove('is-invalid');
+    input.setCustomValidity('');
+  }
+
+  function validateForm(form, isEdit = false) {
+    let valid = true;
+    const errors = [];
+    const nombre = form.querySelector(isEdit ? '#nombreEditar' : '#nombre');
+    const apellido = form.querySelector(isEdit ? '#apellidoEditar' : '#apellido');
+    const edad = form.querySelector(isEdit ? '#edadEditar' : '#edad');
+    const telefono = form.querySelector(isEdit ? '#numeroTelefonoEditar' : '#numeroTelefono');
+    const correo = form.querySelector(isEdit ? '#correoEditar' : '#correo');
+    const pass = form.querySelector(isEdit ? '#contrasenaEditar' : '#contrasena');
+    const rol = form.querySelector(isEdit ? '#rolEditar' : '#rol');
+
+    // Nombre
+    if (!validateName(nombre.value)) {
+      setFieldInvalid(nombre, 'Nombre inválido. Sólo letras y espacios, mínimo 2 caracteres.');
+      errors.push('Nombre: usa sólo letras y espacios (mínimo 2 caracteres).');
+      valid = false;
+    } else clearFieldInvalid(nombre);
+
+    // Apellido
+    if (!validateName(apellido.value)) {
+      setFieldInvalid(apellido, 'Apellido inválido. Sólo letras y espacios, mínimo 2 caracteres.');
+      errors.push('Apellidos: usa sólo letras y espacios (mínimo 2 caracteres).');
+      valid = false;
+    } else clearFieldInvalid(apellido);
+
+    // Edad
+    if (!validateEdad(edad.value)) {
+      setFieldInvalid(edad, 'Edad fuera de rango. Ingrese 16-99.');
+      errors.push('Edad: debe estar entre 16 y 99 años, sólo números enteros.');
+      valid = false;
+    } else clearFieldInvalid(edad);
+
+    // Teléfono
+    if (!validateTelefono(telefono.value)) {
+      setFieldInvalid(telefono, 'Teléfono inválido. Sólo dígitos (7-15).');
+      errors.push('Teléfono: ingresa sólo números (7 a 15 dígitos) sin espacios ni símbolos.');
+      valid = false;
+    } else clearFieldInvalid(telefono);
+
+    // Correo
+    if (!validateEmail(correo.value)) {
+      setFieldInvalid(correo, 'Correo inválido. Ej: usuario@dominio.com');
+      errors.push('Correo: formato válido requerido (ejemplo@dominio.com).');
+      valid = false;
+    } else clearFieldInvalid(correo);
+
+    // Rol
+    if (!rol.value) {
+      setFieldInvalid(rol, 'Seleccione un rol.');
+      errors.push('Rol: selecciona una opción (Usuario, Gerente o Admin).');
+      valid = false;
+    } else clearFieldInvalid(rol);
+
+    // Password
+    const passRequired = !isEdit; // en editar no es obligatorio
+    if (!validatePassword(pass.value, passRequired)) {
+      setFieldInvalid(pass, 'Contraseña inválida. Mínimo 6 caracteres.');
+      errors.push('Contraseña: mínimo 6 caracteres alfanuméricos.');
+      valid = false;
+    } else clearFieldInvalid(pass);
+
+    if (!valid) {
+      const firstInvalid = form.querySelector('.is-invalid');
+      if (firstInvalid) firstInvalid.focus();
+    }
+    return { valid, errors };
+  }
+
+  // listeners en tiempo real para limpiar mensajes
+  function attachRealtimeValidation() {
+    const inputs = document.querySelectorAll('#formAgregarUsuario input, #formAgregarUsuario select, #formEditarUsuario input, #formEditarUsuario select');
+    inputs.forEach(inp => {
+      inp.addEventListener('input', () => {
+        // limpiar clase y customValidity
+        if (inp.classList.contains('is-invalid')) clearFieldInvalid(inp);
+      });
+    });
+  }
+
+  attachRealtimeValidation();
+
   function renderTabla(users) {
     tabla.innerHTML = '';
     if (!users || users.length === 0) {
@@ -82,6 +201,15 @@ document.addEventListener('DOMContentLoaded', () => {
   if (formAgregar) {
     formAgregar.addEventListener('submit', async (e) => {
       e.preventDefault();
+      // validación previa
+      const { valid, errors } = validateForm(formAgregar, false);
+      if (!valid) {
+        const htmlList = errors.length
+          ? `<ul class="text-start mb-0">${errors.map(err => `<li>${err}</li>`).join('')}</ul>`
+          : 'Corrige los campos marcados en rojo.';
+        Swal.fire({ icon: 'error', title: 'Datos inválidos', html: htmlList });
+        return;
+      }
       const payload = {
         nombre: document.getElementById('nombre').value.trim(),
         apellido: document.getElementById('apellido').value.trim(),
@@ -151,6 +279,15 @@ document.addEventListener('DOMContentLoaded', () => {
     formEditar.addEventListener('submit', async (e) => {
       e.preventDefault();
       if (!usuarioEditandoId) return;
+      // validación previa (en editar la contraseña es opcional)
+      const { valid, errors } = validateForm(formEditar, true);
+      if (!valid) {
+        const htmlList = errors.length
+          ? `<ul class="text-start mb-0">${errors.map(err => `<li>${err}</li>`).join('')}</ul>`
+          : 'Corrige los campos marcados en rojo.';
+        Swal.fire({ icon: 'error', title: 'Datos inválidos', html: htmlList });
+        return;
+      }
       const cambios = {
         nombre: document.getElementById('nombreEditar').value.trim(),
         apellido: document.getElementById('apellidoEditar').value.trim(),
