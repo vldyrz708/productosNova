@@ -1,8 +1,8 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "API Tienda de Ropa",
-    "description": "API para gestionar una tienda de ropa",
+    "title": "API productos de k-pop",
+    "description": "API para gestionar álbumes de k-pop y usuarios en productosNova",
     "version": "1.0.0"
   },
   "host": "localhost:3000",
@@ -443,12 +443,7 @@
             "schema": {
               "type": "object",
               "properties": {
-                "contrasena": {
-                  "example": "any"
-                },
-                "password": {
-                  "example": "any"
-                },
+      
                 "nombre": {
                   "example": "any"
                 },
@@ -465,6 +460,9 @@
                   "example": "any"
                 },
                 "correo": {
+                  "example": "any"
+                },
+                "password": {
                   "example": "any"
                 }
               }
@@ -487,7 +485,7 @@
         }
       }
     },
-    "/api/users/{id}": {
+    "/users/{id}": {
       "get": {
         "description": "",
         "parameters": [
