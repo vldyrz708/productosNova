@@ -251,49 +251,214 @@ main h3 {
    ==========  MODAL PRODUCTO (YA EXISTENTE) ==========
    =========================================================== */
 
-#modalProducto .modal-content {
+#modalProducto .modal-content,
+#modalEditarProducto .modal-content {
+    background: linear-gradient(135deg, #f8fafc 80%, #e3e8ee 100%);
     border-radius: 1.5rem;
-    background-color: #fff;
-    transition: all 0.3s ease-in-out;
+    box-shadow: 0 8px 32px rgba(44, 62, 80, 0.18);
+    padding: 2.5rem 2rem;
+    border: none;
     position: relative;
+    transition: box-shadow 0.3s;
 }
 
-#modalProducto .btn-close {
-    background-color: #f1f1f1;
-    border-radius: 50%;
+#modalProducto .modal-header,
+#modalEditarProducto .modal-header,
+#modalProducto .d-flex,
+#modalEditarProducto .d-flex {
+    border-bottom: none;
+    background: transparent;
+}
+
+#modalProducto .btn-close,
+#modalEditarProducto .btn-close {
+    background: none;
+    font-size: 1.3rem;
     opacity: 0.8;
+    border-radius: 50%;
     transition: 0.2s;
 }
 
-#modalProducto .btn-close:hover {
+#modalProducto .btn-close:hover,
+#modalEditarProducto .btn-close:hover {
     opacity: 1;
     transform: scale(1.1);
 }
 
 #modalProducto .btn-outline-primary,
-#modalProducto .btn-outline-danger {
+#modalProducto .btn-outline-danger,
+#modalEditarProducto .btn-outline-primary,
+#modalEditarProducto .btn-outline-danger {
     border-radius: 8px;
     font-weight: 600;
-    transition: all 0.2s;
+    padding: 6px 18px;
+    font-size: 1rem;
+    transition: background 0.2s, color 0.2s;
 }
 
-#modalProducto .btn-outline-primary:hover {
-    background-color: #0d6efd;
-    color: white;
+#modalProducto .btn-outline-primary:hover,
+#modalEditarProducto .btn-outline-primary:hover {
+    background: #0d6efd;
+    color: #fff;
 }
 
-#modalProducto .btn-outline-danger:hover {
-    background-color: #dc3545;
-    color: white;
+#modalProducto .btn-outline-danger:hover,
+#modalEditarProducto .btn-outline-danger:hover {
+    background: #dc3545;
+    color: #fff;
 }
 
-#modalProducto img {
-    border: 2px solid #e9ecef;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+#modalProducto #contenedorImagen,
+#modalEditarProducto #contenedorImagen {
+    margin-bottom: 1.5rem;
 }
 
-#modalProducto p {
-    font-size: 0.95rem;
-    margin-bottom: 0.4rem;
-    color: #333;
+#modalProducto #modalImagen,
+#modalEditarProducto #modalImagen {
+    border-radius: 1rem;
+    box-shadow: 0 4px 16px rgba(44, 62, 80, 0.12);
+    width: 180px;
+    height: auto;
+    object-fit: cover;
+    margin-bottom: 1rem;
+    border: 2px solid #eaeaea;
+    background: #f3f6fa;
+}
+
+#modalProducto .text-start,
+#modalEditarProducto .text-start {
+    font-size: 1.08rem;
+    color: #222;
+    background: #f8f9fa;
+    border-radius: 1rem;
+    padding: 1.5rem 1.2rem;
+    box-shadow: 0 2px 8px rgba(44, 62, 80, 0.07);
+}
+
+#modalProducto .text-start p,
+#modalEditarProducto .text-start p {
+    margin-bottom: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+}
+
+#modalProducto .text-start strong,
+#modalEditarProducto .text-start strong {
+    color: #0d6efd;
+    font-weight: 700;
+}
+
+@media (max-width: 768px) {
+    #modalProducto .modal-content,
+    #modalEditarProducto .modal-content {
+        padding: 1.2rem 0.5rem;
+    }
+    #modalProducto #modalImagen,
+    #modalEditarProducto #modalImagen {
+        width: 120px;
+    }
+    #modalProducto .text-start,
+    #modalEditarProducto .text-start {
+        padding: 1rem 0.5rem;
+        font-size: 1rem;
+    }
+}
+
+/* ===========================================================
+   ==========  MODAL EDITAR USUARIO ADMIN ==========
+   =========================================================== */
+
+#modalEditarUsuario .modal-content {
+    background: linear-gradient(135deg, #f8fafc 80%, #e3e8ee 100%);
+    border-radius: 1.5rem;
+    box-shadow: 0 8px 32px rgba(44, 62, 80, 0.18);
+    padding: 2.5rem 2rem;
+    border: none;
+    position: relative;
+    transition: box-shadow 0.3s;
+}
+
+#modalEditarUsuario .modal-header {
+    border-bottom: none;
+    background: transparent;
+}
+
+#modalEditarUsuario .btn-close {
+    background: none;
+    font-size: 1.3rem;
+    opacity: 0.8;
+    border-radius: 50%;
+    transition: 0.2s;
+}
+
+#modalEditarUsuario .btn-close:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+#modalEditarUsuario .modal-footer {
+    border-top: none;
+    background: transparent;
+}
+
+#modalEditarUsuario .form-label {
+    font-weight: 600;
+    color: #222;
+}
+
+#modalEditarUsuario .form-control {
+    border-radius: 10px;
+    font-size: 1.05rem;
+    padding: 8px 14px;
+    margin-bottom: 0.5rem;
+    background: #f8f9fa;
+    border: 1px solid #eaeaea;
+    box-shadow: 0 1px 4px rgba(44, 62, 80, 0.06);
+    transition: border-color 0.2s;
+}
+
+#modalEditarUsuario .form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 2px rgba(13,110,253,.15);
+}
+
+#modalEditarUsuario .invalid-feedback {
+    font-size: 0.95em;
+    color: #dc3545;
+    margin-top: 2px;
+    display: block;
+}
+
+#modalEditarUsuario .btn-primary {
+    border-radius: 10px;
+    font-weight: 600;
+    padding: 8px 24px;
+    font-size: 1.08rem;
+    background: #0d6efd;
+    border: none;
+    transition: background 0.2s;
+}
+
+#modalEditarUsuario .btn-primary:hover {
+    background: #0b5ed7;
+}
+
+#modalEditarUsuario .btn-secondary {
+    border-radius: 10px;
+    font-weight: 500;
+    padding: 8px 24px;
+    font-size: 1.08rem;
+    background: #6c757d;
+    border: none;
+    transition: background 0.2s;
+}
+
+#modalEditarUsuario .btn-secondary:hover {
+    background: #495057;
+}
+
+@media (max-width: 768px) {
+    #modalEditarUsuario .modal-content {
+        padding: 1.2rem 0.5rem;
+    }
 }
