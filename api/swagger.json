@@ -332,46 +332,47 @@
             "schema": {
               "type": "object",
               "properties": {
-                "fotoAlbum": {
-                  "example": "any"
-                },
-                "artistaGrupo": {
+                  "nombreAlbum": {
                   "example": "any"
                 },
                 "artista": {
                   "example": "any"
                 },
-                "version": {
-                  "example": "any"
-                },
                 "versionAlbum": {
-                  "example": "any"
-                },
-                "peso": {
-                  "example": "any"
-                },
-                "pesoGramos": {
-                  "example": "any"
-                },
-                "fechaCompra": {
-                  "example": "any"
-                },
-                "fechaAdquisicion": {
-                  "example": "any"
-                },
-                "fechaCaducidad": {
-                  "example": "any"
-                },
-                "fechaLimiteVenta": {
                   "example": "any"
                 },
                 "idioma": {
                   "example": "any"
                 },
+                "duracion": {
+                  "example": "any"
+                },
                 "categoria": {
                   "example": "any"
                 },
+                "descripcion": {
+                  "example": "any"
+                },
                 "precio": {
+                  "example": "any"
+                },
+                "stock": {
+                  "example": "any"
+                },
+                "pesoGramos": {
+                  "example": "any"
+                },
+                "fechaLanzamiento": {
+                  "example": "any"
+                },
+                "fechaAdquisicion": {
+                  "example": "any"
+                },
+                "fechaLimiteVenta": {
+                  "example": "any"
+                },
+                
+                "fotoAlbum": {
                   "example": "any"
                 }
               }
@@ -485,7 +486,7 @@
         }
       }
     },
-    "/users/{id}": {
+    "/api/users/{id}": {
       "get": {
         "description": "",
         "parameters": [
