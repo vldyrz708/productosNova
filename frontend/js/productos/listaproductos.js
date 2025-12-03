@@ -138,9 +138,15 @@ function mostrarModalProducto(producto) {
         elImagen.dataset.rutaOriginal = producto && producto.fotoAlbum ? producto.fotoAlbum : '';
     }
 
-    const setText = (id, value) => {
+    const setText = (id, value, fallback = '—') => {
         const el = document.getElementById(id);
-        if (el) el.textContent = value;
+        if (!el) return;
+        const resolved = (value === undefined || value === null || value === '') ? fallback : value;
+        if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+            el.value = resolved === fallback ? '' : resolved;
+        } else {
+            el.textContent = resolved;
+        }
     };
 
     setText('modalNombre', producto?.nombreAlbum || '—');
@@ -148,20 +154,10 @@ function mostrarModalProducto(producto) {
     setText('modalVersion', producto?.version || '—');
     setText('modalFechaLanzamiento', formatearFecha(producto?.fechaLanzamiento));
     setText('modalIdioma', Array.isArray(producto?.idioma) ? producto.idioma.join(', ') : (producto?.idioma || '—'));
-    setText('modalDuracion', producto?.duracion || '—');
-    setText('modalPeso', producto?.peso ?? '—');
+    setText('modalDuracion', producto?.duracion);
+    setText('modalPeso', producto?.peso);
     setText('modalPrecio', (producto?.precio !== undefined && producto?.precio !== null && producto?.precio !== '') ? `$${producto.precio}` : '—');
-
-    const stockElemento = document.getElementById('modalStock');
-    const stockNumerico = Number(producto?.stock);
-    const tieneNumero = Number.isFinite(stockNumerico);
-    const stockValorMostrar = tieneNumero ? stockNumerico : (producto && producto.stock !== undefined && producto.stock !== null ? producto.stock : '—');
-    if (stockElemento) {
-        stockElemento.textContent = stockValorMostrar;
-        stockElemento.classList.remove('stock-text-available', 'stock-text-out');
-        if (tieneNumero && stockNumerico > 0) stockElemento.classList.add('stock-text-available');
-        else if (tieneNumero && stockNumerico === 0) stockElemento.classList.add('stock-text-out');
-    }
+    setText('modalStock', producto?.stock);
 
     setText('modalCategoria', producto?.categoria || '—');
     setText('modalDescripcion', producto?.descripcion || '—');
