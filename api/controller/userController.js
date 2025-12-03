@@ -1,15 +1,37 @@
 const User = require('../modules/User');
 const bcrypt = require('bcryptjs');
 
+const EDAD_MIN = 16;
+const EDAD_MAX = 99;
+
+function validarEdad(edad) {
+    if (edad === undefined || edad === null || edad === '') {
+        return 'La edad es requerida';
+    }
+    const edadNumero = Number(edad);
+    if (!Number.isInteger(edadNumero)) {
+        return 'La edad debe ser un número entero';
+    }
+    if (edadNumero < EDAD_MIN || edadNumero > EDAD_MAX) {
+        return `La edad debe estar entre ${EDAD_MIN} y ${EDAD_MAX} años`;
+    }
+    return null;
+}
+
 // Crear usuario
 async function crearUsuario(req, res, next) {
     try {
         // Aceptar tanto 'contrasena' como 'password' desde el frontend
         const { nombre, apellido, edad, numeroTelefono, rol, correo } = req.body;
+        const errorEdad = validarEdad(edad);
+        if (errorEdad) {
+            return res.status(400).json({ success: false, message: errorEdad });
+        }
+        const edadNormalizada = Number(edad);
         let password = req.body.contrasena || req.body.password;
         if (!password) return res.status(400).json({ success: false, message: 'La contraseña es requerida' });
 
-        const nuevo = new User({ nombre, apellido, edad, numeroTelefono, rol, correo, password });
+        const nuevo = new User({ nombre, apellido, edad: edadNormalizada, numeroTelefono, rol, correo, password });
         const guardado = await nuevo.save();
         const obj = guardado.toObject();
         delete obj.password;
@@ -46,6 +68,14 @@ async function actualizarUsuario(req, res, next) {
     try {
         const { id } = req.params;
         const cambios = { ...req.body };
+
+        if (cambios.edad !== undefined) {
+            const errorEdad = validarEdad(cambios.edad);
+            if (errorEdad) {
+                return res.status(400).json({ success: false, message: errorEdad });
+            }
+            cambios.edad = Number(cambios.edad);
+        }
         // Si vienen contrasena o password, hashearla antes de actualizar
         let plain = cambios.contrasena || cambios.password;
         if (plain) {

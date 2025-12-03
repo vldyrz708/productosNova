@@ -6,12 +6,14 @@ const albumSchema = new mongoose.Schema({
         type: String,
         required: [true, 'El nombre del álbum es requerido'],
         trim: true,
+        minlength: [2, 'El nombre del álbum debe tener al menos 2 caracteres'],
         maxlength: [100, 'El nombre del álbum no puede exceder los 100 caracteres']
     },
     artista: {
         type: String,
         required: [true, 'El artista/grupo es requerido'],
         trim: true,
+        minlength: [2, 'El nombre del artista debe tener al menos 2 caracteres'],
         maxlength: [80, 'El nombre del artista no puede exceder los 80 caracteres']
     },
     versionAlbum: {
@@ -25,7 +27,18 @@ const albumSchema = new mongoose.Schema({
     },
     fechaLanzamiento: {
         type: Date,
-        required: [true, 'La fecha de lanzamiento es requerida']
+        required: [true, 'La fecha de lanzamiento es requerida'],
+        validate: {
+            validator: function(v) {
+                if (!v) return false;
+                const fecha = new Date(v);
+                const hoy = new Date();
+                hoy.setHours(0, 0, 0, 0);
+                fecha.setHours(0, 0, 0, 0);
+                return fecha <= hoy;
+            },
+            message: 'La fecha de lanzamiento debe ser menor o igual a hoy'
+        }
     },
     idioma: {
         type: [String],
@@ -50,17 +63,26 @@ const albumSchema = new mongoose.Schema({
         type: Number,
         required: [true, 'El peso en gramos es requerido'],
         min: [1, 'El peso debe ser mayor a 0 gramos'],
-        max: [2000, 'El peso no puede exceder los 2000 gramos']
+        max: [2000, 'El peso no puede exceder los 2000 gramos'],
+        validate: {
+            validator: Number.isInteger,
+            message: 'El peso debe ser un número entero'
+        }
     },
     precio: {
         type: Number,
         required: [true, 'El precio es requerido'],
-        min: [0, 'El precio no puede ser negativo']
+        min: [0.01, 'El precio debe ser mayor a 0']
     },
     stock: {
         type: Number,
         required: [true, 'El stock es requerido'],
         min: [0, 'El stock no puede ser negativo'],
+        max: [10000, 'El stock no puede exceder las 10000 unidades'],
+        validate: {
+            validator: Number.isInteger,
+            message: 'El stock debe ser un número entero'
+        },
         default: 0
     },
     categoria: {
@@ -75,7 +97,8 @@ const albumSchema = new mongoose.Schema({
         type: String,
         required: [true, 'La descripción del álbum es requerida'],
         trim: true,
-        maxlength: [1000, 'La descripción no puede exceder los 1000 caracteres']
+        minlength: [10, 'La descripción debe tener al menos 10 caracteres'],
+        maxlength: [500, 'La descripción no puede exceder los 500 caracteres']
     },
     fotoAlbum: {
         type: String,
@@ -85,20 +108,51 @@ const albumSchema = new mongoose.Schema({
     fechaAdquisicion: {
         type: Date,
         required: [true, 'La fecha de adquisición es requerida'],
-        default: Date.now
+        default: Date.now,
+        validate: [
+            {
+                validator: function(v) {
+                    if (!v) return false;
+                    const fecha = new Date(v);
+                    const hoy = new Date();
+                    hoy.setHours(0, 0, 0, 0);
+                    fecha.setHours(0, 0, 0, 0);
+                    return fecha <= hoy;
+                },
+                message: 'La fecha de compra debe ser menor o igual a hoy'
+            },
+            {
+                validator: function(v) {
+                    if (!v || !this.fechaLanzamiento) return true;
+                    const compra = new Date(v);
+                    const lanzamiento = new Date(this.fechaLanzamiento);
+                    compra.setHours(0, 0, 0, 0);
+                    lanzamiento.setHours(0, 0, 0, 0);
+                    return compra >= lanzamiento;
+                },
+                message: 'La fecha de compra debe ser mayor o igual a la fecha de lanzamiento'
+            }
+        ]
     },
     fechaLimiteVenta: {
         type: Date,
         required: [true, 'La fecha límite de venta es requerida'],
         validate: {
             validator: function(v) {
-                // Solo validar en creación o cuando ambas fechas están presentes
-                if (this.isNew || this.fechaAdquisicion) {
-                    return v > this.fechaAdquisicion;
+                if (!v) return false;
+                const limite = new Date(v);
+                const hoy = new Date();
+                limite.setHours(0, 0, 0, 0);
+                hoy.setHours(0, 0, 0, 0);
+                if (limite <= hoy) return false;
+                if (this.fechaAdquisicion) {
+                    const compra = new Date(this.fechaAdquisicion);
+                    compra.setHours(0, 0, 0, 0);
+                    return limite > compra;
                 }
-                return true; // No validar en actualizaciones parciales
+                return true;
             },
-            message: 'La fecha límite de venta debe ser posterior a la fecha de adquisición'
+            message: 'La fecha límite debe ser mayor a la fecha de compra y mayor a hoy'
         }
     },
     // Campos adicionales para búsqueda y filtrado
@@ -106,10 +160,13 @@ const albumSchema = new mongoose.Schema({
         type: [String],
         default: function() {
             // Generar palabras clave automáticamente
+            const nombre = (this.nombreAlbum || '').toLowerCase();
+            const artista = (this.artista || '').toLowerCase();
+            const categorias = Array.isArray(this.categoria) ? this.categoria : [];
             return [
-                this.nombreAlbum.toLowerCase(),
-                this.artista.toLowerCase(),
-                ...this.categoria.map(cat => cat.toLowerCase())
+                nombre,
+                artista,
+                ...categorias.map(cat => (cat || '').toLowerCase())
             ];
         }
     }

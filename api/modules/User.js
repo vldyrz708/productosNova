@@ -8,19 +8,27 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: [true, 'El nombre es requerido'],
         trim: true,
-        maxlength: [50, 'El nombre no puede exceder los 50 caracteres']
+        maxlength: [50, 'El nombre no puede exceder los 50 caracteres'],
+        minlength: [2, 'El nombre debe tener al menos 2 caracteres'],
+        match: [/^[A-Za-zÁÉÍÓÚáéíóúñÑ\s]+$/, 'El nombre sólo puede contener letras y espacios']
     },
     apellido: {
         type: String,
         required: [true, 'El apellido es requerido'],
         trim: true,
-        maxlength: [50, 'El apellido no puede exceder los 50 caracteres']
+        maxlength: [50, 'El apellido no puede exceder los 50 caracteres'],
+        minlength: [2, 'El apellido debe tener al menos 2 caracteres'],
+        match: [/^[A-Za-zÁÉÍÓÚáéíóúñÑ\s]+$/, 'El apellido sólo puede contener letras y espacios']
     },
     edad: {
         type: Number,
         required: [true, 'La edad es requerida'],
-        min: [0, 'La edad no puede ser negativa'],
-        max: [120, 'Edad inválida']
+        min: [16, 'La edad mínima permitida es 16 años'],
+        max: [99, 'La edad máxima permitida es 99 años'],
+        validate: {
+            validator: Number.isInteger,
+            message: 'La edad debe ser un número entero'
+        }
     },
     numeroTelefono: {
         type: String,
@@ -28,10 +36,9 @@ const userSchema = new mongoose.Schema({
         trim: true,
         validate: {
             validator: function(v) {
-                // Permitir distintos formatos; usar validator con locale 'any'
-                return validator.isMobilePhone(v + '', 'any');
+                return /^[0-9]{7,15}$/.test((v || '').trim());
             },
-            message: 'Número de teléfono inválido'
+            message: 'El teléfono debe contener sólo dígitos (7 a 15 caracteres)'
         }
     },
     correo: {

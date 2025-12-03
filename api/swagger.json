@@ -11,6 +11,16 @@
     "http"
   ],
   "paths": {
+    "/swagger.json": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/health": {
       "get": {
         "description": "",
@@ -227,50 +237,63 @@
             "schema": {
               "type": "object",
               "properties": {
-                "nombreAlbum": {
+                "fotoAlbum": {
+                  "example": "any"
+                },
+                "artistaGrupo": {
                   "example": "any"
                 },
                 "artista": {
                   "example": "any"
                 },
+                "version": {
+                  "example": "any"
+                },
                 "versionAlbum": {
                   "example": "any"
                 },
-                "idioma": {
-                  "example": "any"
-                },
-                "duracion": {
-                  "example": "any"
-                },
-                "categoria": {
-                  "example": "any"
-                },
-                "descripcion": {
-                  "example": "any"
-                },
-                "precio": {
-                  "example": "any"
-                },
-                "stock": {
+                "peso": {
                   "example": "any"
                 },
                 "pesoGramos": {
                   "example": "any"
                 },
-                "fechaLanzamiento": {
+                "fechaCompra": {
                   "example": "any"
                 },
                 "fechaAdquisicion": {
                   "example": "any"
                 },
+                "fechaCaducidad": {
+                  "example": "any"
+                },
                 "fechaLimiteVenta": {
                   "example": "any"
                 },
-                
-                "fotoAlbum": {
+                "idioma": {
+                  "example": "any"
+                },
+                "categoria": {
+                  "example": "any"
+                },
+                "precio": {
+                  "example": "any"
+                },
+                "nombreAlbum": {
+                  "example": "any"
+                },
+                "duracion": {
+                  "example": "any"
+                },
+                "stock": {
+                  "example": "any"
+                },
+                "descripcion": {
+                  "example": "any"
+                },
+                "fechaLanzamiento": {
                   "example": "any"
                 }
-                
               }
             }
           }
@@ -332,47 +355,61 @@
             "schema": {
               "type": "object",
               "properties": {
-                  "nombreAlbum": {
+                "fotoAlbum": {
+                  "example": "any"
+                },
+                "artistaGrupo": {
                   "example": "any"
                 },
                 "artista": {
                   "example": "any"
                 },
+                "version": {
+                  "example": "any"
+                },
                 "versionAlbum": {
                   "example": "any"
                 },
-                "idioma": {
-                  "example": "any"
-                },
-                "duracion": {
-                  "example": "any"
-                },
-                "categoria": {
-                  "example": "any"
-                },
-                "descripcion": {
-                  "example": "any"
-                },
-                "precio": {
-                  "example": "any"
-                },
-                "stock": {
+                "peso": {
                   "example": "any"
                 },
                 "pesoGramos": {
                   "example": "any"
                 },
-                "fechaLanzamiento": {
+                "fechaCompra": {
                   "example": "any"
                 },
                 "fechaAdquisicion": {
                   "example": "any"
                 },
+                "fechaCaducidad": {
+                  "example": "any"
+                },
                 "fechaLimiteVenta": {
                   "example": "any"
                 },
-                
-                "fotoAlbum": {
+                "idioma": {
+                  "example": "any"
+                },
+                "categoria": {
+                  "example": "any"
+                },
+                "precio": {
+                  "example": "any"
+                },
+                "nombreAlbum": {
+                  "example": "any"
+                },
+                "duracion": {
+                  "example": "any"
+                },
+                "stock": {
+                  "example": "any"
+                },
+                "descripcion": {
+                  "example": "any"
+                },
+                "fechaLanzamiento": {
                   "example": "any"
                 }
               }
@@ -444,7 +481,12 @@
             "schema": {
               "type": "object",
               "properties": {
-      
+                "contrasena": {
+                  "example": "any"
+                },
+                "password": {
+                  "example": "any"
+                },
                 "nombre": {
                   "example": "any"
                 },
@@ -461,9 +503,6 @@
                   "example": "any"
                 },
                 "correo": {
-                  "example": "any"
-                },
-                "password": {
                   "example": "any"
                 }
               }
@@ -525,6 +564,9 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
           },
           "401": {
             "description": "Unauthorized"

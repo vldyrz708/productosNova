@@ -116,8 +116,8 @@ const procesarFotoAlbum = (req, res, next) => {
         req.body.categoria = [req.body.categoria];
     }
     
-    // Agregar precio por defecto si no viene
-    if (!req.body.precio) {
+    // Agregar precio por defecto solo en creación
+    if (req.method === 'POST' && !req.body.precio) {
         req.body.precio = 0;
     }
     
@@ -213,7 +213,15 @@ const procesarCambiosJSON = (req, res, next) => {
 // @route   PATCH /api/albums/:id
 // @desc    Actualizar cualquier campo de un álbum (con o sin imagen)
 // @access  Private
-router.patch('/:id', validarObjectId, upload.single('fotoAlbum'), procesarFotoAlbum, procesarCambiosJSON, actualizarAlbum);
+router.patch(
+    '/:id',
+    validarObjectId,
+    upload.single('fotoAlbum'),
+    procesarFotoAlbum,
+    procesarCambiosJSON,
+    validarActualizarAlbum,
+    actualizarAlbum
+);
 
 // @route   DELETE /api/albums/:id
 // @desc    Eliminar un álbum permanentemente
