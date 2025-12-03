@@ -481,12 +481,6 @@
             "schema": {
               "type": "object",
               "properties": {
-                "contrasena": {
-                  "example": "any"
-                },
-                "password": {
-                  "example": "any"
-                },
                 "nombre": {
                   "example": "any"
                 },
@@ -499,10 +493,16 @@
                 "numeroTelefono": {
                   "example": "any"
                 },
+                "correo": {
+                  "example": "any"
+                },
                 "rol": {
                   "example": "any"
                 },
-                "correo": {
+                "contrasena": {
+                  "example": "any"
+                },
+                "password": {
                   "example": "any"
                 }
               }
