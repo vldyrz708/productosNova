@@ -1,9 +1,14 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+// const swaggerUi = require('swagger-ui-express');
+//const swaggerDocument = require('./swagger.json');
 
 // Importar conexión a la base de datos
 const conection = require('./database/conection');
+
+//doc de scalar
+const { apiReference } = require('@scalar/express-api-reference');
 
 // Importar middlewares
 const { manejoErrores, rutaNoEncontrada, logRequest, sanitizarEntrada } = require('./middleware/errores');
@@ -59,6 +64,18 @@ conection();
 app.use('/api/albums', albumRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
+
+//documentacion de la api
+app.use(
+  '/doc',
+  apiReference({
+    spec: {url: '/swagger.json',}
+  }),
+)
+
+app.get('/swagger.json', (req, res) => {
+    res.sendFile(path.join(__dirname, 'swagger.json'));
+});
 
 // Endpoint de salud para el frontend
 app.get('/health', (req, res) => {
