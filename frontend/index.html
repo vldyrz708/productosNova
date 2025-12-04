@@ -35,10 +35,13 @@
                     <span class="brand-name fw-bold">K-Bias Merch</span>
                 </a>
 
-                <!-- Botón Iniciar Sesión -->
-                <div class="ms-auto">
+                <!-- Botón Iniciar Sesión y Regístrate -->
+                <div class="ms-auto d-flex gap-2">
                     <button class="btn btn-dark px-4 py-2" id="abrirLogin">
                         <i class="bi bi-person-circle me-1"></i> Iniciar sesión
+                    </button>
+                    <button class="btn btn-dark px-4 py-2" id="abrirRegistro" data-bs-toggle="modal" data-bs-target="#modalRegistroUsuario">
+                        <i class="bi bi-person-plus me-1"></i> Regístrate
                     </button>
                 </div>
 
@@ -56,6 +59,58 @@
         </div>
     </div>
 
+    <!-- MODAL REGISTRO USUARIO -->
+    <div class="modal fade" id="modalRegistroUsuario" tabindex="-1" aria-labelledby="modalRegistroUsuarioLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content registro-card">
+                <div class="modal-header border-0 flex-column align-items-center" style="background: linear-gradient(90deg, #ffb74d 60%, #ffe0b2 100%); color: #222;">
+                    <img src="images/logo.png" alt="Logo" style="width:70px; height:70px; border-radius:12px; margin-bottom:10px; background:#ffb74d;">
+                    <h5 class="modal-title w-100 text-center" id="modalRegistroUsuarioLabel">Registro de Usuario</h5>
+                    <button type="button" class="btn-close position-absolute end-0 top-0 m-3" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <form id="formAgregarUsuario" novalidate>
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label for="nombre" class="form-label">Nombre</label>
+                                <input type="text" class="form-control" id="nombre" placeholder="Ej: María" required>
+                                <div class="invalid-feedback">Ingrese un nombre válido (ej: María).</div>
+                            </div>
+                            <div class="col-12">
+                                <label for="apellido" class="form-label">Apellidos</label>
+                                <input type="text" class="form-control" id="apellido" placeholder="Ej: Pérez" required>
+                                <div class="invalid-feedback">Ingrese apellidos válidos (ej: Pérez).</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="edad" class="form-label">Edad</label>
+                                <input type="number" class="form-control" id="edad" placeholder="Ej: 30" min="16" max="99" required>
+                                <div class="invalid-feedback">Ingrese una edad válida entre 16 y 99.</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="numeroTelefono" class="form-label">Teléfono</label>
+                                <input type="tel" class="form-control" id="numeroTelefono" placeholder="Ej: 5512345678" pattern="[0-9]{7,15}" required>
+                                <div class="invalid-feedback">Teléfono inválido. Ejemplo válido: 5512345678</div>
+                            </div>
+                            <div class="col-12">
+                                <label for="correo" class="form-label">Correo</label>
+                                <input type="email" class="form-control" id="correo" placeholder="ejemplo@dominio.com" required>
+                                <div class="invalid-feedback">Ingrese un correo válido (ej: usuario@dominio.com).</div>
+                            </div>
+                            <div class="col-12">
+                                <label for="contrasena" class="form-label">Contraseña</label>
+                                <input type="password" class="form-control" id="contrasena" placeholder="Mínimo 6 caracteres" minlength="6" required>
+                                <div class="invalid-feedback">Contraseña demasiado corta. Mínimo 6 caracteres.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-between">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-dark">Registrar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <!-- Hero -->
     <section class="hero d-flex flex-column justify-content-center align-items-center text-center">
@@ -85,3 +140,67 @@
 </body>
 
 </html>
+
+<style>
+    .registro-card {
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 8px 32px rgba(34,34,34,0.10);
+        border: 2px solid #222;
+        padding: 2.5rem 2rem 2rem 2rem;
+    }
+    .registro-card .form-label {
+        font-weight: 600;
+        color: #222;
+    }
+    .registro-card .form-control {
+        border-radius: 10px;
+        border: 1.5px solid #222;
+        background: #fff;
+        color: #222;
+        margin-bottom: 1.2rem;
+        box-shadow: 0 2px 4px rgba(34,34,34,0.04);
+        padding: 0.7rem 1rem;
+        font-size: 1rem;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .registro-card .form-control:focus {
+        border-color: #111;
+        box-shadow: 0 0 0 0.2rem rgba(34,34,34,0.13);
+    }
+    .registro-card .btn-dark {
+        background: #222;
+        color: #fff;
+        border: none;
+        font-weight: 600;
+        border-radius: 8px;
+        padding: 0.7rem 2rem;
+        font-size: 1.1rem;
+        transition: background 0.2s, transform 0.2s;
+    }
+    .registro-card .btn-dark:hover {
+        background: #444;
+        color: #fff;
+        transform: scale(1.04);
+    }
+    .registro-card .btn-secondary {
+        border-radius: 8px;
+        padding: 0.7rem 2rem;
+        background: #fff;
+        color: #222;
+        border: 1.5px solid #222;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: background 0.2s, color 0.2s, transform 0.2s;
+    }
+    .registro-card .btn-secondary:hover {
+        background: #222;
+        color: #fff;
+        transform: scale(1.04);
+    }
+    .registro-card .invalid-feedback {
+        color: #222;
+        font-size: 0.95em;
+        transition: opacity 0.2s;
+    }
+</style>
