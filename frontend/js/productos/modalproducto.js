@@ -539,7 +539,7 @@ setTimeout(() => {
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: 'No se pudieron guardar los cambios. Verifica que el servidor esté corriendo.',
+                    text: 'Campos incorrectos, verifica nuevamente',
                     confirmButtonColor: '#212529'
                 });
             });
