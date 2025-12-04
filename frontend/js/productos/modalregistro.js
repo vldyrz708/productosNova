@@ -59,7 +59,6 @@ if (duracionInput) {
         // Al salir del campo, agregar ceros si es necesario y formatear
         let valor = e.target.value.replace(/\D/g, '');
 
-
         if (valor.length > 0) {
             // Rellenar con ceros a la izquierda si es necesario
             valor = valor.padStart(4, '0');
