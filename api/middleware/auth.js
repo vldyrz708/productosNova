@@ -1,6 +1,20 @@
 let jwt;
 const JWT_SECRET = process.env.JWT_SECRET || 'change_this_secret_in_prod';
 
+function wantsHtmlRedirect(req) {
+    const accept = req.headers.accept || '';
+    const isHtml = accept.includes('text/html');
+    const isPageRequest = req.method === 'GET' && !req.path.startsWith('/api');
+    return isHtml && isPageRequest;
+}
+
+function sendUnauthorized(req, res, message, statusCode = 401) {
+    if (wantsHtmlRedirect(req)) {
+        return res.redirect(302, '/index.html');
+    }
+    return res.status(statusCode).json({ success: false, message });
+}
+
 function getTokenFromReq(req) {
     // Authorization header
     const auth = req.headers.authorization;
@@ -28,22 +42,24 @@ function ensureJwtLib(res) {
 async function verifyToken(req, res, next) {
     try {
         const token = getTokenFromReq(req);
-        if (!token) return res.status(401).json({ success: false, message: 'No autorizado' });
+        if (!token) return sendUnauthorized(req, res, 'No autorizado');
         const jwtlib = ensureJwtLib(res);
         if (!jwtlib) return; // ensureJwtLib already responded
         const payload = jwtlib.verify(token, JWT_SECRET);
         req.user = payload; // contains id, role, correo
         next();
     } catch (err) {
-        return res.status(401).json({ success: false, message: 'Token inválido o expirado' });
+        return sendUnauthorized(req, res, 'Token inválido o expirado');
     }
 }
 
 function requireRole(...roles) {
     return (req, res, next) => {
-        if (!req.user) return res.status(401).json({ success: false, message: 'No autorizado' });
+        if (!req.user) return sendUnauthorized(req, res, 'No autorizado');
         if (!roles.includes(req.user.role) && !roles.includes(req.user.rol)) {
-            return res.status(403).json({ success: false, message: 'Acceso denegado' });
+            return wantsHtmlRedirect(req)
+                ? res.redirect(302, '/index.html')
+                : res.status(403).json({ success: false, message: 'Acceso denegado' });
         }
         next();
     };

@@ -5,11 +5,13 @@ const { getTokenFromReq } = require('../middleware/auth');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'change_this_secret_in_prod';
 const COOKIE_NAME = 'token';
+const SESSION_TTL_MS = parseInt(process.env.SESSION_TTL_MS || (60 * 60 * 1000), 10);
+const SESSION_TTL_SECONDS = Math.max(1, Math.floor(SESSION_TTL_MS / 1000));
 const COOKIE_OPTIONS = {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
-    maxAge: 60*60 * 1000
+    maxAge: SESSION_TTL_MS
 };
 
 async function login(req, res, next) {
@@ -33,15 +35,15 @@ async function login(req, res, next) {
         if (!match) return res.status(401).json({ success: false, message: 'Credenciales inválidas' });
 
         const payload = { id: user._id, role: user.rol, correo: user.correo };
-        const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign(payload, JWT_SECRET, { expiresIn: SESSION_TTL_SECONDS });
 
         // Limpiar password antes de enviar user
         const userObj = user.toObject();
         delete userObj.password;
 
-        // Enviar token en cookie httpOnly y en cuerpo (opcional)
+        // Enviar token en cookie httpOnly y en cuerpo 
         res.cookie(COOKIE_NAME, token, COOKIE_OPTIONS);
-        res.json({ success: true, token, user: userObj });
+        res.json({ success: true, token, user: userObj, expiresIn: SESSION_TTL_SECONDS });
     } catch (err) {
         next(err);
     }
