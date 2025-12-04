@@ -114,22 +114,34 @@ document.getElementById('guardarProducto').addEventListener('click', () => {
     let valido = true;
 
     // Validaciones
-    if (!nombreAlbumInput.value.trim() || nombreAlbumInput.value.trim().length < 2 || nombreAlbumInput.value.trim().length > 100) {
-        marcarError(nombreAlbumInput, 'Nombre inválido (2-100 caracteres)');
+    if (!nombreAlbumInput.value.trim()) {
+        marcarError(nombreAlbumInput, 'El nombre del álbum es obligatorio');
+        valido = false;
+    } else if (nombreAlbumInput.value.trim().length < 2) {
+        marcarError(nombreAlbumInput, 'El nombre debe tener al menos 2 caracteres');
+        valido = false;
+    } else if (nombreAlbumInput.value.trim().length > 100) {
+        marcarError(nombreAlbumInput, 'El nombre no puede exceder 100 caracteres');
         valido = false;
     } else {
         marcarExito(nombreAlbumInput);
     }
 
-    if (!artistaGrupoInput.value.trim() || artistaGrupoInput.value.trim().length < 2 || artistaGrupoInput.value.trim().length > 100) {
-        marcarError(artistaGrupoInput, 'Artista inválido (2-100 caracteres)');
+    if (!artistaGrupoInput.value.trim()) {
+        marcarError(artistaGrupoInput, 'El artista/grupo es obligatorio');
+        valido = false;
+    } else if (artistaGrupoInput.value.trim().length < 2) {
+        marcarError(artistaGrupoInput, 'El artista debe tener al menos 2 caracteres');
+        valido = false;
+    } else if (artistaGrupoInput.value.trim().length > 100) {
+        marcarError(artistaGrupoInput, 'El artista no puede exceder 100 caracteres');
         valido = false;
     } else {
         marcarExito(artistaGrupoInput);
     }
 
     if (!versionInput.value.trim()) {
-        marcarError(versionInput, 'Versión requerida');
+        marcarError(versionInput, 'Debe seleccionar una versión del álbum');
         valido = false;
     } else {
         marcarExito(versionInput);
@@ -153,49 +165,82 @@ document.getElementById('guardarProducto').addEventListener('click', () => {
     }
 
     if (!idiomaInput.value.trim()) {
-        marcarError(idiomaInput, 'Idioma requerido');
+        marcarError(idiomaInput, 'Debe seleccionar un idioma');
         valido = false;
     } else {
         marcarExito(idiomaInput);
     }
 
-    if (!duracionInput.value.trim() || duracionInput.value.length !== 4) {
-        marcarError(duracionInput, 'Duración requerida (4 dígitos, ej: 0345)');
+    if (!duracionInput.value.trim()) {
+        marcarError(duracionInput, 'La duración es obligatoria');
+        valido = false;
+    } else if (duracionInput.value.length !== 4) {
+        marcarError(duracionInput, 'Ingrese 4 dígitos (ej: 0345 para 03:45)');
         valido = false;
     } else {
         marcarExito(duracionInput);
     }
 
-    if (!pesoInput.value || isNaN(pesoInput.value) || parseInt(pesoInput.value) < 1 || parseInt(pesoInput.value) > 2000) {
-        marcarError(pesoInput, 'Peso inválido (1-2000 gramos)');
+    if (!pesoInput.value) {
+        marcarError(pesoInput, 'El peso es obligatorio');
+        valido = false;
+    } else if (isNaN(pesoInput.value)) {
+        marcarError(pesoInput, 'El peso debe ser un número válido');
+        valido = false;
+    } else if (parseInt(pesoInput.value) < 1) {
+        marcarError(pesoInput, 'El peso mínimo es 1 gramo');
+        valido = false;
+    } else if (parseInt(pesoInput.value) > 2000) {
+        marcarError(pesoInput, 'El peso máximo es 2000 gramos');
         valido = false;
     } else {
         marcarExito(pesoInput);
     }
 
-    if (!precioInput.value || isNaN(precioInput.value) || parseFloat(precioInput.value) < 0.01) {
-        marcarError(precioInput, 'Precio inválido (debe ser mayor a 0)');
+    if (!precioInput.value) {
+        marcarError(precioInput, 'El precio es obligatorio');
+        valido = false;
+    } else if (isNaN(precioInput.value)) {
+        marcarError(precioInput, 'El precio debe ser un número válido');
+        valido = false;
+    } else if (parseFloat(precioInput.value) < 0.01) {
+        marcarError(precioInput, 'El precio debe ser mayor a 0');
         valido = false;
     } else {
         marcarExito(precioInput);
     }
 
-    if (stockInput.value === '' || isNaN(stockInput.value) || parseInt(stockInput.value) < 0 || parseInt(stockInput.value) > 10000) {
-        marcarError(stockInput, 'Stock inválido (0-10000 unidades)');
+    if (stockInput.value === '') {
+        marcarError(stockInput, 'El stock es obligatorio');
+        valido = false;
+    } else if (isNaN(stockInput.value)) {
+        marcarError(stockInput, 'El stock debe ser un número válido');
+        valido = false;
+    } else if (parseInt(stockInput.value) < 0) {
+        marcarError(stockInput, 'El stock no puede ser negativo');
+        valido = false;
+    } else if (parseInt(stockInput.value) > 10000) {
+        marcarError(stockInput, 'El stock máximo es 10000 unidades');
         valido = false;
     } else {
         marcarExito(stockInput);
     }
 
     if (!categoriaInput.value.trim()) {
-        marcarError(categoriaInput, 'Categoría requerida');
+        marcarError(categoriaInput, 'Debe seleccionar una categoría');
         valido = false;
     } else {
         marcarExito(categoriaInput);
     }
 
-    if (!descripcionInput.value.trim() || descripcionInput.value.trim().length < 10 || descripcionInput.value.trim().length > 500) {
-        marcarError(descripcionInput, 'Descripción inválida (10-500 caracteres)');
+    if (!descripcionInput.value.trim()) {
+        marcarError(descripcionInput, 'La descripción es obligatoria');
+        valido = false;
+    } else if (descripcionInput.value.trim().length < 10) {
+        marcarError(descripcionInput, 'La descripción debe tener al menos 10 caracteres');
+        valido = false;
+    } else if (descripcionInput.value.trim().length > 500) {
+        marcarError(descripcionInput, 'La descripción no puede exceder 500 caracteres');
         valido = false;
     } else {
         marcarExito(descripcionInput);
@@ -242,13 +287,13 @@ document.getElementById('guardarProducto').addEventListener('click', () => {
     // Validar imagen
     const archivoImagen = imagenInput.files[0];
     if (!archivoImagen) {
-        marcarError(imagenInput, 'Selecciona una imagen');
+        marcarError(imagenInput, 'Debe seleccionar una imagen del producto');
         valido = false;
     } else if (!archivoImagen.type.startsWith('image/')) {
-        marcarError(imagenInput, 'Archivo no es imagen');
+        marcarError(imagenInput, 'El archivo debe ser una imagen (jpg, png, gif, webp)');
         valido = false;
     } else if (archivoImagen.size > 5 * 1024 * 1024) {
-        marcarError(imagenInput, 'Imagen demasiado grande (máx 5MB)');
+        marcarError(imagenInput, 'La imagen no puede superar los 5MB');
         valido = false;
     } else {
         marcarExito(imagenInput);
@@ -302,7 +347,11 @@ document.getElementById('guardarProducto').addEventListener('click', () => {
         body: formData
     })
     .then(response => {
-        if (!response.ok) throw new Error('Error al guardar el producto');
+        if (!response.ok) {
+            const error = new Error('Error al guardar el producto');
+            error.response = response;
+            throw error;
+        }
         return response.json();
     })
     .then(data => {
@@ -335,11 +384,41 @@ document.getElementById('guardarProducto').addEventListener('click', () => {
     })
     .catch(error => {
         console.error('Error:', error);
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'No se pudo guardar el producto. Verifica que el servidor esté corriendo.',
-            confirmButtonColor: '#212529'
-        });
+        
+        // Intentar obtener los errores específicos del backend
+        if (error.response) {
+            error.response.json().then(data => {
+                if (data.errores && Array.isArray(data.errores)) {
+                    const listaErrores = data.errores.map(err => `<li>${err}</li>`).join('');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Errores de validación',
+                        html: `<ul class="text-start mb-0">${listaErrores}</ul>`,
+                        confirmButtonColor: '#212529'
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message || 'No se pudo guardar el producto',
+                        confirmButtonColor: '#212529'
+                    });
+                }
+            }).catch(() => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se pudo guardar el producto. Verifica que el servidor esté corriendo.',
+                    confirmButtonColor: '#212529'
+                });
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No se pudo guardar el producto. Verifica que el servidor esté corriendo.',
+                confirmButtonColor: '#212529'
+            });
+        }
     });
 });

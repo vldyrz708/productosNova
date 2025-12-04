@@ -279,16 +279,10 @@
                 "precio": {
                   "example": "any"
                 },
-                "nombreAlbum": {
-                  "example": "any"
-                },
-                "duracion": {
-                  "example": "any"
-                },
                 "stock": {
                   "example": "any"
                 },
-                "descripcion": {
+                "duracion": {
                   "example": "any"
                 },
                 "fechaLanzamiento": {
@@ -396,21 +390,6 @@
                 },
                 "precio": {
                   "example": "any"
-                },
-                "nombreAlbum": {
-                  "example": "any"
-                },
-                "duracion": {
-                  "example": "any"
-                },
-                "stock": {
-                  "example": "any"
-                },
-                "descripcion": {
-                  "example": "any"
-                },
-                "fechaLanzamiento": {
-                  "example": "any"
                 }
               }
             }
@@ -481,6 +460,12 @@
             "schema": {
               "type": "object",
               "properties": {
+                "contrasena": {
+                  "example": "any"
+                },
+                "password": {
+                  "example": "any"
+                },
                 "nombre": {
                   "example": "any"
                 },
@@ -493,16 +478,10 @@
                 "numeroTelefono": {
                   "example": "any"
                 },
-                "correo": {
-                  "example": "any"
-                },
                 "rol": {
                   "example": "any"
                 },
-                "contrasena": {
-                  "example": "any"
-                },
-                "password": {
+                "correo": {
                   "example": "any"
                 }
               }
@@ -564,9 +543,6 @@
         "responses": {
           "200": {
             "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
           },
           "401": {
             "description": "Unauthorized"
