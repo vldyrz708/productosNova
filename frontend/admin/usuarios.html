@@ -36,9 +36,9 @@
                     <span class="brand-name fw-bold">K-Bias Merch</span>
                 </a>
 
-                <!-- Botón Iniciar Sesión -->
+                <!-- Botón Cerrar Sesión -->
                 <div class="ms-auto">
-                    <a href="../index.html" class="btn btn-dark px-4 py-2" id="abrirLogin">
+                    <a href="../index.html" class="btn btn-dark px-4 py-2 btn-logout">
                         <i class="bi bi-box-arrow-right me-1"></i> Cerrar sesión
                     </a>
                 </div>
@@ -222,5 +222,9 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../js/admin/usuarios.js"></script>
     <script src="../js/main.js"></script>
+    <script>
+        // Solo Admin o Gerente pueden ver/gestionar usuarios
+        window.ensureRole(['Admin','Gerente'], '/');
+    </script>
 </body>
 </html>

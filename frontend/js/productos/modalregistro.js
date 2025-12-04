@@ -7,7 +7,7 @@ if (fechaLanzamientoInput) {
     // Fecha de lanzamiento: máximo hoy
     const hoy = new Date().toISOString().split('T')[0];
     fechaLanzamientoInput.setAttribute('max', hoy);
-    
+
     // Cuando cambia fecha de lanzamiento, actualizar mínimo de fecha de compra
     fechaLanzamientoInput.addEventListener('change', (e) => {
         if (e.target.value) {
@@ -21,7 +21,7 @@ if (fechaCompraInput) {
     // Fecha de compra: máximo hoy
     const hoy = new Date().toISOString().split('T')[0];
     fechaCompraInput.setAttribute('max', hoy);
-    
+
     // Cuando cambia fecha de compra, actualizar mínimo de fecha de caducidad
     fechaCompraInput.addEventListener('change', (e) => {
         if (e.target.value) {
@@ -46,27 +46,28 @@ if (duracionInput) {
     duracionInput.addEventListener('input', (e) => {
         // Solo permitir números
         let valor = e.target.value.replace(/\D/g, '');
-        
+
         // Limitar a 4 dígitos
         if (valor.length > 4) {
             valor = valor.slice(0, 4);
         }
-        
+
         e.target.value = valor;
     });
-    
+
     duracionInput.addEventListener('blur', (e) => {
         // Al salir del campo, agregar ceros si es necesario y formatear
         let valor = e.target.value.replace(/\D/g, '');
-        
+
+
         if (valor.length > 0) {
             // Rellenar con ceros a la izquierda si es necesario
             valor = valor.padStart(4, '0');
-            
+
             // Formatear como MM:SS
             const minutos = valor.slice(0, 2);
             const segundos = valor.slice(2, 4);
-            
+
             // Validar que los segundos no sean mayores a 59
             if (parseInt(segundos) > 59) {
                 e.target.value = minutos + '59';
@@ -138,7 +139,7 @@ document.getElementById('guardarProducto').addEventListener('click', () => {
     // Validar fecha de lanzamiento (debe ser menor o igual a hoy)
     const hoy = new Date();
     hoy.setHours(0, 0, 0, 0);
-    
+
     if (!fechaLanzamientoInput.value) {
         marcarError(fechaLanzamientoInput, 'Fecha de lanzamiento requerida');
         valido = false;
@@ -208,7 +209,7 @@ document.getElementById('guardarProducto').addEventListener('click', () => {
     } else {
         const fechaCompra = new Date(fechaCompraInput.value + 'T00:00:00');
         const fechaLanzamiento = new Date(fechaLanzamientoInput.value + 'T00:00:00');
-        
+
         if (fechaCompra < fechaLanzamiento) {
             marcarError(fechaCompraInput, 'Fecha de compra debe ser mayor o igual a fecha de lanzamiento');
             valido = false;
@@ -227,7 +228,7 @@ document.getElementById('guardarProducto').addEventListener('click', () => {
     } else {
         const fechaCaducidad = new Date(fechaCaducidadInput.value + 'T00:00:00');
         const fechaCompra = new Date(fechaCompraInput.value + 'T00:00:00');
-        
+
         if (fechaCaducidad <= fechaCompra) {
             marcarError(fechaCaducidadInput, 'Fecha de caducidad debe ser mayor a fecha de compra');
             valido = false;
@@ -259,12 +260,12 @@ document.getElementById('guardarProducto').addEventListener('click', () => {
     // Validar que no exista un producto con el mismo nombre y artista
     const nombreAlbum = nombreAlbumInput.value.trim().toLowerCase();
     const artistaGrupo = artistaGrupoInput.value.trim().toLowerCase();
-    
-    const productoExistente = productosEnMemoria.find(p => 
-        p.nombreAlbum.toLowerCase() === nombreAlbum && 
+
+    const productoExistente = productosEnMemoria.find(p =>
+        p.nombreAlbum.toLowerCase() === nombreAlbum &&
         p.artistaGrupo.toLowerCase() === artistaGrupo
     );
-    
+
     if (productoExistente) {
         Swal.fire({
             icon: 'warning',
@@ -279,7 +280,7 @@ document.getElementById('guardarProducto').addEventListener('click', () => {
     // Formatear duración con dos puntos (MMSS → MM:SS)
     const duracionFormateada = duracionInput.value.trim();
     const duracionConPuntos = duracionFormateada.slice(0, 2) + ':' + duracionFormateada.slice(2);
-    
+
     const formData = new FormData();
     formData.append('nombreAlbum', nombreAlbumInput.value.trim());
     formData.append('artistaGrupo', artistaGrupoInput.value.trim());
@@ -298,48 +299,48 @@ document.getElementById('guardarProducto').addEventListener('click', () => {
 
     // Enviar a la API
     fetch(API_URL, {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => {
-        if (!response.ok) throw new Error('Error al guardar el producto');
-        return response.json();
-    })
-    .then(data => {
-        console.log('Producto guardado:', data);
-        
-        // Cerrar modal
-        const modal = bootstrap.Modal.getInstance(document.getElementById('modalRegistro'));
-        modal.hide();
-        
-        // Resetear formulario
-        document.getElementById('formRegistroProducto').reset();
-        
-        // Limpiar validaciones
-        document.querySelectorAll('.form-control').forEach(input => {
-            input.classList.remove('is-invalid');
-            input.classList.remove('is-valid');
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Error al guardar el producto');
+            return response.json();
+        })
+        .then(data => {
+            console.log('Producto guardado:', data);
+
+            // Cerrar modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('modalRegistro'));
+            modal.hide();
+
+            // Resetear formulario
+            document.getElementById('formRegistroProducto').reset();
+
+            // Limpiar validaciones
+            document.querySelectorAll('.form-control').forEach(input => {
+                input.classList.remove('is-invalid');
+                input.classList.remove('is-valid');
+            });
+
+            // Recargar productos
+            cargarProductos();
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Producto agregado',
+                text: 'El producto se ha registrado exitosamente',
+                confirmButtonColor: '#212529',
+                timer: 2000,
+                timerProgressBar: true
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No se pudo guardar el producto. Verifica que el servidor esté corriendo.',
+                confirmButtonColor: '#212529'
+            });
         });
-        
-        // Recargar productos
-        cargarProductos();
-        
-        Swal.fire({
-            icon: 'success',
-            title: 'Producto agregado',
-            text: 'El producto se ha registrado exitosamente',
-            confirmButtonColor: '#212529',
-            timer: 2000,
-            timerProgressBar: true
-        });
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'No se pudo guardar el producto. Verifica que el servidor esté corriendo.',
-            confirmButtonColor: '#212529'
-        });
-    });
 });

@@ -1,9 +1,14 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+// const swaggerUi = require('swagger-ui-express');
+//const swaggerDocument = require('./swagger.json');
 
 // Importar conexión a la base de datos
 const conection = require('./database/conection');
+
+//doc de scalar
+const { apiReference } = require('@scalar/express-api-reference');
 
 // Importar middlewares
 const { manejoErrores, rutaNoEncontrada, logRequest, sanitizarEntrada } = require('./middleware/errores');
@@ -11,6 +16,7 @@ const { manejoErrores, rutaNoEncontrada, logRequest, sanitizarEntrada } = requir
 // Importar rutas
 const albumRoutes = require('./routes/albumRoutes');
 const userRoutes = require('./routes/userRoutes');
+const authRoutes = require('./routes/authRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -35,8 +41,20 @@ app.use(sanitizarEntrada);
 
 // Servir archivos estáticos (fotos de álbumes)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// PROTECCIÓN SERVER-SIDE: servir páginas protegidas solo si el usuario está autenticado
+const { verifyToken, requireRole } = require('./middleware/auth');
 
-// Servir archivos estáticos desde la carpeta "frontend"
+// PROTECCIÓN: servir directorios estáticos protegidos mediante middleware
+// Cajero: solo Usuario
+app.use('/cashier', verifyToken, requireRole('Usuario'), express.static(path.join(__dirname, '..', 'frontend', 'cashier')));
+
+// Gerente: Gerente o Admin
+app.use('/gerente', verifyToken, requireRole('Gerente','Admin'), express.static(path.join(__dirname, '..', 'frontend', 'gerente')));
+
+// Admin: solo Admin
+app.use('/admin', verifyToken, requireRole('Admin'), express.static(path.join(__dirname, '..', 'frontend', 'admin')));
+
+// Servir archivos estáticos desde la carpeta "frontend" (públicos)
 app.use(express.static(path.join(__dirname, './../frontend')));
 
 // Conectar a MongoDB
@@ -45,6 +63,19 @@ conection();
 // Rutas
 app.use('/api/albums', albumRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/auth', authRoutes);
+
+//documentacion de la api
+app.use(
+  '/doc',
+  apiReference({
+    spec: {url: '/swagger.json',}
+  }),
+)
+
+app.get('/swagger.json', (req, res) => {
+    res.sendFile(path.join(__dirname, 'swagger.json'));
+});
 
 // Endpoint de salud para el frontend
 app.get('/health', (req, res) => {

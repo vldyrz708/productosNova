@@ -129,44 +129,53 @@ function formatearFecha(fecha) {
 
 // Mostrar modal
 function mostrarModalProducto(producto) {
-    const imagenUrl = producto.fotoAlbum ? `http://localhost:3000/${producto.fotoAlbum}` : '../images/logo.png';
+    // Mantener la versión segura (con comprobaciones de existencia de elementos)
+    const imagenUrl = producto && producto.fotoAlbum ? `http://localhost:3000/${producto.fotoAlbum}` : '../images/logo.png';
 
-    document.getElementById('modalImagen').src = imagenUrl;
-    document.getElementById('modalImagen').dataset.rutaOriginal = producto.fotoAlbum || '';
-    document.getElementById('modalNombre').textContent = producto.nombreAlbum || '—';
-    document.getElementById('modalArtista').textContent = producto.artistaGrupo || '—';
-    document.getElementById('modalVersion').textContent = producto.version || '—';
-    document.getElementById('modalFechaLanzamiento').textContent = formatearFecha(producto.fechaLanzamiento);
-    document.getElementById('modalIdioma').textContent = producto.idioma || '—';
-    document.getElementById('modalDuracion').textContent = producto.duracion || '—';
-    document.getElementById('modalPeso').textContent = producto.peso || '—';
-    document.getElementById('modalPrecio').textContent =
-        producto.precio !== undefined && producto.precio !== null && producto.precio !== '' ?
-        `$${producto.precio}` :
-        '—';
+    const elImagen = document.getElementById('modalImagen');
+    if (elImagen) {
+        elImagen.src = imagenUrl;
+        elImagen.dataset.rutaOriginal = producto && producto.fotoAlbum ? producto.fotoAlbum : '';
+    }
+
+    const setText = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value;
+    };
+
+    setText('modalNombre', producto?.nombreAlbum || '—');
+    setText('modalArtista', producto?.artistaGrupo || '—');
+    setText('modalVersion', producto?.version || '—');
+    setText('modalFechaLanzamiento', formatearFecha(producto?.fechaLanzamiento));
+    setText('modalIdioma', Array.isArray(producto?.idioma) ? producto.idioma.join(', ') : (producto?.idioma || '—'));
+    setText('modalDuracion', producto?.duracion || '—');
+    setText('modalPeso', producto?.peso ?? '—');
+    setText('modalPrecio', (producto?.precio !== undefined && producto?.precio !== null && producto?.precio !== '') ? `$${producto.precio}` : '—');
 
     const stockElemento = document.getElementById('modalStock');
-    const stockNumerico = Number(producto.stock);
-    const tieneNumero = !Number.isNaN(stockNumerico);
-    const stockEsCero = tieneNumero && stockNumerico === 0;
-    const stockEsPositivo = tieneNumero && stockNumerico > 0;
+    const stockNumerico = Number(producto?.stock);
+    const tieneNumero = Number.isFinite(stockNumerico);
+    const stockValorMostrar = tieneNumero ? stockNumerico : (producto && producto.stock !== undefined && producto.stock !== null ? producto.stock : '—');
+    if (stockElemento) {
+        stockElemento.textContent = stockValorMostrar;
+        stockElemento.classList.remove('stock-text-available', 'stock-text-out');
+        if (tieneNumero && stockNumerico > 0) stockElemento.classList.add('stock-text-available');
+        else if (tieneNumero && stockNumerico === 0) stockElemento.classList.add('stock-text-out');
+    }
 
-    const stockTextoModal = tieneNumero ? stockNumerico : (producto.stock || '—');
-    stockElemento.textContent = stockTextoModal;
+    setText('modalCategoria', producto?.categoria || '—');
+    setText('modalDescripcion', producto?.descripcion || '—');
+    setText('modalFechaCompra', formatearFecha(producto?.fechaCompra));
+    setText('modalFechaCaducidad', formatearFecha(producto?.fechaCaducidad));
 
-    stockElemento.classList.remove('stock-text-available', 'stock-text-out');
-    if (stockEsPositivo) stockElemento.classList.add('stock-text-available');
-    else if (stockEsCero) stockElemento.classList.add('stock-text-out');
-
-    document.getElementById('modalCategoria').textContent = producto.categoria || '—';
-    document.getElementById('modalDescripcion').textContent = producto.descripcion || '—';
-    document.getElementById('modalFechaCompra').textContent = formatearFecha(producto.fechaCompra);
-    document.getElementById('modalFechaCaducidad').textContent = formatearFecha(producto.fechaCaducidad);
-
-    document.getElementById('modalProducto').dataset.productoId = producto._id;
-    const modal = new bootstrap.Modal(document.getElementById('modalProducto'));
-    modal.show();
+    const modalProductoEl = document.getElementById('modalProducto');
+    if (modalProductoEl) {
+        modalProductoEl.dataset.productoId = producto?._id || '';
+        const modal = new bootstrap.Modal(modalProductoEl);
+        modal.show();
+    }
 }
+
 
 function agregarProducto(producto) {
     productosEnMemoria.push(producto);

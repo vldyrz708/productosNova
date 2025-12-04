@@ -11,6 +11,7 @@
             <!-- Contenido -->
             <div class="text-center" id="contenedorImagen">
                 <img id="modalImagen" src="../images/logo.png" class="rounded mb-3 shadow-sm" style="width: 150px; height: auto;">
+                <input type="file" id="inputImagen" class="form-control mt-3" accept=".png, .jpg, .jpeg" aria-label="Subir imagen">
             </div>
 
             <div class="text-start mx-auto" style="max-width: 600px;">
@@ -19,10 +20,10 @@
                 <p><strong>Versión:</strong> <span id="modalVersion"></span></p>
                 <p><strong>Fecha de lanzamiento:</strong> <span id="modalFechaLanzamiento"></span></p>
                 <p><strong>Idioma:</strong> <span id="modalIdioma"></span></p>
-                <p><strong>Duración:</strong> <span id="modalDuracion"></span></p>
-                <p><strong>Peso:</strong> <span id="modalPeso"></span></p>
+                <p><strong>Duración:</strong> <input type="number" id="modalDuracion" class="form-control" min="0" step="1"></p>
+                <p><strong>Peso:</strong> <input type="number" id="modalPeso" class="form-control" min="0" step="0.01"></p>
                 <p><strong>Precio:</strong> <span id="modalPrecio"></span></p>
-                <p><strong>Stock:</strong> <span id="modalStock"></span></p>
+                <p><strong>Stock:</strong> <input type="number" id="modalStock" class="form-control" min="0" step="1"></p>
                 <p><strong>Categoría:</strong> <span id="modalCategoria"></span></p>
                 <p><strong>Descripción:</strong> <span id="modalDescripcion"></span></p>
                 <p><strong>Fecha de compra:</strong> <span id="modalFechaCompra"></span></p>
@@ -31,3 +32,35 @@
         </div>
     </div>
 </div>
+
+<script>
+    // Validar campos de solo números y evitar ceros
+    const numericFields = ['modalDuracion', 'modalPeso', 'modalStock'];
+    numericFields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        field.addEventListener('input', () => {
+            if (field.value < 0) {
+                field.value = ''; // Limpiar si el valor es negativo
+                alert('El valor no puede ser negativo.');
+            } else if (/^0+$/.test(field.value)) {
+                field.value = ''; // Limpiar si el valor es solo ceros
+                alert('El valor no puede ser solo ceros.');
+            }
+        });
+    });
+
+    // Validar imagen
+    document.getElementById('inputImagen').addEventListener('change', function (event) {
+        const file = event.target.files[0];
+        if (file) {
+            const validExtensions = ['image/png', 'image/jpeg', 'image/jpg'];
+            if (!validExtensions.includes(file.type)) {
+                alert('Por favor, selecciona un archivo de imagen válido (PNG, JPG, JPEG).');
+                event.target.value = ''; // Limpiar el input
+            } else if (file.size > 5 * 1024 * 1024) { // Limitar tamaño a 5MB
+                alert('El archivo es demasiado grande. El tamaño máximo permitido es de 5MB.');
+                event.target.value = ''; // Limpiar el input
+            }
+        }
+    });
+</script>

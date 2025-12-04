@@ -56,7 +56,7 @@ const userSchema = new mongoose.Schema({
     rol: {
         type: String,
         enum: {
-            values: ['Cajero', 'Usuario', 'Admin', 'Gerente'],
+            values: ['Usuario', 'Admin', 'Gerente'],
             message: 'Rol inválido. Debe ser Cajero, Usuario, Admin o Gerente'
         },
         default: 'Usuario',
