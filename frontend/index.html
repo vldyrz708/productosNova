@@ -136,7 +136,77 @@
 
     <!-- Scripts (solo Bootstrap y tu main.js) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="js/main.js"></script>
+    <script>
+        document.getElementById('formAgregarUsuario').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const nombre = document.getElementById('nombre');
+            const apellido = document.getElementById('apellido');
+            const edad = document.getElementById('edad');
+            const telefono = document.getElementById('numeroTelefono');
+            const correo = document.getElementById('correo');
+            const contrasena = document.getElementById('contrasena');
+
+            let valido = true;
+
+            // Validación de campos vacíos
+            [nombre, apellido, edad, telefono, correo, contrasena].forEach(campo => {
+                if (!campo.value.trim()) {
+                    campo.classList.add('is-invalid');
+                    valido = false;
+                } else {
+                    campo.classList.remove('is-invalid');
+                }
+            });
+
+            // Validación de edad
+            if (edad.value && (isNaN(edad.value) || edad.value < 16 || edad.value > 99)) {
+                edad.classList.add('is-invalid');
+                valido = false;
+            }
+
+            // Validación de teléfono solo números
+            if (telefono.value && !/^\d{7,15}$/.test(telefono.value)) {
+                telefono.classList.add('is-invalid');
+                valido = false;
+            }
+
+            // Validación de correo
+            if (correo.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo.value)) {
+                correo.classList.add('is-invalid');
+                valido = false;
+            }
+
+            // Validación de contraseña
+            if (contrasena.value.length < 6) {
+                contrasena.classList.add('is-invalid');
+                valido = false;
+            }
+
+            if (!valido) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Campos inválidos',
+                    text: 'Por favor, completa correctamente todos los campos.',
+                    confirmButtonColor: '#222'
+                });
+                return;
+            }
+
+            // Si todo es válido, muestra éxito (aquí puedes enviar el formulario por AJAX si lo deseas)
+            Swal.fire({
+                icon: 'success',
+                title: 'Usuario registrado',
+                text: 'El usuario se ha registrado correctamente.',
+                confirmButtonColor: '#222'
+            }).then(() => {
+                document.getElementById('formAgregarUsuario').reset();
+                const modal = bootstrap.Modal.getInstance(document.getElementById('modalRegistroUsuario'));
+                modal.hide();
+            });
+        });
+    </script>
 </body>
 
 </html>
