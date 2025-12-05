@@ -312,6 +312,9 @@ document.getElementById("abrirLogin").addEventListener("click", function() {
                             expiresIn: data.expiresIn
                         }));
 
+                        // Guarda el token en sessionStorage
+                        sessionStorage.setItem('jwtToken', data.token);
+
                         const role = data.user && data.user.rol ? data.user.rol : (data.role || 'Usuario');
                         modal.hide();
                         // Redirigir según rol
