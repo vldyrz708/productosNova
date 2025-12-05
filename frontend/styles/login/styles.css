@@ -1,6 +1,6 @@
-/* Fondo general */
+/* Fondo general para páginas que lo requieran */
 
-body {
+body.login-page {
     margin: 0;
     font-family: Arial, sans-serif;
 }
@@ -27,6 +27,7 @@ body.modal-open {
 
 /* BOTÓN X dentro del recuadro */
 
+/* Cerrar modal login */
 .close-modal {
     position: absolute;
     top: 12px;
@@ -43,7 +44,6 @@ body.modal-open {
 .close-modal:hover {
     transform: scale(1.2);
 }
-
 
 /* Asegura que login-card tenga position relative */
 
