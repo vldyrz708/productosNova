@@ -62,6 +62,26 @@ function configurarFormularioRegistro() {
             contrasena: campos.contrasena?.value || ''
         };
 
+        let tieneVacios = false;
+        Object.entries(campos).forEach(([clave, campo]) => {
+            if (!campo) return;
+            const valor = valores[clave] ?? '';
+            if (!valor) {
+                campo.classList.add('is-invalid');
+                tieneVacios = true;
+            }
+        });
+
+        if (tieneVacios) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Todos los datos son obligatorios',
+                text: 'Completa los campos vacíos antes de continuar.',
+                confirmButtonColor: '#222'
+            });
+            return;
+        }
+
         const errores = [];
 
         const chequeos = [
@@ -114,7 +134,7 @@ function configurarFormularioRegistro() {
             Swal.fire({
                 icon: 'success',
                 title: 'Usuario registrado',
-                text: 'Tu cuenta se creó correctamente. Ahora puedes iniciar sesión.',
+                text: 'Te registraste como usuario estándar. Si requieres otro rol, comunícate con el administrador.',
                 confirmButtonColor: '#222'
             }).then(() => {
                 form.reset();

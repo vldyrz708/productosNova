@@ -20,6 +20,7 @@
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/login/styles.css">
 
     <style>
         .registro-card {
@@ -28,6 +29,10 @@
             box-shadow: 0 8px 32px rgba(34,34,34,0.10);
             border: 2px solid #222;
             padding: 2.5rem 2rem 2rem 2rem;
+            position: relative;
+        }
+        .registro-form {
+            position: relative;
         }
         .registro-card .form-label {
             font-weight: 600;
@@ -127,12 +132,12 @@
     <div class="modal fade" id="modalRegistroUsuario" tabindex="-1" aria-labelledby="modalRegistroUsuarioLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content registro-card">
+                <button type="button" class="close-modal" data-bs-dismiss="modal" aria-label="Cerrar">✕</button>
                 <div class="modal-header border-0 flex-column align-items-center" style="background: linear-gradient(90deg, #ffb74d 60%, #ffe0b2 100%); color: #222;">
                     <img src="images/logo.png" alt="Logo" style="width:70px; height:70px; border-radius:12px; margin-bottom:10px; background:#ffb74d;">
                     <h5 class="modal-title w-100 text-center" id="modalRegistroUsuarioLabel">Registro de Usuario</h5>
-                    <button type="button" class="btn-close position-absolute end-0 top-0 m-3" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
-                <form id="formAgregarUsuario" novalidate>
+                <form id="formAgregarUsuario" class="registro-form" novalidate>
                     <div class="modal-body">
                         <div class="row g-3">
                             <div class="col-12">
