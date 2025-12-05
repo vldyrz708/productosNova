@@ -237,7 +237,9 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (err) {
                 console.error('Logout error', err);
             }
+            // Limpiar datos de sesión y token
             limpiarSesionEnStorage();
+            sessionStorage.removeItem('jwtToken');
             window.location.href = '/';
         });
     });
