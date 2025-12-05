@@ -11,6 +11,8 @@ setTimeout(() => {
 
     // Restaurar estado del modal cuando se cierra
     modalElement.addEventListener('hidden.bs.modal', () => {
+        // Quitar clase de edición al cerrar
+        modalElement.classList.remove('editing');
         // Restaurar todos los inputs y selects a spans si el modal estaba en modo edición
         const campos = modalElement.querySelectorAll('input[data-id-campo], select[data-id-campo]');
         if (campos.length > 0) {
@@ -27,7 +29,7 @@ setTimeout(() => {
         if (contenedorImagen) {
             const labelImagen = contenedorImagen.querySelector('label');
             const inputImagen = document.getElementById('inputEditarImagen');
-            
+
             if (labelImagen) labelImagen.remove();
             if (inputImagen) inputImagen.remove();
         }
@@ -56,64 +58,66 @@ setTimeout(() => {
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-            const productoId = modalElement.dataset.productoId;
-            
-            fetch(`${API_URL}/${productoId}`, {
-                method: 'DELETE'
-            })
-            .then(response => {
-                if (!response.ok) throw new Error('Error al eliminar el producto');
-                return response.json();
-            })
-            .then(data => {
-                console.log('Producto eliminado:', data);
-                
-                const modal = bootstrap.Modal.getInstance(modalElement);
-                modal.hide();
-                
-                // Recargar productos
-                cargarProductos();
-                
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Producto eliminado',
-                    text: 'El producto se ha eliminado correctamente',
-                    confirmButtonColor: '#212529',
-                    timer: 2000,
-                    timerProgressBar: true
-                });
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'No se pudo eliminar el producto. Verifica que el servidor esté corriendo.',
-                    confirmButtonColor: '#212529'
-                });
-            });
+                const productoId = modalElement.dataset.productoId;
+
+                fetch(`${API_URL}/${productoId}`, {
+                        method: 'DELETE'
+                    })
+                    .then(response => {
+                        if (!response.ok) throw new Error('Error al eliminar el producto');
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Producto eliminado:', data);
+
+                        const modal = bootstrap.Modal.getInstance(modalElement);
+                        modal.hide();
+
+                        // Recargar productos
+                        cargarProductos();
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Producto eliminado',
+                            text: 'El producto se ha eliminado correctamente',
+                            confirmButtonColor: '#212529',
+                            timer: 2000,
+                            timerProgressBar: true
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'No se pudo eliminar el producto. Verifica que el servidor esté corriendo.',
+                            confirmButtonColor: '#212529'
+                        });
+                    });
             }
         });
     });
 
     // --- EDITAR PRODUCTO ---
     btnEditar.addEventListener('click', () => {
+        // Marcar modal en modo edición para aplicar estilos específicos
+        modalElement.classList.add('editing');
         const campos = modalElement.querySelectorAll('span[id^="modal"]');
 
         // Guardar valores originales antes de editar
         const valoresOriginales = new Map();
-        
+
         // Agregar input de archivo para cambiar la imagen
         const contenedorImagen = document.getElementById('contenedorImagen');
         const imagenActual = document.getElementById('modalImagen');
-        
+
         // Crear label y input de archivo
         const labelImagen = document.createElement('label');
         labelImagen.textContent = 'Cambiar imagen (opcional):';
         labelImagen.id = 'labelEditarImagen';
         labelImagen.classList.add('form-label', 'text-center', 'd-block', 'mt-2', 'mb-1');
         labelImagen.style.fontSize = '0.9rem';
-        
+
         const inputImagen = document.createElement('input');
         inputImagen.type = 'file';
         inputImagen.accept = 'image/*';
@@ -121,7 +125,7 @@ setTimeout(() => {
         inputImagen.classList.add('form-control', 'form-control-sm', 'mb-2');
         inputImagen.style.maxWidth = '300px';
         inputImagen.style.margin = '0 auto';
-        
+
         // Preview de la nueva imagen
         inputImagen.addEventListener('change', (e) => {
             const archivo = e.target.files[0];
@@ -137,7 +141,7 @@ setTimeout(() => {
                     inputImagen.value = '';
                     return;
                 }
-                
+
                 const reader = new FileReader();
                 reader.onload = (event) => {
                     imagenActual.src = event.target.result;
@@ -145,22 +149,22 @@ setTimeout(() => {
                 reader.readAsDataURL(archivo);
             }
         });
-        
+
         contenedorImagen.appendChild(labelImagen);
         contenedorImagen.appendChild(inputImagen);
-        
+
         // Guardar la ruta original de la imagen
         valoresOriginales.set('imagenOriginal', imagenActual.src);
-        
+
         // Convertir los campos en inputs editables
         campos.forEach(span => {
             const valor = span.textContent.trim();
             let elemento;
-            
+
             // Identificar campos de fecha y configurarlos correctamente
             const camposFecha = ['modalFechaLanzamiento', 'modalFechaCompra', 'modalFechaCaducidad'];
             const camposEnum = ['modalVersion', 'modalIdioma', 'modalCategoria'];
-            
+
             if (camposFecha.includes(span.id)) {
                 elemento = document.createElement('input');
                 elemento.type = 'date';
@@ -168,7 +172,7 @@ setTimeout(() => {
             } else if (camposEnum.includes(span.id)) {
                 // Crear select para campos enum
                 elemento = document.createElement('select');
-                
+
                 // Configurar opciones según el campo
                 if (span.id === 'modalVersion') {
                     elemento.innerHTML = `
@@ -213,26 +217,26 @@ setTimeout(() => {
                 elemento.type = 'text';
                 elemento.value = valor !== '—' ? valor : '';
             }
-            
+
             elemento.classList.add('form-control', 'form-control-sm', 'mb-1');
             elemento.dataset.idCampo = span.id;
-            
+
             // Guardar el valor original
             valoresOriginales.set(span.id, valor);
-            
+
             span.replaceWith(elemento);
         });
-        
+
         // Configurar validaciones de fechas
         const fechaLanzamientoInput = modalElement.querySelector('input[data-id-campo="modalFechaLanzamiento"]');
         const fechaCompraInput = modalElement.querySelector('input[data-id-campo="modalFechaCompra"]');
         const fechaCaducidadInput = modalElement.querySelector('input[data-id-campo="modalFechaCaducidad"]');
-        
+
         if (fechaLanzamientoInput) {
             // Fecha de lanzamiento: máximo hoy
             const hoy = new Date().toISOString().split('T')[0];
             fechaLanzamientoInput.setAttribute('max', hoy);
-            
+
             // Cuando cambia fecha de lanzamiento, actualizar mínimo de fecha de compra
             fechaLanzamientoInput.addEventListener('change', (e) => {
                 if (e.target.value && fechaCompraInput) {
@@ -240,16 +244,16 @@ setTimeout(() => {
                 }
             });
         }
-        
+
         if (fechaCompraInput) {
             // Fecha de compra: máximo hoy, mínimo fecha de lanzamiento
             const hoy = new Date().toISOString().split('T')[0];
             fechaCompraInput.setAttribute('max', hoy);
-            
+
             if (fechaLanzamientoInput && fechaLanzamientoInput.value) {
                 fechaCompraInput.setAttribute('min', fechaLanzamientoInput.value);
             }
-            
+
             // Cuando cambia fecha de compra, actualizar mínimo de fecha de caducidad
             fechaCompraInput.addEventListener('change', (e) => {
                 if (e.target.value && fechaCaducidadInput) {
@@ -260,13 +264,13 @@ setTimeout(() => {
                 }
             });
         }
-        
+
         if (fechaCaducidadInput) {
             // Fecha de caducidad: mínimo mañana
             const manana = new Date();
             manana.setDate(manana.getDate() + 1);
             fechaCaducidadInput.setAttribute('min', manana.toISOString().split('T')[0]);
-            
+
             // Si hay fecha de compra, actualizar mínimo
             if (fechaCompraInput && fechaCompraInput.value) {
                 const fechaCompra = new Date(fechaCompraInput.value);
@@ -300,17 +304,17 @@ setTimeout(() => {
         btnGuardar.addEventListener('click', () => {
             const productoId = modalElement.dataset.productoId;
             const inputs = modalElement.querySelectorAll('input[data-id-campo]');
-            
+
             // Validar fechas antes de guardar
             const fechaLanzamientoInput = modalElement.querySelector('input[data-id-campo="modalFechaLanzamiento"]');
             const fechaCompraInput = modalElement.querySelector('input[data-id-campo="modalFechaCompra"]');
             const fechaCaducidadInput = modalElement.querySelector('input[data-id-campo="modalFechaCaducidad"]');
-            
+
             if (fechaLanzamientoInput && fechaLanzamientoInput.value) {
                 const hoy = new Date();
                 hoy.setHours(0, 0, 0, 0);
                 const fechaLanzamiento = new Date(fechaLanzamientoInput.value + 'T00:00:00');
-                
+
                 if (fechaLanzamiento > hoy) {
                     Swal.fire({
                         icon: 'error',
@@ -321,13 +325,13 @@ setTimeout(() => {
                     return;
                 }
             }
-            
+
             if (fechaCompraInput && fechaCompraInput.value && fechaLanzamientoInput && fechaLanzamientoInput.value) {
                 const fechaLanzamiento = new Date(fechaLanzamientoInput.value + 'T00:00:00');
                 const fechaCompra = new Date(fechaCompraInput.value + 'T00:00:00');
                 const hoy = new Date();
                 hoy.setHours(0, 0, 0, 0);
-                
+
                 if (fechaCompra < fechaLanzamiento) {
                     Swal.fire({
                         icon: 'error',
@@ -337,7 +341,7 @@ setTimeout(() => {
                     });
                     return;
                 }
-                
+
                 if (fechaCompra > hoy) {
                     Swal.fire({
                         icon: 'error',
@@ -348,13 +352,13 @@ setTimeout(() => {
                     return;
                 }
             }
-            
+
             if (fechaCaducidadInput && fechaCaducidadInput.value && fechaCompraInput && fechaCompraInput.value) {
                 const hoy = new Date();
                 hoy.setHours(0, 0, 0, 0);
                 const fechaCompra = new Date(fechaCompraInput.value + 'T00:00:00');
                 const fechaCaducidad = new Date(fechaCaducidadInput.value + 'T00:00:00');
-                
+
                 if (fechaCaducidad <= fechaCompra) {
                     Swal.fire({
                         icon: 'error',
@@ -364,7 +368,7 @@ setTimeout(() => {
                     });
                     return;
                 }
-                
+
                 if (fechaCaducidad <= hoy) {
                     Swal.fire({
                         icon: 'error',
@@ -375,21 +379,21 @@ setTimeout(() => {
                     return;
                 }
             }
-            
+
             // Construir objeto con los cambios - Mapear campos del modal al backend
             const cambios = {};
             // Obtener tanto inputs como selects
             const todosLosCampos = modalElement.querySelectorAll('input[data-id-campo], select[data-id-campo]');
-            
+
             todosLosCampos.forEach(campo => {
                 const modalId = campo.dataset.idCampo; // ej: "modalNombre", "modalArtista"
                 let valor = campo.value.trim();
-                
+
                 // Limpiar el símbolo $ del precio si existe
                 if (modalId === 'modalPrecio' && valor.startsWith('$')) {
                     valor = valor.substring(1).trim();
                 }
-                
+
                 // Mapear IDs del modal a campos del backend
                 const mapaCampos = {
                     'modalNombre': 'nombreAlbum',
@@ -406,29 +410,29 @@ setTimeout(() => {
                     'modalFechaCompra': 'fechaCompra',
                     'modalFechaCaducidad': 'fechaCaducidad'
                 };
-                
+
                 const nombreCampo = mapaCampos[modalId];
                 // Solo agregar si hay un valor válido y no es "—"
                 if (nombreCampo && valor && valor !== '—') {
                     cambios[nombreCampo] = valor;
                 }
             });
-            
+
             // Validar duplicados antes de actualizar (si se cambió nombre o artista)
             if (cambios.nombreAlbum || cambios.artistaGrupo) {
                 // Obtener el elemento actual (puede ser input o span según el estado)
                 const elementoNombre = modalElement.querySelector('[data-id-campo="modalNombre"]') || document.getElementById('modalNombre');
                 const elementoArtista = modalElement.querySelector('[data-id-campo="modalArtista"]') || document.getElementById('modalArtista');
-                
+
                 const nombreAlbumEditar = (cambios.nombreAlbum || (elementoNombre ? (elementoNombre.value || elementoNombre.textContent).trim() : '')).toLowerCase();
                 const artistaGrupoEditar = (cambios.artistaGrupo || (elementoArtista ? (elementoArtista.value || elementoArtista.textContent).trim() : '')).toLowerCase();
-                
-                const productoExistente = productosEnMemoria.find(p => 
+
+                const productoExistente = productosEnMemoria.find(p =>
                     p._id !== productoId &&
-                    p.nombreAlbum.toLowerCase() === nombreAlbumEditar && 
+                    p.nombreAlbum.toLowerCase() === nombreAlbumEditar &&
                     p.artistaGrupo.toLowerCase() === artistaGrupoEditar
                 );
-                
+
                 if (productoExistente) {
                     Swal.fire({
                         icon: 'warning',
@@ -439,7 +443,7 @@ setTimeout(() => {
                     return;
                 }
             }
-            
+
             // Convertir valores numéricos y validar que no sean NaN
             if (Object.prototype.hasOwnProperty.call(cambios, 'stock')) {
                 const stockNum = parseInt(cambios.stock);
@@ -449,7 +453,7 @@ setTimeout(() => {
                     delete cambios.stock;
                 }
             }
-            
+
             if (Object.prototype.hasOwnProperty.call(cambios, 'peso')) {
                 const pesoNum = parseInt(cambios.peso);
                 if (!isNaN(pesoNum)) {
@@ -458,7 +462,7 @@ setTimeout(() => {
                     delete cambios.peso;
                 }
             }
-            
+
             if (Object.prototype.hasOwnProperty.call(cambios, 'precio')) {
                 const precioNum = parseFloat(cambios.precio);
                 if (!isNaN(precioNum)) {
@@ -467,14 +471,14 @@ setTimeout(() => {
                     delete cambios.precio;
                 }
             }
-            
+
             // Verificar si hay una nueva imagen
             const inputImagen = document.getElementById('inputEditarImagen');
             const tieneNuevaImagen = inputImagen && inputImagen.files && inputImagen.files.length > 0;
-            
+
             // Si hay nueva imagen, usar FormData; si no, usar JSON
             let requestBody, headers;
-            
+
             if (tieneNuevaImagen) {
                 // Usar FormData para enviar imagen
                 const formData = new FormData();
@@ -482,7 +486,7 @@ setTimeout(() => {
                     formData.append(key, cambios[key]);
                 });
                 formData.append('fotoAlbum', inputImagen.files[0]);
-                
+
                 requestBody = formData;
                 headers = {}; // No enviar Content-Type, el navegador lo configurará automáticamente
             } else {
@@ -490,59 +494,61 @@ setTimeout(() => {
                 requestBody = JSON.stringify(cambios);
                 headers = { 'Content-Type': 'application/json' };
             }
-            
+
             // Enviar PATCH a la API
             fetch(`${API_URL}/${productoId}`, {
-                method: 'PATCH',
-                headers: headers,
-                body: requestBody
-            })
-            .then(response => {
-                if (!response.ok) throw new Error('Error al actualizar el producto');
-                return response.json();
-            })
-            .then(data => {
-                console.log('Producto actualizado:', data);
-                
-                // Restaurar vista de spans con los valores actualizados
-                todosLosCampos.forEach(campo => {
-                    const span = document.createElement('span');
-                    span.id = campo.dataset.idCampo;
-                    span.textContent = campo.value.trim() || '—';
-                    campo.replaceWith(span);
-                });
+                    method: 'PATCH',
+                    headers: headers,
+                    body: requestBody
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error('Error al actualizar el producto');
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Producto actualizado:', data);
 
-                // Eliminar label e input de imagen
-                const labelImagen = document.getElementById('labelEditarImagen');
-                const inputImagenEliminar = document.getElementById('inputEditarImagen');
-                if (labelImagen) labelImagen.remove();
-                if (inputImagenEliminar) inputImagenEliminar.remove();
+                    // Restaurar vista de spans con los valores actualizados
+                    todosLosCampos.forEach(campo => {
+                        const span = document.createElement('span');
+                        span.id = campo.dataset.idCampo;
+                        span.textContent = campo.value.trim() || '—';
+                        campo.replaceWith(span);
+                    });
 
-                contenedorBotones.remove();
-                btnEditar.style.display = 'inline-block';
-                btnEliminar.style.display = 'inline-block';
-                
-                // Recargar productos
-                cargarProductos();
-                
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Cambios guardados',
-                    text: 'El producto se ha actualizado correctamente',
-                    confirmButtonColor: '#212529',
-                    timer: 2000,
-                    timerProgressBar: true
+                    // Eliminar label e input de imagen
+                    const labelImagen = document.getElementById('labelEditarImagen');
+                    const inputImagenEliminar = document.getElementById('inputEditarImagen');
+                    if (labelImagen) labelImagen.remove();
+                    if (inputImagenEliminar) inputImagenEliminar.remove();
+
+                    contenedorBotones.remove();
+                    btnEditar.style.display = 'inline-block';
+                    btnEliminar.style.display = 'inline-block';
+                    // Salir del modo edición
+                    modalElement.classList.remove('editing');
+
+                    // Recargar productos
+                    cargarProductos();
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Cambios guardados',
+                        text: 'El producto se ha actualizado correctamente',
+                        confirmButtonColor: '#212529',
+                        timer: 2000,
+                        timerProgressBar: true
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Campos incorrectos, verifica nuevamente',
+                        confirmButtonColor: '#212529'
+                    });
                 });
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Campos incorrectos, verifica nuevamente',
-                    confirmButtonColor: '#212529'
-                });
-            });
         });
 
         // --- CANCELAR EDICIÓN ---
@@ -561,18 +567,20 @@ setTimeout(() => {
             if (valoresOriginales.has('imagenOriginal')) {
                 imagenActual.src = valoresOriginales.get('imagenOriginal');
             }
-            
+
             // Eliminar label e input de imagen
             const contenedorImagen = document.getElementById('contenedorImagen');
             const labelImagen = contenedorImagen.querySelector('label');
             const inputImagen = document.getElementById('inputEditarImagen');
-            
+
             if (labelImagen) labelImagen.remove();
             if (inputImagen) inputImagen.remove();
 
             contenedorBotones.remove();
             btnEditar.style.display = 'inline-block';
             btnEliminar.style.display = 'inline-block';
+            // Salir del modo edición
+            modalElement.classList.remove('editing');
         });
     });
 });

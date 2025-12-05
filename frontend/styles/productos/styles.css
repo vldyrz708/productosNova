@@ -364,6 +364,7 @@ main h3 {
     }
 }
 
+
 /* ===========================================================
    ==========  MODAL EDITAR USUARIO ADMIN ==========
    =========================================================== */
@@ -419,7 +420,7 @@ main h3 {
 
 #modalEditarUsuario .form-control:focus {
     border-color: #0d6efd;
-    box-shadow: 0 0 0 2px rgba(13,110,253,.15);
+    box-shadow: 0 0 0 2px rgba(13, 110, 253, .15);
 }
 
 #modalEditarUsuario .invalid-feedback {
@@ -461,4 +462,228 @@ main h3 {
     #modalEditarUsuario .modal-content {
         padding: 1.2rem 0.5rem;
     }
+}
+
+
+/* ======= GRID Y ESTILOS PARA EL MODAL DE PRODUCTO (EDICIÓN ARMÓNICA) ======= */
+
+
+/* Estas reglas solo aplican cuando el modal tiene la clase `editing` para
+   preservar la apariencia original en modo solo lectura. */
+
+#modalProducto.editing .product-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem 1rem;
+    align-items: start;
+}
+
+#modalProducto.editing .product-grid .field {
+    background: transparent;
+    padding: 0.35rem 0.35rem;
+}
+
+#modalProducto.editing .product-grid .field-full {
+    grid-column: 1 / -1;
+}
+
+#modalProducto.editing .product-grid label {
+    display: block;
+    font-size: 0.95rem;
+    margin-bottom: 0.25rem;
+    color: #0d6efd;
+    font-weight: 700;
+}
+
+
+/* Estilos para inputs/select y spans durante la edición (los spans serán
+   normalmente reemplazados por inputs al entrar en edición). */
+
+#modalProducto.editing .product-grid span,
+#modalProducto.editing .product-grid input.form-control,
+#modalProducto.editing .product-grid select.form-control {
+    display: block;
+    font-size: 0.98rem;
+    color: #111;
+    padding: 0.45rem 0.6rem;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 1px 6px rgba(16, 24, 40, 0.04);
+    width: 100%;
+}
+
+@media (max-width: 768px) {
+    #modalProducto.editing .product-grid {
+        grid-template-columns: 1fr;
+    }
+    #modalProducto .modal-content {
+        padding: 1rem 0.8rem;
+    }
+    #modalProducto #modalImagen {
+        width: 140px;
+    }
+}
+
+
+/* CENTRAR LA REJILLA DENTRO DEL MODAL Y AJUSTAR COLUMNAS */
+
+#modalProducto.editing .row.g-3 {
+    justify-content: center;
+}
+
+#modalProducto.editing .col-md-8 {
+    display: flex;
+    justify-content: center;
+    /* centrar la grid dentro de la columna */
+}
+
+#modalProducto.editing .product-grid {
+    max-width: 50px;
+    /* ancho de la rejilla para que quede centrada */
+    margin: 0 auto;
+}
+
+
+/* Ajustes visuales: imagen ligeramente más grande y centrada */
+
+#modalProducto.editing #contenedorImagen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+#modalProducto.editing #modalImagen {
+    width: 200px;
+    height: auto;
+    margin-bottom: 0.6rem;
+}
+
+
+/* Asegurar inputs/toggles ocupen el ancho de la celda */
+
+#modalProducto.editing .product-grid input.form-control,
+#modalProducto.editing .product-grid select.form-control,
+#modalProducto.editing .product-grid textarea.form-control {
+    width: 100%;
+}
+
+
+/* Centrar el bloque de detalles (product-grid) dentro del modal en modo edición */
+
+#modalProducto.editing .text-start {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+#modalProducto.editing .product-grid {
+    width: 100%;
+    max-width: 620px;
+    /* ancho del bloque centrado */
+    margin: 0 auto;
+    padding: 0.8rem 1rem;
+    background: #f8fafc;
+    /* leve fondo para destacar */
+    border-radius: 12px;
+}
+
+#modalProducto.editing .product-grid .field {
+    padding: 0.4rem 0.35rem;
+}
+
+
+/* Aumentar el espacio vertical entre filas y centrar inputs dentro de sus celdas */
+
+#modalProducto.editing .product-grid {
+    grid-row-gap: 1rem;
+    grid-column-gap: 1rem;
+}
+
+
+/* Centrar los botones Guardar/Cancelar cuando se agregan dinámicamente */
+
+#modalProducto.editing .text-start .d-flex.justify-content-center.gap-3.mt-3 {
+    justify-content: center !important;
+    margin-top: 1rem;
+}
+
+
+/* Estilo del botón X grande de cierre */
+
+.modal-exit {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(16, 24, 40, 0.06);
+    color: #333;
+}
+
+.modal-exit:hover {
+    background: #fff;
+    transform: scale(1.04);
+}
+
+
+/* === Además centrar la 'tabla' (product-grid) también en modo lectura/visualización === */
+
+#modalProducto:not(.editing) .text-start {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* centramos contenido */
+    text-align: center;
+    /* centramos textos */
+}
+
+#modalProducto:not(.editing) .product-grid p,
+#modalProducto:not(.editing) .product-grid span {
+    text-align: center !important;
+    /* aseguramos centrado */
+    width: 100%;
+    display: block;
+}
+
+
+/* === CENTRADO REAL DEL GRID EN CUALQUIER MODO === */
+
+#modalProducto .col-md-8 {
+    display: flex;
+    justify-content: center;
+    /* centra horizontal */
+    width: 100%;
+}
+
+#modalProducto .text-start {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+#modalProducto .product-grid {
+    width: 100%;
+    max-width: 620px;
+    margin: 0 auto;
+}
+
+
+/* === Modo edición: misma lógica pero SIN reducir ancho === */
+
+#modalProducto.editing .product-grid {
+    width: 100%;
+    max-width: 620px !important;
+    /* corrige el "50px" */
+    margin: 0 auto;
 }
