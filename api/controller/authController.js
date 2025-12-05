@@ -1,5 +1,6 @@
 const User = require('../modules/User');
 const bcrypt = require('bcryptjs');
+const validator = require('validator');
 let jwt;
 const { getTokenFromReq } = require('../middleware/auth');
 
@@ -13,6 +14,40 @@ const COOKIE_OPTIONS = {
     sameSite: 'lax',
     maxAge: SESSION_TTL_MS
 };
+const NAME_REGEX = /^[A-Za-zÁÉÍÓÚáéíóúñÑ\s]+$/;
+const PHONE_REGEX = /^\d{7,15}$/;
+const EDAD_MIN = 16;
+const EDAD_MAX = 99;
+
+function normalizarCorreo(correo = '') {
+    return (correo || '').trim().toLowerCase();
+}
+
+function validarDatosRegistro({ nombre, apellido, edad, numeroTelefono, correo, password }) {
+    if (!nombre || !NAME_REGEX.test(nombre)) return 'El nombre sólo puede contener letras y espacios';
+    if (!apellido || !NAME_REGEX.test(apellido)) return 'El apellido sólo puede contener letras y espacios';
+
+    if (edad === undefined || edad === null || edad === '') return 'La edad es requerida';
+    if (!Number.isInteger(Number(edad))) return 'La edad debe ser un número entero';
+    const edadNumero = Number(edad);
+    if (edadNumero < EDAD_MIN || edadNumero > EDAD_MAX) {
+        return `La edad debe estar entre ${EDAD_MIN} y ${EDAD_MAX} años`;
+    }
+
+    if (!numeroTelefono || !PHONE_REGEX.test(numeroTelefono)) {
+        return 'El teléfono sólo puede contener dígitos (7 a 15 caracteres)';
+    }
+
+    if (!correo || !validator.isEmail(correo)) {
+        return 'Ingresa un correo válido';
+    }
+
+    if (!password || typeof password !== 'string' || password.length < 6) {
+        return 'La contraseña debe tener al menos 6 caracteres';
+    }
+
+    return null;
+}
 
 async function login(req, res, next) {
     try {
@@ -54,6 +89,54 @@ function logout(req, res) {
     res.json({ success: true, message: 'Sesión cerrada' });
 }
 
+async function register(req, res, next) {
+    try {
+        const payload = {
+            nombre: (req.body.nombre || '').trim(),
+            apellido: (req.body.apellido || '').trim(),
+            edad: req.body.edad,
+            numeroTelefono: (req.body.numeroTelefono || '').trim(),
+            correo: normalizarCorreo(req.body.correo),
+            password: req.body.contrasena || req.body.password
+        };
+
+        const error = validarDatosRegistro(payload);
+        if (error) {
+            return res.status(400).json({ success: false, message: error });
+        }
+
+        const correoExistente = await User.findOne({ correo: payload.correo });
+        if (correoExistente) {
+            return res.status(409).json({ success: false, message: 'El correo ya está registrado' });
+        }
+
+        const nuevoUsuario = new User({
+            nombre: payload.nombre,
+            apellido: payload.apellido,
+            edad: Number(payload.edad),
+            numeroTelefono: payload.numeroTelefono,
+            correo: payload.correo,
+            password: payload.password,
+            rol: 'Usuario'
+        });
+
+        const guardado = await nuevoUsuario.save();
+        const userObj = guardado.toObject();
+        delete userObj.password;
+
+        return res.status(201).json({ success: true, message: 'Registro exitoso', user: userObj });
+    } catch (err) {
+        if (err && err.code === 11000 && err.keyPattern && err.keyPattern.correo) {
+            return res.status(409).json({ success: false, message: 'El correo ya está registrado' });
+        }
+        if (err && err.name === 'ValidationError') {
+            const mensaje = Object.values(err.errors)[0]?.message || 'Datos inválidos';
+            return res.status(400).json({ success: false, message: mensaje });
+        }
+        next(err);
+    }
+}
+
 async function me(req, res) {
     try {
         // Obtener token desde cookie o header
@@ -70,4 +153,4 @@ async function me(req, res) {
     }
 }
 
-module.exports = { login, logout, me };
+module.exports = { login, logout, me, register };

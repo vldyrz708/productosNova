@@ -15,7 +15,7 @@ body.modal-open {
 
 /* ─────────────── MODAL SIN FONDO BLANCO ─────────────── */
 
-.modal-content {
+.login-shell {
     background: transparent !important;
     box-shadow: none !important;
     border: none !important;
