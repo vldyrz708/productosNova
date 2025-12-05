@@ -2,7 +2,7 @@
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content p-4 border-0 shadow-lg rounded-4 position-relative">
             <!-- Encabezado con botones -->
-            <div class="d-flex justify-content-end align-items-center mb-3">
+            <div class="modal-toolbar d-flex justify-content-end align-items-center mb-3">
                 <button id="btnEditar" class="btn btn-outline-primary btn-sm me-2">Editar</button>
                 <button id="btnEliminar" class="btn btn-outline-danger btn-sm me-3">Eliminar</button>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
@@ -12,27 +12,30 @@
             <button type="button" class="modal-exit" data-bs-dismiss="modal" aria-label="Cerrar">×</button>
 
             <!-- Contenido -->
-            <div class="text-center" id="contenedorImagen">
-                <img id="modalImagen" src="../images/logo.png" class="rounded mb-3 shadow-sm" style="width: 150px; height: auto;">
-            </div>
+            <div class="product-modal-body">
+                <div class="product-media" id="contenedorImagen">
+                    <div class="media-frame">
+                        <img id="modalImagen" src="../images/logo.png" alt="Portada del álbum" class="rounded mb-3 shadow-sm">
+                    </div>
+                    <p class="media-note">Explora la ficha completa del producto antes de tomar acciones.</p>
+                </div>
 
-            <!-- Columna derecha: detalles y área de edición -> mantener clase text-start para compatibilidad con JS -->
-            <div class="col-md-8">
-                <div class="text-start">
+                <!-- Columna derecha: detalles y área de edición -> mantener clase text-start para compatibilidad con JS -->
+                <div class="product-info text-start">
                     <div class="product-grid">
-                        <div class="field"><label class="fw-bold">Nombre del álbum</label><span id="modalNombre"></span></div>
-                        <div class="field"><label class="fw-bold">Artista / Grupo</label><span id="modalArtista"></span></div>
-                        <div class="field"><label class="fw-bold">Versión</label><span id="modalVersion"></span></div>
-                        <div class="field"><label class="fw-bold">Fecha de lanzamiento</label><span id="modalFechaLanzamiento"></span></div>
-                        <div class="field"><label class="fw-bold">Idioma</label><span id="modalIdioma"></span></div>
-                        <div class="field"><label class="fw-bold">Duración</label><span id="modalDuracion"></span></div>
-                        <div class="field"><label class="fw-bold">Peso</label><span id="modalPeso"></span></div>
-                        <div class="field"><label class="fw-bold">Precio</label><span id="modalPrecio"></span></div>
-                        <div class="field"><label class="fw-bold">Stock</label><span id="modalStock"></span></div>
-                        <div class="field"><label class="fw-bold">Categoría</label><span id="modalCategoria"></span></div>
-                        <div class="field field-full"><label class="fw-bold">Descripción</label><span id="modalDescripcion"></span></div>
-                        <div class="field"><label class="fw-bold">Fecha de compra</label><span id="modalFechaCompra"></span></div>
-                        <div class="field"><label class="fw-bold">Fecha límite de venta</label><span id="modalFechaCaducidad"></span></div>
+                        <div class="field" data-field="nombre"><label class="fw-bold">Nombre del álbum</label><span id="modalNombre"></span></div>
+                        <div class="field" data-field="artista"><label class="fw-bold">Artista / Grupo</label><span id="modalArtista"></span></div>
+                        <div class="field" data-field="version"><label class="fw-bold">Versión</label><span id="modalVersion"></span></div>
+                        <div class="field" data-field="lanzamiento"><label class="fw-bold">Fecha de lanzamiento</label><span id="modalFechaLanzamiento"></span></div>
+                        <div class="field" data-field="idioma"><label class="fw-bold">Idioma</label><span id="modalIdioma"></span></div>
+                        <div class="field" data-field="duracion"><label class="fw-bold">Duración</label><span id="modalDuracion"></span></div>
+                        <div class="field field-pill" data-field="categoria"><label class="fw-bold">Categoría</label><span id="modalCategoria"></span></div>
+                        <div class="field" data-field="peso"><label class="fw-bold">Peso</label><span id="modalPeso"></span></div>
+                        <div class="field field-pill" data-field="precio"><label class="fw-bold">Precio</label><span id="modalPrecio"></span></div>
+                        <div class="field field-pill" data-field="stock"><label class="fw-bold">Stock</label><span id="modalStock"></span></div>
+                        <div class="field field-full field-description"><label class="fw-bold">Descripción</label><span id="modalDescripcion"></span></div>
+                        <div class="field" data-field="compra"><label class="fw-bold">Fecha de compra</label><span id="modalFechaCompra"></span></div>
+                        <div class="field" data-field="caducidad"><label class="fw-bold">Fecha límite de venta</label><span id="modalFechaCaducidad"></span></div>
                     </div>
                     <!-- Los botones Guardar/Cancelar se insertan dinámicamente por JS dentro de este .text-start -->
                 </div>

@@ -1,3 +1,183 @@
+const PRODUCTOS_CHANNEL_NAME = 'productos-sync';
+let canalProductosModal;
+function notificarProductoCambio(tipo, payload = null) {
+    if (window.productosSync?.notificar) {
+        window.productosSync.notificar(tipo, payload);
+        return;
+    }
+    if (typeof BroadcastChannel === 'undefined') return;
+    if (!canalProductosModal) {
+        canalProductosModal = new BroadcastChannel(PRODUCTOS_CHANNEL_NAME);
+    }
+    canalProductosModal.postMessage({ tipo, payload, emisor: 'modal-producto' });
+}
+
+const DURACION_EDICION_REGEX = /^\d{1,4}$/;
+const SOLO_NUMEROS_REGEX = /^\d+$/;
+const SOLO_TEXTO_REGEX = /^[a-zA-ZÁÉÍÓÚáéíóúñÑüÜ\s.,;:¡!¿?()'"-]+$/;
+
+function obtenerCampoEditable(modalElement, campoId) {
+    if (!modalElement) return null;
+    return modalElement.querySelector(`input[data-id-campo="${campoId}"]`);
+}
+
+function mostrarErrorCampo(mensaje, input) {
+    if (input) {
+        input.classList.add('is-invalid');
+        input.focus();
+    }
+    Swal.fire({
+        icon: 'warning',
+        title: 'Revisa los campos',
+        text: mensaje,
+        confirmButtonColor: '#212529'
+    });
+}
+
+function aplicarRestriccionesCampos(modalElement) {
+    const duracionInput = obtenerCampoEditable(modalElement, 'modalDuracion');
+    if (duracionInput) {
+        duracionInput.setAttribute('inputmode', 'numeric');
+        duracionInput.setAttribute('maxlength', '4');
+        duracionInput.placeholder = 'Ej: 0345';
+        duracionInput.value = duracionInput.value.replace(/\D/g, '').slice(0, 4);
+        duracionInput.classList.remove('is-invalid');
+        duracionInput.addEventListener('input', (e) => {
+            let valor = e.target.value.replace(/\D/g, '');
+            if (valor.length > 4) {
+                valor = valor.slice(0, 4);
+            }
+            e.target.value = valor;
+            e.target.classList.remove('is-invalid');
+        });
+        duracionInput.addEventListener('blur', (e) => {
+            let valor = e.target.value.replace(/\D/g, '');
+            if (valor.length) {
+                valor = valor.padStart(4, '0').slice(-4);
+                e.target.value = valor;
+            }
+        });
+    }
+
+    const pesoInput = obtenerCampoEditable(modalElement, 'modalPeso');
+    if (pesoInput) {
+        pesoInput.setAttribute('inputmode', 'numeric');
+        pesoInput.addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/\D/g, '');
+            e.target.classList.remove('is-invalid');
+        });
+    }
+
+    const precioInput = obtenerCampoEditable(modalElement, 'modalPrecio');
+    if (precioInput) {
+        precioInput.setAttribute('inputmode', 'numeric');
+        precioInput.addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/\D/g, '');
+            e.target.classList.remove('is-invalid');
+        });
+    }
+
+    const stockInput = obtenerCampoEditable(modalElement, 'modalStock');
+    if (stockInput) {
+        stockInput.setAttribute('inputmode', 'numeric');
+        stockInput.addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/\D/g, '');
+            e.target.classList.remove('is-invalid');
+        });
+    }
+
+    const descripcionInput = obtenerCampoEditable(modalElement, 'modalDescripcion');
+    if (descripcionInput) {
+        descripcionInput.setAttribute('maxlength', '500');
+        descripcionInput.addEventListener('input', (e) => {
+            const filtrado = e.target.value.replace(/[^a-zA-ZÁÉÍÓÚáéíóúñÑüÜ\s.,;:¡!¿?()'"-]/g, '');
+            if (filtrado !== e.target.value) {
+                e.target.value = filtrado;
+            }
+            e.target.classList.remove('is-invalid');
+        });
+        descripcionInput.addEventListener('blur', (e) => {
+            e.target.value = e.target.value.replace(/\s+/g, ' ').trim();
+        });
+    }
+}
+
+function validarCamposEspeciales(modalElement) {
+    const duracionInput = obtenerCampoEditable(modalElement, 'modalDuracion');
+    if (duracionInput) {
+        const valorDuracion = duracionInput.value.trim();
+        if (!valorDuracion) {
+            mostrarErrorCampo('La duración no puede estar vacía.', duracionInput);
+            return false;
+        }
+        if (!DURACION_EDICION_REGEX.test(valorDuracion)) {
+            mostrarErrorCampo('La duración solo acepta números y un máximo de 4 dígitos.', duracionInput);
+            return false;
+        }
+    }
+
+    const pesoInput = obtenerCampoEditable(modalElement, 'modalPeso');
+    if (pesoInput) {
+        const valorPeso = pesoInput.value.trim();
+        if (!valorPeso) {
+            mostrarErrorCampo('El peso no puede estar vacío.', pesoInput);
+            return false;
+        }
+        if (!SOLO_NUMEROS_REGEX.test(valorPeso)) {
+            mostrarErrorCampo('El peso solo acepta números.', pesoInput);
+            return false;
+        }
+    }
+
+    const descripcionInput = obtenerCampoEditable(modalElement, 'modalDescripcion');
+    if (descripcionInput) {
+        const valorDescripcion = descripcionInput.value.trim();
+        if (!valorDescripcion) {
+            mostrarErrorCampo('La descripción no puede estar vacía.', descripcionInput);
+            return false;
+        }
+        if (!SOLO_TEXTO_REGEX.test(valorDescripcion)) {
+            mostrarErrorCampo('La descripción solo puede contener texto (letras y signos básicos).', descripcionInput);
+            return false;
+        }
+    }
+
+    const precioInput = obtenerCampoEditable(modalElement, 'modalPrecio');
+    if (precioInput) {
+        const valorPrecio = precioInput.value.trim();
+        if (!valorPrecio) {
+            mostrarErrorCampo('El precio no puede estar vacío.', precioInput);
+            return false;
+        }
+        if (!SOLO_NUMEROS_REGEX.test(valorPrecio)) {
+            mostrarErrorCampo('El precio solo acepta números.', precioInput);
+            return false;
+        }
+    }
+
+    const stockInput = obtenerCampoEditable(modalElement, 'modalStock');
+    if (stockInput) {
+        const valorStock = stockInput.value.trim();
+        if (!valorStock) {
+            mostrarErrorCampo('El stock no puede estar vacío.', stockInput);
+            return false;
+        }
+        if (!SOLO_NUMEROS_REGEX.test(valorStock)) {
+            mostrarErrorCampo('El stock solo acepta números.', stockInput);
+            return false;
+        }
+    }
+
+    return true;
+}
+
+function formatearDuracionParaGuardar(valor) {
+    const digitos = valor.replace(/\D/g, '');
+    if (!digitos) return '';
+    const normalizado = digitos.padStart(4, '0').slice(-4);
+    return `${normalizado.slice(0, 2)}:${normalizado.slice(2)}`;
+}
+
 // Esperar a que el DOM esté listo
 setTimeout(() => {
     const btnEditar = document.getElementById('btnEditar');
@@ -19,7 +199,17 @@ setTimeout(() => {
             campos.forEach(campo => {
                 const span = document.createElement('span');
                 span.id = campo.dataset.idCampo;
-                span.textContent = campo.value.trim() || '—';
+                let valorCampo = campo.value.trim();
+                if (campo.dataset.idCampo === 'modalDuracion') {
+                    valorCampo = formatearDuracionParaGuardar(valorCampo);
+                } else if (campo.dataset.idCampo === 'modalDescripcion') {
+                    valorCampo = valorCampo.replace(/\s+/g, ' ').trim();
+                } else if (campo.dataset.idCampo === 'modalPrecio') {
+                    valorCampo = valorCampo.replace(/\D/g, '');
+                } else if (campo.dataset.idCampo === 'modalStock') {
+                    valorCampo = valorCampo.replace(/\D/g, '');
+                }
+                span.textContent = valorCampo || '—';
                 campo.replaceWith(span);
             });
         }
@@ -73,8 +263,11 @@ setTimeout(() => {
                         const modal = bootstrap.Modal.getInstance(modalElement);
                         modal.hide();
 
-                        // Recargar productos
-                        cargarProductos();
+                        // Recargar productos y notificar
+                        if (typeof cargarProductos === 'function') {
+                            cargarProductos();
+                        }
+                        notificarProductoCambio('producto-eliminado', { id: productoId });
 
                         Swal.fire({
                             icon: 'success',
@@ -158,7 +351,10 @@ setTimeout(() => {
 
         // Convertir los campos en inputs editables
         campos.forEach(span => {
-            const valor = span.textContent.trim();
+            let valor = span.textContent.trim();
+            if (span.id === 'modalPrecio' || span.id === 'modalPeso' || span.id === 'modalStock') {
+                valor = valor.replace(/[^0-9]/g, '');
+            }
             let elemento;
 
             // Identificar campos de fecha y configurarlos correctamente
@@ -226,6 +422,8 @@ setTimeout(() => {
 
             span.replaceWith(elemento);
         });
+
+        aplicarRestriccionesCampos(modalElement);
 
         // Configurar validaciones de fechas
         const fechaLanzamientoInput = modalElement.querySelector('input[data-id-campo="modalFechaLanzamiento"]');
@@ -380,6 +578,10 @@ setTimeout(() => {
                 }
             }
 
+            if (!validarCamposEspeciales(modalElement)) {
+                return;
+            }
+
             // Construir objeto con los cambios - Mapear campos del modal al backend
             const cambios = {};
             // Obtener tanto inputs como selects
@@ -392,6 +594,16 @@ setTimeout(() => {
                 // Limpiar el símbolo $ del precio si existe
                 if (modalId === 'modalPrecio' && valor.startsWith('$')) {
                     valor = valor.substring(1).trim();
+                }
+
+                if (modalId === 'modalDuracion') {
+                    valor = formatearDuracionParaGuardar(valor);
+                } else if (modalId === 'modalDescripcion') {
+                    valor = valor.replace(/\s+/g, ' ').trim();
+                } else if (modalId === 'modalPrecio') {
+                    valor = valor.replace(/\D/g, '');
+                } else if (modalId === 'modalStock') {
+                    valor = valor.replace(/\D/g, '');
                 }
 
                 // Mapear IDs del modal a campos del backend
@@ -501,9 +713,25 @@ setTimeout(() => {
                     headers: headers,
                     body: requestBody
                 })
-                .then(response => {
-                    if (!response.ok) throw new Error('Error al actualizar el producto');
-                    return response.json();
+                .then(async response => {
+                    let respuestaJson = null;
+                    try {
+                        respuestaJson = await response.json();
+                    } catch (_err) {
+                        respuestaJson = null;
+                    }
+
+                    if (!response.ok) {
+                        const errores = Array.isArray(respuestaJson?.errores) ? respuestaJson.errores : null;
+                        const mensaje = respuestaJson?.message || 'No se pudo actualizar el producto. Corrige los datos e inténtalo nuevamente.';
+                        throw {
+                            esValidacion: !!errores,
+                            errores,
+                            mensaje
+                        };
+                    }
+
+                    return respuestaJson || {};
                 })
                 .then(data => {
                     console.log('Producto actualizado:', data);
@@ -512,7 +740,17 @@ setTimeout(() => {
                     todosLosCampos.forEach(campo => {
                         const span = document.createElement('span');
                         span.id = campo.dataset.idCampo;
-                        span.textContent = campo.value.trim() || '—';
+                        let valorCampo = campo.value.trim();
+                        if (campo.dataset.idCampo === 'modalDuracion') {
+                            valorCampo = formatearDuracionParaGuardar(valorCampo);
+                        } else if (campo.dataset.idCampo === 'modalDescripcion') {
+                            valorCampo = valorCampo.replace(/\s+/g, ' ').trim();
+                        } else if (campo.dataset.idCampo === 'modalPrecio') {
+                            valorCampo = valorCampo.replace(/\D/g, '');
+                        } else if (campo.dataset.idCampo === 'modalStock') {
+                            valorCampo = valorCampo.replace(/\D/g, '');
+                        }
+                        span.textContent = valorCampo || '—';
                         campo.replaceWith(span);
                     });
 
@@ -528,8 +766,11 @@ setTimeout(() => {
                     // Salir del modo edición
                     modalElement.classList.remove('editing');
 
-                    // Recargar productos
-                    cargarProductos();
+                    // Recargar productos y notificar
+                    if (typeof cargarProductos === 'function') {
+                        cargarProductos();
+                    }
+                    notificarProductoCambio('producto-actualizado', { id: productoId });
 
                     Swal.fire({
                         icon: 'success',
@@ -542,12 +783,22 @@ setTimeout(() => {
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Campos incorrectos, verifica nuevamente',
-                        confirmButtonColor: '#212529'
-                    });
+                    if (error.esValidacion && Array.isArray(error.errores) && error.errores.length) {
+                        const listaErrores = error.errores.map(err => `<li>${err}</li>`).join('');
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Errores de validación',
+                            html: `<ul class="text-start mb-0">${listaErrores}</ul>`,
+                            confirmButtonColor: '#212529'
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: error.mensaje || 'No se pudo actualizar el producto. Verifica los datos ingresados.',
+                            confirmButtonColor: '#212529'
+                        });
+                    }
                 });
         });
 

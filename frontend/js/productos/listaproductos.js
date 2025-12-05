@@ -1,6 +1,27 @@
 // Array global para mantener todos los productos en memoria
 let productosEnMemoria = [];
 
+const PRODUCTOS_SYNC_CHANNEL = 'productos-sync';
+const PRODUCTOS_SYNC_ID = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `prod-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+const productosChannel = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel(PRODUCTOS_SYNC_CHANNEL) : null;
+
+if (productosChannel) {
+    productosChannel.addEventListener('message', (event) => {
+        const { tipo, emisor } = event.data || {};
+        if (!tipo || emisor === PRODUCTOS_SYNC_ID) return;
+        if (['producto-creado', 'producto-actualizado', 'producto-eliminado'].includes(tipo)) {
+            cargarProductos();
+        }
+    });
+}
+
+window.productosSync = Object.assign({}, window.productosSync, {
+    notificar: (tipo, payload = null) => {
+        if (!productosChannel) return;
+        productosChannel.postMessage({ tipo, payload, emisor: PRODUCTOS_SYNC_ID });
+    }
+});
+
 // Configurar buscador cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', () => {
     const searchBox = document.getElementById('buscadorInput');

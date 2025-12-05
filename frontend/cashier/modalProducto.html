@@ -2,29 +2,39 @@
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content p-4 border-0 shadow-lg rounded-4 position-relative">
             <!-- Encabezado con botones -->
-            <div class="d-flex justify-content-end align-items-center mb-3">
+            <div class="modal-toolbar d-flex justify-content-end align-items-center mb-3">
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
 
-            <!-- Contenido -->
-            <div class="text-center" id="contenedorImagen">
-                <img id="modalImagen" src="../images/logo.png" class="rounded mb-3 shadow-sm" style="width: 150px; height: auto;">
-            </div>
+            <!-- Botón X grande visible en el extremo derecho (también cierra el modal) -->
+            <button type="button" class="modal-exit" data-bs-dismiss="modal" aria-label="Cerrar">×</button>
 
-            <div class="text-start mx-auto" style="max-width: 600px;">
-                <p><strong>Nombre del álbum:</strong> <span id="modalNombre"></span></p>
-                <p><strong>Artista / Grupo:</strong> <span id="modalArtista"></span></p>
-                <p><strong>Versión:</strong> <span id="modalVersion"></span></p>
-                <p><strong>Fecha de lanzamiento:</strong> <span id="modalFechaLanzamiento"></span></p>
-                <p><strong>Idioma:</strong> <span id="modalIdioma"></span></p>
-                <p><strong>Duración:</strong> <span id="modalDuracion"></span></p>
-                <p><strong>Peso:</strong> <span id="modalPeso"></span></p>
-                <p><strong>Precio:</strong> <span id="modalPrecio"></span></p>
-                <p><strong>Stock:</strong> <span id="modalStock"></span></p>
-                <p><strong>Categoría:</strong> <span id="modalCategoria"></span></p>
-                <p><strong>Descripción:</strong> <span id="modalDescripcion"></span></p>
-                <p><strong>Fecha de compra:</strong> <span id="modalFechaCompra"></span></p>
-                <p><strong>Fecha límite de venta:</strong> <span id="modalFechaCaducidad"></span></p>
+            <!-- Contenido -->
+            <div class="product-modal-body">
+                <div class="product-media" id="contenedorImagen">
+                    <div class="media-frame">
+                        <img id="modalImagen" src="../images/logo.png" alt="Portada del álbum" class="rounded mb-3 shadow-sm">
+                    </div>
+                    <p class="media-note">Explora la ficha completa del producto.</p>
+                </div>
+
+                <div class="product-info text-start">
+                    <div class="product-grid">
+                        <div class="field" data-field="nombre"><label class="fw-bold">Nombre del álbum</label><span id="modalNombre"></span></div>
+                        <div class="field" data-field="artista"><label class="fw-bold">Artista / Grupo</label><span id="modalArtista"></span></div>
+                        <div class="field" data-field="version"><label class="fw-bold">Versión</label><span id="modalVersion"></span></div>
+                        <div class="field" data-field="lanzamiento"><label class="fw-bold">Fecha de lanzamiento</label><span id="modalFechaLanzamiento"></span></div>
+                        <div class="field" data-field="idioma"><label class="fw-bold">Idioma</label><span id="modalIdioma"></span></div>
+                        <div class="field" data-field="duracion"><label class="fw-bold">Duración</label><span id="modalDuracion"></span></div>
+                        <div class="field" data-field="peso"><label class="fw-bold">Peso</label><span id="modalPeso"></span></div>
+                        <div class="field field-pill" data-field="precio"><label class="fw-bold">Precio</label><span id="modalPrecio"></span></div>
+                        <div class="field field-pill" data-field="stock"><label class="fw-bold">Stock</label><span id="modalStock"></span></div>
+                        <div class="field field-pill" data-field="categoria"><label class="fw-bold">Categoría</label><span id="modalCategoria"></span></div>
+                        <div class="field field-full field-description" data-field="descripcion"><label class="fw-bold">Descripción</label><span id="modalDescripcion"></span></div>
+                        <div class="field" data-field="compra"><label class="fw-bold">Fecha de compra</label><span id="modalFechaCompra"></span></div>
+                        <div class="field" data-field="caducidad"><label class="fw-bold">Fecha límite de venta</label><span id="modalFechaCaducidad"></span></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

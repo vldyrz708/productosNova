@@ -1,3 +1,24 @@
+const USUARIOS_SYNC_CHANNEL = 'usuarios-sync';
+const USUARIOS_SYNC_ID = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `usr-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+const usuariosChannel = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel(USUARIOS_SYNC_CHANNEL) : null;
+
+if (usuariosChannel) {
+    usuariosChannel.addEventListener('message', (event) => {
+        const { tipo, emisor } = event.data || {};
+        if (!tipo || emisor === USUARIOS_SYNC_ID) return;
+        if (['usuario-creado', 'usuario-actualizado', 'usuario-eliminado'].includes(tipo)) {
+            cargarUsuarios();
+        }
+    });
+}
+
+window.usuariosSync = Object.assign({}, window.usuariosSync, {
+    notificar: (tipo, payload = null) => {
+        if (!usuariosChannel) return;
+        usuariosChannel.postMessage({ tipo, payload, emisor: USUARIOS_SYNC_ID });
+    }
+});
+
 // Cargar usuarios reales desde la API y renderizar en la tabla
 async function cargarUsuarios() {
     const tbody = document.getElementById('cuerpoTablaUsuarios');

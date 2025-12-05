@@ -262,6 +262,46 @@ main h3 {
     transition: box-shadow 0.3s;
 }
 
+#modalProducto .modal-toolbar {
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    border-radius: 999px;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+    padding: 0.35rem 0.75rem;
+}
+
+#modalProducto .product-modal-body {
+    display: grid;
+    grid-template-columns: minmax(230px, 280px) minmax(0, 1fr);
+    gap: 2rem;
+    align-items: stretch;
+}
+
+#modalProducto .product-media {
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    border-radius: 1.25rem;
+    padding: 1.5rem;
+    box-shadow: 0 8px 30px rgba(15, 23, 42, 0.08);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+#modalProducto .product-media .media-frame {
+    background: linear-gradient(135deg, rgba(13, 110, 253, 0.08), rgba(93, 63, 211, 0.08));
+    border: 1px dashed rgba(99, 102, 241, 0.5);
+    border-radius: 1rem;
+    padding: 1rem;
+}
+
+#modalProducto .product-media .media-note {
+    font-size: 0.95rem;
+    color: #4b5563;
+    margin: 0;
+}
+
 #modalProducto .modal-header,
 #modalEditarProducto .modal-header,
 #modalProducto .d-flex,
@@ -308,12 +348,26 @@ main h3 {
     color: #fff;
 }
 
-#modalProducto #contenedorImagen,
+#modalProducto #contenedorImagen {
+    margin-bottom: 0;
+}
+
 #modalEditarProducto #contenedorImagen {
     margin-bottom: 1.5rem;
 }
 
-#modalProducto #modalImagen,
+#modalProducto #modalImagen {
+    border-radius: 1rem;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.15);
+    width: 100%;
+    max-width: 240px;
+    height: auto;
+    object-fit: cover;
+    margin: 0 auto;
+    border: 2px solid rgba(148, 163, 184, 0.4);
+    background: #f8fafc;
+}
+
 #modalEditarProducto #modalImagen {
     border-radius: 1rem;
     box-shadow: 0 4px 16px rgba(44, 62, 80, 0.12);
@@ -325,7 +379,97 @@ main h3 {
     background: #f3f6fa;
 }
 
-#modalProducto .text-start,
+#modalProducto .product-info {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 1.2rem;
+    padding: 1.75rem 1.5rem;
+    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+    font-size: 1.05rem;
+    color: #1f2933;
+}
+
+#modalProducto .product-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.1rem 1.4rem;
+}
+
+#modalProducto .product-grid .field {
+    background: #ffffff;
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    border-radius: 1rem;
+    padding: 0.9rem 1rem;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-height: 130px;
+}
+
+#modalProducto .product-grid .field::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    border: 1px solid transparent;
+    background: linear-gradient(135deg, rgba(13, 110, 253, 0.12), rgba(99, 102, 241, 0.12));
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+
+#modalProducto .product-grid .field:hover::after {
+    opacity: 1;
+}
+
+#modalProducto .product-grid .field label {
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #64748b;
+    display: block;
+    margin-bottom: 0.35rem;
+}
+
+#modalProducto .product-grid .field span,
+#modalProducto .product-grid .field input,
+#modalProducto .product-grid .field select,
+#modalProducto .product-grid .field textarea {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #0f172a;
+    flex: 1;
+    min-height: 48px;
+    border-radius: 0.65rem;
+    background: #f8fbff;
+    padding: 0.35rem 0.75rem;
+    border: none;
+}
+
+#modalProducto .product-grid .field.field-pill {
+    background: linear-gradient(120deg, rgba(13, 110, 253, 0.12), rgba(16, 185, 129, 0.12));
+    border: 1px solid rgba(99, 102, 241, 0.25);
+}
+
+#modalProducto .product-grid .field.field-pill span {
+    font-size: 1.2rem;
+}
+
+#modalProducto .product-grid .field-full {
+    grid-column: 1 / -1;
+}
+
+#modalProducto .product-grid .field-description span {
+    line-height: 1.5;
+    font-weight: 500;
+    color: #334155;
+}
+
 #modalEditarProducto .text-start {
     font-size: 1.08rem;
     color: #222;
@@ -335,17 +479,21 @@ main h3 {
     box-shadow: 0 2px 8px rgba(44, 62, 80, 0.07);
 }
 
-#modalProducto .text-start p,
 #modalEditarProducto .text-start p {
     margin-bottom: 0.7rem;
     font-weight: 500;
     letter-spacing: 0.01em;
 }
 
-#modalProducto .text-start strong,
 #modalEditarProducto .text-start strong {
     color: #0d6efd;
     font-weight: 700;
+}
+
+@media (max-width: 992px) {
+    #modalProducto .product-modal-body {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 768px) {
@@ -357,10 +505,13 @@ main h3 {
     #modalEditarProducto #modalImagen {
         width: 120px;
     }
-    #modalProducto .text-start,
+    #modalProducto .product-info,
     #modalEditarProducto .text-start {
         padding: 1rem 0.5rem;
         font-size: 1rem;
+    }
+    #modalProducto .product-grid {
+        grid-template-columns: 1fr;
     }
 }
 

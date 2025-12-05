@@ -1,3 +1,17 @@
+const PRODUCTOS_SYNC_CHANNEL = 'productos-sync';
+let canalProductosFallback;
+function emitirSyncProducto(tipo, payload = null) {
+    if (window.productosSync?.notificar) {
+        window.productosSync.notificar(tipo, payload);
+        return;
+    }
+    if (typeof BroadcastChannel === 'undefined') return;
+    if (!canalProductosFallback) {
+        canalProductosFallback = new BroadcastChannel(PRODUCTOS_SYNC_CHANNEL);
+    }
+    canalProductosFallback.postMessage({ tipo, payload, emisor: 'modal-registro' });
+}
+
 // Configurar límites de fechas
 const fechaLanzamientoInput = document.getElementById('fechaLanzamiento');
 const fechaCompraInput = document.getElementById('fechaCompra');
@@ -370,8 +384,11 @@ document.getElementById('guardarProducto').addEventListener('click', () => {
             input.classList.remove('is-valid');
         });
         
-        // Recargar productos
-        cargarProductos();
+        // Recargar productos y notificar a otras vistas
+        if (typeof cargarProductos === 'function') {
+            cargarProductos();
+        }
+        emitirSyncProducto('producto-creado');
         
         Swal.fire({
             icon: 'success',

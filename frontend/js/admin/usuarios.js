@@ -1,5 +1,18 @@
 // JS limpio para Admin - Usuarios: listar, crear, editar, eliminar
 const API_USERS = '/api/users';
+const USUARIOS_CHANNEL_NAME = 'usuarios-sync';
+const USUARIOS_ADMIN_SYNC_ID = typeof crypto !== 'undefined' && crypto.randomUUID
+  ? crypto.randomUUID()
+  : `admin-usuarios-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+const usuariosAdminChannel = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel(USUARIOS_CHANNEL_NAME) : null;
+
+function notificarCambioUsuarios(tipo, payload = null) {
+  if (window.usuariosSync?.notificar) {
+    window.usuariosSync.notificar(tipo, payload);
+  } else if (usuariosAdminChannel) {
+    usuariosAdminChannel.postMessage({ tipo, payload, emisor: USUARIOS_ADMIN_SYNC_ID });
+  }
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   const tabla = document.getElementById('usuariosTabla'); // tbody
@@ -19,6 +32,17 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error(err);
       tabla.innerHTML = '<tr><td colspan="8" class="text-danger text-center">Error al cargar los datos</td></tr>';
     }
+  }
+
+  function suscribirActualizacionesTiempoReal() {
+    if (!usuariosAdminChannel) return;
+    usuariosAdminChannel.addEventListener('message', (event) => {
+      const { tipo, emisor } = event.data || {};
+      if (!tipo || emisor === USUARIOS_ADMIN_SYNC_ID) return;
+      if (['usuario-creado', 'usuario-actualizado', 'usuario-eliminado'].includes(tipo)) {
+        fetchUsuarios();
+      }
+    });
   }
 
   // ------------------ Validación de formularios ------------------
@@ -139,6 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   attachRealtimeValidation();
+  suscribirActualizacionesTiempoReal();
 
   function renderTabla(users) {
     tabla.innerHTML = '';
@@ -223,6 +248,7 @@ document.addEventListener('DOMContentLoaded', () => {
         await crearUsuario(payload);
         bootstrap.Modal.getInstance(document.getElementById('modalAgregarUsuario')).hide();
         await fetchUsuarios();
+        notificarCambioUsuarios('usuario-creado');
         Swal.fire('Creado', 'Usuario creado correctamente', 'success');
         formAgregar.reset();
       } catch (err) {
@@ -250,6 +276,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
           await eliminarUsuario(id);
           await fetchUsuarios();
+          notificarCambioUsuarios('usuario-eliminado', { id });
           Swal.fire('Eliminado', 'Usuario eliminado', 'success');
         } catch (err) {
           console.error(err);
@@ -302,6 +329,7 @@ document.addEventListener('DOMContentLoaded', () => {
         await actualizarUsuario(usuarioEditandoId, cambios);
         bootstrap.Modal.getInstance(document.getElementById('modalEditarUsuario')).hide();
         await fetchUsuarios();
+        notificarCambioUsuarios('usuario-actualizado', { id: usuarioEditandoId });
         Swal.fire('Actualizado', 'Usuario actualizado', 'success');
       } catch (err) {
         console.error(err);
